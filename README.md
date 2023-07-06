@@ -26,7 +26,7 @@ then select whichever tool you would like to use from the toolbox's dropdown men
 
 # Installation
 
-[Add the toolbox](https://pro.arcgis.com/en/pro-app/latest/arcpy/functions/describe.htm) 
+[Add the toolbox](https://pro.arcgis.com/en/pro-app/latest/help/projects/connect-to-a-toolbox.htm) 
 from the [latest release](https://github.com/felix-quark/ColaWaterToolbox/releases).
 
 # Versioning
