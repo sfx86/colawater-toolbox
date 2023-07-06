@@ -26,7 +26,7 @@ class CalculateFacilityIdentifiers(object):
         def water_lyr_param(short_name: str, disp_name: str) -> tuple[arcpy.Parameter, arcpy.Parameter]:
             """Return a tuple of a water layer parameter and facility identifier start value parameter
             given a short name and a display name."""
-            # https://pro.arcgis.com/en/pro-app/latest/arcpy/functions/describe.htm
+            # https://pro.arcgis.com/en/pro-app/latest/arcpy/classes/parameter.htm
             layer = arcpy.Parameter(displayName=disp_name, name=short_name, datatype="GPFeatureLayer", parameterType="Optional", direction="Input")
             start = arcpy.Parameter(displayName=f"{disp_name} Start Value", name=f"{short_name}_start", datatype="GPLong", parameterType="Optional", direction="Input")
 
