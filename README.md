@@ -1,5 +1,19 @@
 ﻿# ColaWaterToolbox
+
 An ArcGIS Pro toolbox for the City of Columbia Water GIS Team
+
+# Usage
+
+Navigate to the `Catalog Pane` and open the `Toolboxes` dropdown.
+Double click on the `ColaWater.pyt` toolbox or click the arrow,
+then double click on whichever tool you would like to use from the toolbox's dropdown menu.
+
+# Installation
+
+Unzip the `ColaWaterToolbox.zip`
+from the [latest release](https://github.com/felix-quark/ColaWaterToolbox/releases)
+and [add the toolbox](https://pro.arcgis.com/en/pro-app/latest/help/projects/connect-to-a-toolbox.htm) 
+to ArcGIS. Make sure all of the associated `.py` files are in the same directory as the `.pyt` file.
 
 # Tools
 
@@ -18,16 +32,13 @@ Automatically calculate the facility identifier fields according to the below ta
 | System Valves  |     ✅     |         ❌        |
 | Water Mains    |     ✅     |         ✅        |
 
-# Usage
+# Roadmap
 
-Navigate to the `Catalog Pane` and open the `Toolboxes` dropdown.
-Double click on the `ColaWater` toolbox or click the arrow,
-then select whichever tool you would like to use from the toolbox's dropdown menu.
-
-# Installation
-
-[Add the toolbox](https://pro.arcgis.com/en/pro-app/latest/help/projects/connect-to-a-toolbox.htm) 
-from the [latest release](https://github.com/felix-quark/ColaWaterToolbox/releases).
+- [ ] Water Quality Control Tool
+    - [ ] Validate facility identifier format
+    - [ ] Deduplicate facility identifiers
+    - [ ] Ensure values conform to domains
+    - [ ] Ensure integrated mains have an associated file
 
 # Versioning
 
