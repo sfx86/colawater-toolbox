@@ -21,15 +21,15 @@ class StatusUpdater:
         arcpy.SetProgressorLabel(content)
         arcpy.SetProgressorPosition()
 
-    def update_info(self, messages: list, content: str) -> None:
+    def update_info(self, content: str) -> None:
         """Add a message, set the progressor label, and update the progressor position."""
-        messages.addMessage(content)
+        self.messages.addMessage(content)
         arcpy.SetProgressorLabel(content)
         arcpy.SetProgressorPosition()
 
-    def update_err(self, messages: list, content: str) -> None:
+    def update_err(self, content: str) -> None:
         """Add an error message and raise an ExecutionErorr."""
-        messages.addErrorMessage(content)
+        self.messages.addErrorMessage(content)
         raise arcpy.ExecuteError(content)
 
     def bump_progressor(self, position=1):
