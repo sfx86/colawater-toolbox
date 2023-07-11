@@ -119,9 +119,7 @@ class CalculateFacilityIdentifiers(object):
                 start = parameters[i + 1].value
                 # see the function docstrings for info on the rest of the execution
                 if layer and start:
-                    status.update_info(
-                        f"Calculating facility identifiers for '{layer_name}'..."
-                    )
+                    status.update_info(f"Calculating facility identifiers for '{layer_name}'...")
                     new_fid = self.calc_fids(
                         layer, layer_short_name, initials, start, interval, status
                     )
