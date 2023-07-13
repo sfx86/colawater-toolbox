@@ -1,7 +1,6 @@
 *.xml
-.vs/
-ColaWater*.py
 *.zip
+.vs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
