@@ -1,11 +1,11 @@
-# 1.1.0
+# 1.2.0
 
 ## Minor changes
 
-- New `utils.py` module with common helper functions and classes
-- Update existing tools to use the new `utils.py` module
+- Full codebase restructuring for sustainable future development
+    - Organized into modules/submodules
+    - Templates to maintain organization when adding new tools
 
 ## Patch changes
 
-- Edited, added, and removed some comments
-- Edited documentation comments
+- Miscellaneous README updates
