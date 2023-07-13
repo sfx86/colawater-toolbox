@@ -44,6 +44,9 @@ Automatically calculate the facility identifier fields according to the below ta
 
 Versions will take the form `major.minor.patch`.
 New tools, behavior changes, new parameters, etc. will result in a major version bump.
+Major versions will always get a new release. 
+Anything else is probably just refactoring and does not necessarily need a full release; 
+some minor versions will get releases if neccessary.
 Modification of tool contents in a backwards-compatible way will result in a minor version bump.
 Changes to documentation, wording, small backward-compatible bugfixes, etc. will result in patch number bump.
 
