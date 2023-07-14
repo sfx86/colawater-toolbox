@@ -1,8 +1,6 @@
 import arcpy
 import tools
-from importlib import reload
 
-reload(tools)
 
 class Toolbox(object):
     def __init__(self):
