@@ -2,7 +2,7 @@ import arcpy
 import utils
 
 
-def execute(parameters: list[arcpy.Parameter], messages) -> None:
+def execute(parameters: list[arcpy.Parameter]) -> None:
     """Entry point."""
     arcpy.SetProgressor("step", "", 0, 99)
     status = utils.StatusUpdater()
