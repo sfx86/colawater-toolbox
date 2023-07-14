@@ -4,7 +4,7 @@
 <p align="center">
 <a href="https://opensource.org/licenses/MPL-2.0"><img alt="License: MPL 2.0" src="https://img.shields.io/badge/license-MPL_2.0-brightgreen"></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000"></a>
-<a href="https://github.com/felix-quark/ColaWaterToolbox/releases"><img alt="Version: 1.2.0" src="https://img.shields.io/badge/version-1.2.0-blue"></a>
+<a href="https://github.com/felix-quark/ColaWaterToolbox/releases"><img alt="Version: 1.2.0" src="https://img.shields.io/github/v/release/felix-quark/ColaWaterToolbox"></a>
 <a href="https://pro.arcgis.com/en/pro-app/latest/arcpy/main/arcgis-pro-arcpy-reference.htm"><img alt="Docs: ArcPy reference" src="https://img.shields.io/badge/docs-ArcPy%20reference-purple"></a>
 </p>
 
