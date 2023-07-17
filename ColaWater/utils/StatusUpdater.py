@@ -8,22 +8,25 @@ class StatusUpdater:
         pass
 
     def update_warn(self, content: str) -> None:
-        """Add a warning message, set the progressor label, and update the progressor position."""
+        """Add a warning message and update the progressor label and position."""
         arcpy.AddWarning(content)
-        arcpy.SetProgressorLabel(content)
-        arcpy.SetProgressorPosition()
+        self.update_label(content)
+        self.bump_progressor()
 
     def update_info(self, content: str) -> None:
-        """Add a message, set the progressor label, and update the progressor position."""
+        """Add a message and update the progressor label and position."""
         arcpy.AddMessage(content)
-        arcpy.SetProgressorLabel(content)
-        arcpy.SetProgressorPosition()
+        self.update_label(content)
+        self.bump_progressor()
 
     def update_err(self, content: str) -> None:
-        """Add an error message and raise an ExecutionErorr."""
+        """Add an error message and raise an ExecutionError."""
         arcpy.AddError(content)
         raise arcpy.ExecuteError(content)
 
-    def bump_progressor(self, position=1):
+    def update_label(self, content: str) -> None:
+        arcpy.SetProgressorLabel(content)
+
+    def bump_progressor(self, position=1) -> None:
         """Increment progressor by a given value."""
         arcpy.SetProgressorPosition(position)
