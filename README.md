@@ -1,5 +1,4 @@
 ﻿<h1 align="center">ColaWaterToolbox</h1>
-
 <h2 align="center">An ArcGIS Pro toolbox for the City of Columbia Water GIS Team</h2>
 <p align="center">
 <a href="https://opensource.org/licenses/MPL-2.0"><img alt="License: MPL 2.0" src="https://img.shields.io/badge/license-MPL_2.0-brightgreen"></a>
@@ -19,7 +18,6 @@
 - [Versioning](#versioning)
 
 ---
-
 
 # Usage
 
@@ -69,6 +67,6 @@ Versions will take the form `major.minor.patch`.
 New tools, behavior changes, new parameters, etc. will result in a major version bump.
 Major versions will always get a new release. 
 Anything else is probably just refactoring and does not necessarily need a full release; 
-some minor versions will get releases if neccessary.
+some minor versions will get releases if necessary.
 Modification of tool contents in a backwards-compatible way will result in a minor version bump.
 Changes to documentation, wording, small backward-compatible bugfixes, etc. will result in patch number bump.
