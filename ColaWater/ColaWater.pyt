@@ -1,20 +1,18 @@
 import arcpy
 import tools
-from importlib import reload
 
-reload(tools)
 
 class Toolbox(object):
     def __init__(self):
         self.label = "Columbia Water"
         self.alias = "ColaWater"
-        self.tools = [CalculateFacilityIdentifiers]
+        self.tools = [CalculateFacilityIdentifiers, QualityControl]
 
 
 class CalculateFacilityIdentifiers(object):
     def __init__(self) -> None:
         self.label = "Calculate Facility Identifiers"
-        self.description = "Calculates the various facility identifiers and facility identifier indices for water layers."
+        self.description = "Calculates FIDs and FID indices for specified water layers."
         self.canRunInBackground = False
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
@@ -34,3 +32,30 @@ class CalculateFacilityIdentifiers(object):
 
     def postExecute(self, parameters: list[arcpy.Parameter]) -> None:
         tools.fids.post_execute(parameters)
+
+
+class QualityControl(object):
+    def __init__(self):
+        self.label = "Water Quality Control"
+        self.description = (
+            "Executes selected quality control checks on specified water layers."
+        )
+        self.canRunInBackground = False
+
+    def getParameterInfo(self) -> list[arcpy.Parameter]:
+        return tools.qc.parameters()
+
+    def isLicensed(self) -> bool:
+        return True
+
+    def updateParameters(self, parameters: list[arcpy.Parameter]) -> None:
+        tools.qc.update_parameters(parameters)
+
+    def updateMessages(self, parameters: list[arcpy.Parameter]) -> None:
+        tools.qc.update_messages(parameters)
+
+    def execute(self, parameters: list[arcpy.Parameter], messages) -> None:
+        tools.qc.execute(parameters)
+
+    def postExecute(self, parameters: list[arcpy.Parameter]) -> None:
+        tools.qc.post_execute(parameters)
