@@ -1,47 +1,22 @@
 import arcpy
-import utils
 from dataclasses import dataclass
+import utils
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
-    """Entry point."""
+    """Entry point for Calculate Facility Identifiers."""
     arcpy.SetProgressor("step", "Calculating facility identifiers...", 0, 13)
     status = utils.StatusUpdater()
     summary = utils.SummaryBuilder()
     summary.add_header("New start values:")
 
-    initials = parameters[0].value
-    interval = parameters[1].value
+    _calc_fids(parameters, status, summary)
 
-    for i, p in enumerate(parameters):
-        if p.name.endswith("_lyr"):
-            layer = p.value
-            layer_name = p.valueAsText
-            layer_short_name = p.name
-            layer_disp_name = p.displayName
-            start = parameters[i + 1].value
-            # see the function docstrings for info on the rest of the execution
-            if layer and start:
-                status.update_info(
-                    f"Calculating facility identifiers for '{layer_name}'..."
-                )
-                # side effect of calculating the fids but returns the exclusive end of the range
-                # [start, end)
-                new_fid = _calc_fids(
-                    layer, layer_short_name, initials, start, interval, status
-                )
-                status.update_info(f"'{layer_name}' finished.")
-                summary.add_item(f"{layer_disp_name}: {new_fid}")
-            else:
-                status.update_warn(
-                    f"Layer or start value omitted: skipping '{p.displayName}'"
-                )
-                # non-warn runs bump the progressor twice
-                status.bump_progressor()
     summary.post()
 
 
 def post_execute(parameters: list[arcpy.Parameter]) -> None:
+    """Unimplemented for this tool."""
     pass
 
 
@@ -57,10 +32,10 @@ def parameters() -> list[arcpy.Parameter]:
         ("sv_lyr", "System Valve"),
         ("wm_lyr", "Water Main"),
     )
-    # water layer param list
+    # layer param list
     input_layers = []
-    for short_name, disp_name in templates:
-        input_layers.extend(_water_layer_parameter(short_name, disp_name))
+    for abbrev, disp_name in templates:
+        input_layers.extend(_water_param_pair(abbrev, disp_name))
     # facility identifier placeholder initials
     initials = arcpy.Parameter(
         displayName="Initials",
@@ -97,85 +72,113 @@ def update_parameters(parameters: list[arcpy.Parameter]) -> None:
 
 
 def update_messages(parameters: list[arcpy.Parameter]) -> None:
+    """Unimplemented for this tool."""
     pass
 
 
-@dataclass(frozen=True)
-class _LayerKV:
-    # layer short name -> prefix, suffix, whether or not fid index is calculated
-    ca_lyr = ("", "CA", True)
-    cv_lyr = ("", "CV", True)
-    ft_lyr = ("", "FT", True)
-    hy_lyr = ("", "HYD", True)
-    sl_lyr = ("", "SERV", False)
-    st_lyr = ("", "STR", False)
-    sv_lyr = ("", "SV", False)
-    wm_lyr = ("000015-WATER-000", "", True)
-
-
 def _calc_fids(
-    layer: arcpy._mp.Layer,
-    layer_short_name: str,
-    initials: str,
-    start: int,
-    interval: int,
+    parameters: list[arcpy.Parameter],
     status: utils.StatusUpdater,
-) -> str:
-    """Return a string with the new facility identifier for a given layer."""
-    layer_kv = _LayerKV()
-    layer_path = utils.get_layer_path(layer)
-    prefix, suffix, id_flag = getattr(layer_kv, layer_short_name)
-    increment = start
+    summary: utils.SummaryBuilder,
+) -> None:
+    """Calculate the facility identifiers for the layers in the parameter list."""
+    initials = parameters[0].value
+    interval = parameters[1].value
 
-    try:
-        # https://pro.arcgis.com/en/pro-app/latest/arcpy/data-access/updatecursor-class.htm
-        if id_flag:
-            with arcpy.da.UpdateCursor(
-                layer_path,
-                ("FACILITYID", "FACILITYIDINDEX"),
-                where_clause=f"FACILITYID = '{initials}'",
-            ) as cursor:
-                for row in cursor:
-                    row[0] = f"{prefix}{increment}{suffix}"
-                    row[1] = increment
-                    increment += interval
-                    cursor.updateRow(row)
-        else:
-            with arcpy.da.UpdateCursor(
-                layer_path, "FACILITYID", where_clause=f"FACILITYID = '{initials}'"
-            ) as cursor:
-                for row in cursor:
-                    row[0] = f"{prefix}{increment}{suffix}"
-                    increment += interval
-                    cursor.updateRow(row)
-    except RuntimeError:
-        # arcgis needs to have exclusive write access to the layer's database,
-        # so it complains about not being able to acquire the lock if you have the lock with the attribute table
-        status.update_err(
-            "If you see an error that says 'RuntimeError: Cannot acquire a lock.', close the attribute tables of the layers for which you are trying to calculate facility identifiers. If that still does not work, go find whomever wrote this tool and ask them about it."
-        )
+    # first two parameters are not needed for the loop
+    p_iter = iter(parameters[2:])
 
-    return f"{prefix}{increment}{suffix}"
+    for p in p_iter:
+        lyr = p.value
+        # associated start value is always next
+        # using next inside of a for loop is sketchy, but given that the parameter
+        # list is of a known shape, domain knowledge allows for this pattern
+        start = next(p_iter).value
+
+        # guard against None
+        if not (lyr and start):
+            status.update_warn(
+                f"Layer or start value omitted: skipping [{p.displayName}]"
+            )
+            # non-warn runs bump the progressor twice
+            status.bump_progressor()
+            continue
+
+        # map of layer short name to its affixes
+        affix_map = {
+            "ca_lyr": ("", "CA"),
+            "cv_lyr": ("", "CV"),
+            "ft_lyr": ("", "FT"),
+            "hy_lyr": ("", "HYD"),
+            "sl_lyr": ("", "SERV"),
+            "st_lyr": ("", "STR"),
+            "sv_lyr": ("", "SV"),
+            "wm_lyr": ("000015-WATER-000", ""),
+        }
+        fields = ("FACILITYID", "FACILITYIDINDEX")
+        incr = start
+        lyr_abbrev = p.name
+        lyr_disp_name = p.displayName
+        lyr_name = p.valueAsText
+        lyr_path = utils.get_layer_path(lyr)
+        prefix, suffix = affix_map[lyr_abbrev]
+        where_initials = f"FACILITYID = '{initials}'"
+
+        status.update_info(f"Calculating facility identifiers for [{lyr_name}]...")
+
+        try:
+            # only these layers have FACILITYIDINDEX
+            if lyr_abbrev in (
+                "ca_lyr",
+                "cv_lyr",
+                "ft_lyr",
+                "hy_lyr",
+                "wm_lyr",
+            ):
+                with arcpy.da.UpdateCursor(lyr_path, fields, where_initials) as cursor:
+                    for row in cursor:
+                        # update fid and fid index with incr value
+                        row[0] = f"{prefix}{incr}{suffix}"
+                        row[1] = incr
+                        cursor.updateRow(row)
+                        incr += interval
+            else:
+                with arcpy.da.UpdateCursor(lyr_path, fields, where_initials) as cursor:
+                    for row in cursor:
+                        # leave FACILITYIDINDEX alone; logic is otherwise identicial
+                        row[0] = f"{prefix}{incr}{suffix}"
+                        cursor.updateRow(row)
+                        incr += interval
+        # arcpy should only ever throw RuntimeError here, but you never know
+        except Exception:
+            # post existing summaries as to not lose information
+            summary.post()
+            status.update_err(utils.RUNTIME_ERROR_MSG)
+
+        status.update_info(f"[{lyr_name}] finished.")
+        new_fid = f"{prefix}{incr}{suffix}"
+        summary.add_item(f"{lyr_disp_name}: {new_fid}")
 
 
-def _water_layer_parameter(
+def _water_param_pair(
     short_name: str, disp_name: str
 ) -> tuple[arcpy.Parameter, arcpy.Parameter]:
-    """Return a tuple of a water layer parameter and facility identifier start value parameter."""
-    # https://pro.arcgis.com/en/pro-app/latest/arcpy/classes/parameter.htm
-    layer = arcpy.Parameter(
-        displayName=disp_name,
-        name=short_name,
-        datatype="GPFeatureLayer",
-        parameterType="Optional",
-        direction="Input",
+    """Return a tuple of a layer parameter and start value parameter."""
+    return (
+        # layer portion
+        arcpy.Parameter(
+            displayName=disp_name,
+            name=short_name,
+            datatype="GPFeatureLayer",
+            parameterType="Optional",
+            direction="Input",
+        ),
+        # start value portion
+        arcpy.Parameter(
+            displayName=f"{disp_name} Start Value",
+            name=f"{short_name}_start",
+            datatype="GPLong",
+            parameterType="Optional",
+            direction="Input",
+        ),
     )
-    start = arcpy.Parameter(
-        displayName=f"{disp_name} Start Value",
-        name=f"{short_name}_start",
-        datatype="GPLong",
-        parameterType="Optional",
-        direction="Input",
-    )
-
-    return (layer, start)
