@@ -143,7 +143,7 @@ def _calc_fids(
                         cursor.updateRow(row)
                         incr += interval
             else:
-                with arcpy.da.UpdateCursor(lyr_path, fields, where_initials) as cursor:
+                with arcpy.da.UpdateCursor(lyr_path, fields[0], where_initials) as cursor:
                     for row in cursor:
                         # leave FACILITYIDINDEX alone; logic is otherwise identicial
                         row[0] = f"{prefix}{incr}{suffix}"
