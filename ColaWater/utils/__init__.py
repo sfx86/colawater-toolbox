@@ -1,5 +1,4 @@
 from .constants import *
 from .functions import *
-from .StatusUpdater import StatusUpdater
-from .SummaryBuilder import SummaryBuilder
-from .SummaryContainer import SummaryContainer
+from .status import StatusUpdater
+from .summary import SummaryBuilder, SummaryContainer
