@@ -22,6 +22,8 @@ class SummaryBuilder:
         """Clear the summary's content."""
         self._summary_content.clear()
 
-    def post(self) -> None:
+    def post(self, dumped=False) -> None:
         """Add a message with the summary's content."""
         arcpy.AddMessage("".join(self._summary_content))
+        if dumped:
+            arcpy.AddMessage("[OUTPUT DUMPED DUE TO ERROR]")
