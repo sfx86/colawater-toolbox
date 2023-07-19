@@ -17,7 +17,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     lyr_wm = lyrs[-1]
     is_fid_format_check = checks[0].value
     is_wm_file_check = checks[1].value
-    is_ds_check = checks[2].value
+    is_wm_ds_check = checks[2].value
 
     if is_fid_format_check:
         _fid_format_qc(lyrs, status, summaries)
@@ -25,7 +25,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     if is_wm_file_check:
         _wm_assoc_file_qc(lyr_wm, status, summaries)
 
-    if is_ds_check:
+    if is_wm_ds_check:
         _wm_datasource_qc(lyr_wm, status, summaries)
 
     # TODO: deduplication
