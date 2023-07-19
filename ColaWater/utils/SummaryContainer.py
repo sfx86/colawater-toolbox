@@ -15,10 +15,10 @@ class SummaryContainer:
         for s in summaries:
             self.add_summary(s)
 
-    def post(self) -> None:
+    def post(self, dumped=False) -> None:
         """Invoke post() for each summary in the container."""
         for s in self.__dict__.values():
-            s.post()
+            s.post(dumped=dumped)
 
     def clear(self) -> None:
         """Remove all summaries in the container."""
