@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<metadata xml:lang="en">
+    <Esri>
+        <CreaDate>20230719</CreaDate>
+        <CreaTime>10300100</CreaTime>
+        <ArcGISFormat>1.0</ArcGISFormat>
+        <SyncOnce>TRUE</SyncOnce>
+        <ModDate>20230719</ModDate>
+        <ModTime>10451400</ModTime>
+        <scaleRange>
+            <minScale>150000000</minScale>
+            <maxScale>5000</maxScale>
+        </scaleRange>
+        <ArcGISProfile>ItemDescription</ArcGISProfile>
+    </Esri>
+    <toolbox name="ColaWater" alias="ColaWater">
+        <arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
+    </toolbox>
+    <dataIdInfo>
+        <idCitation>
+            <resTitle>ColaWater</resTitle>
+        </idCitation>
+        <idPurp>A collection of tools for the City of Columbia GIS team designed specifically to automate difficult or common tasks involved in water-related GIS.​</idPurp>
+        <searchKeys>
+            <keyword>water</keyword>
+        </searchKeys>
+    </dataIdInfo>
+    <distInfo>
+        <distributor>
+            <distorFormat>
+                <formatName>ArcToolbox Toolbox</formatName>
+            </distorFormat>
+        </distributor>
+    </distInfo>
+    <mdHrLv>
+        <ScopeCd value="005"></ScopeCd>
+    </mdHrLv>
+    <mdDateSt Sync="TRUE">20230719</mdDateSt>
+</metadata>
