@@ -1,5 +1,5 @@
 ﻿<h1 align="center">ColaWaterToolbox</h1>
-<h2 align="center">An ArcGIS Pro toolbox for the City of Columbia Water GIS Team</h2>
+<h2 align="center">ArcGIS geoprocessing tools for Columbia Water</h2>
 <p align="center">
 <a href="https://opensource.org/licenses/MPL-2.0"><img alt="License: MPL 2.0" src="https://img.shields.io/badge/license-MPL_2.0-brightgreen"></a>
 <a href="https://github.com/felix-quark/ColaWaterToolbox/releases"><img alt="Latest release" src="https://img.shields.io/github/v/release/felix-quark/ColaWaterToolbox"></a>
@@ -56,8 +56,9 @@ Automatically calculate the facility identifier fields according to the below ta
 ## Water Quality Control
 
 Available quality control checks:
-- Validate facility identifier format for all layers
-- Ensure the associated file exists for all integrated water mains 
+- Check if the associated file exists for all integrated water mains 
+- Check if the data source is set and not unknown for all integrated water mains 
+- Find incorrectly formatted facility identifiers for all layers
 
 # Changes
 
@@ -66,10 +67,11 @@ See [CHANGELOG.md][changelog].
 # Roadmap
 
 - 🏗 Quality Control Tool
-    - Deduplicate facility identifiers
+    - 🏗 Deduplicate facility identifiers
     - Ensure values conform to domains
-    - ✅ Validate facility identifier format
+    - ✅ Ensure integrated mains have a data source that is not missing or unknown 
     - ✅ Ensure integrated mains have an associated file that exists
+    - ✅ Validate facility identifier format
 - Documentation (Sphinx)
     - top-level usage instructions
     - coverage of internal APIs
