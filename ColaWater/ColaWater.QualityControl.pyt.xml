@@ -19,10 +19,10 @@
             <param name="fid_check" displayname="Check facility identifiers" type="Optional" direction="Input" datatype="Boolean" expression="{fid_check}">
                 <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;Specifies whether the facility identifier format will be validated for selected layers.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
             </param>
-            <param name="wm_check" displayname="Check water main files" type="Optional" direction="Input" datatype="Boolean" expression="{wm_check}">
+            <param name="wm_file_check" displayname="Check water main files" type="Optional" direction="Input" datatype="Boolean" expression="{wm_check}">
                 <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;Specifies whether the existence of associated files for integrated mains will be verified.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
             </param>
-            <param name="datasource_check" displayname="Check water main data sources" type="Optional" direction="Input" datatype="Boolean" expression="{datasource_check}">
+            <param name="wm_datasource_check" displayname="Check water main data sources" type="Optional" direction="Input" datatype="Boolean" expression="{datasource_check}">
                 <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;Specifies whether the data source will be verified as set or not unknown for integrated mains.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
             </param>
             <param name="Casing" displayname="Casing" type="Optional" direction="Input" datatype="Feature Layer" expression="{Casing}">
