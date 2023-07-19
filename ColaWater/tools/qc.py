@@ -135,9 +135,11 @@ def _fid_format_qc(
                 summaries.fid_format.add_header(
                     f"[{lyr_name}] Incorrectly formatted facility identifiers (object ID, facility identifier):"
                 )
+                summaries.fid_format.add_header(utils.CSV_PROCESSING_MSG)
                 for row in cursor:
-                    oid, fid = row
-                    if not r.fullmatch(str(fid)):
+                    oid = row[0]
+                    fid = utils.process_nullable_attr(row[1], csv=True)
+                    if not r.fullmatch(fid):
                         summaries.fid_format.add_item(f"{oid}, {fid}")
         # arcpy should only ever throw RuntimeError here, but you never know
         except Exception:
