@@ -1,5 +1,9 @@
 from pathlib import Path
 
+# known directories
+SCAN_DIR: Path = Path("M:\\Util&Eng\\Dept_Staff\\Scans\\")
+
+# boilerplate messages
 RUNTIME_ERROR_MSG: str = "\n".join(
     (
         "How to resolve common errors:",
@@ -11,4 +15,4 @@ RUNTIME_ERROR_MSG: str = "\n".join(
     )
 )
 
-SCAN_DIR: Path = Path("M:\\Util&Eng\\Dept_Staff\\Scans\\")
+CSV_PROCESSING_MSG: str = "Note: commas, leading and trailing whitespace, and quotation marks have been removed so this output can be consumed properly as a CSV."
