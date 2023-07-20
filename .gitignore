@@ -1,7 +1,6 @@
-*.zip
-.vs/
-
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
 *$py.class
+*.py[cod]
+*.zip
+.mypy_cache
+.vs/
+__pycache__/
