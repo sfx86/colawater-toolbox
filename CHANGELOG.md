@@ -1,5 +1,11 @@
-# 2.1.0
+# 2.2.0
 
-## Minor changes
+# Minor Changes
 
-- Fix bug where an unspecified column was included 
+- Internal refactoring
+
+# Patch changes
+
+- Updated tool output to indicate error dumping 
+- Fixed type issues from mypy
+- Enforced black formatting
