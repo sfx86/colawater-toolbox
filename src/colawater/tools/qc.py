@@ -220,8 +220,12 @@ def _wm_assoc_file_qc(
     summaries.items["wm_file"].add_item(
         f"{num_exists:n} existant, {num_not_exists:} non-existant."
     )
-    summaries.items["wm_file"].add_item(f"{len(unique_comments):n} unique non-existant files.")
-    summaries.items["wm_file"].add_item(f"{num_exists + num_not_exists:n} total files checked.")
+    summaries.items["wm_file"].add_item(
+        f"{len(unique_comments):n} unique non-existant files."
+    )
+    summaries.items["wm_file"].add_item(
+        f"{num_exists + num_not_exists:n} total files checked."
+    )
 
 
 def _wm_datasource_qc(
@@ -272,4 +276,6 @@ def _wm_datasource_qc(
     summaries.items["wm_datasource"].add_header(
         f"[{lyr_name}] Missing or unknown data sources for integrated mains:"
     )
-    summaries.items["wm_datasource"].add_item(f"{num_missing_unk:n} missing or unknown.")
+    summaries.items["wm_datasource"].add_item(
+        f"{num_missing_unk:n} missing or unknown."
+    )
