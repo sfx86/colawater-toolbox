@@ -7,8 +7,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     """Entry point for Quality Control."""
     arcpy.SetProgressor("default", "Starting quality control checks...")
     status = utils.StatusUpdater()
-    summaries = utils.SummaryContainer()
-    summaries.add_summaries(["fid_format", "wm_file", "wm_datasource"])
+    summaries = utils.SummaryContainer(["fid_format", "wm_file", "wm_datasource"])
 
     LAYER_START = 3
     checks = parameters[:LAYER_START]
@@ -131,15 +130,15 @@ def _fid_format_qc(
 
         try:
             with arcpy.da.SearchCursor(lyr_path, fields) as cursor:
-                summaries.fid_format.add_header(
+                summaries.items["fid_format"].add_header(
                     f"[{lyr_name}] Incorrectly formatted facility identifiers (object ID, facility identifier):"
                 )
-                summaries.fid_format.add_header(utils.CSV_PROCESSING_MSG)
+                summaries.items["fid_format"].add_header(utils.CSV_PROCESSING_MSG)
                 for row in cursor:
                     oid = row[0]
                     fid = utils.process_attr(row[1], csv=True)
                     if not r.fullmatch(fid):
-                        summaries.fid_format.add_item(f"{oid}, {fid}")
+                        summaries.items["fid_format"].add_item(f"{oid}, {fid}")
         # arcpy should only ever throw RuntimeError here, but you never know
         except Exception:
             # post existing summaries as to not lose information
@@ -178,10 +177,10 @@ def _wm_assoc_file_qc(
     unique_comments = set()
     where_integrated = "INTEGRATIONSTATUS = 'Y'"
 
-    summaries.wm_file.add_header(
+    summaries.items["wm_file"].add_header(
         f"[{lyr_name}] Non-existant associated files (object ID, comments):"
     )
-    summaries.wm_file.add_header(utils.CSV_PROCESSING_MSG)
+    summaries.items["wm_file"].add_header(utils.CSV_PROCESSING_MSG)
 
     try:
         with arcpy.da.SearchCursor(lyr_path, fields, where_integrated) as cursor:
@@ -191,14 +190,14 @@ def _wm_assoc_file_qc(
                 unique_comments.add(comments)
 
                 if comments == "<Null>":
-                    summaries.wm_file.add_item(f"{oid}, {comments}")
+                    summaries.items["wm_file"].add_item(f"{oid}, {comments}")
                     num_not_exists += 1
                     continue
 
                 if utils.is_existing_scan(comments):
                     num_exists += 1
                 else:
-                    summaries.wm_file.add_item(f"{oid}, {comments}")
+                    summaries.items["wm_file"].add_item(f"{oid}, {comments}")
                     num_not_exists += 1
                 # there's so many files that the progressor only needs updating
                 # every couple of files
@@ -215,14 +214,14 @@ def _wm_assoc_file_qc(
         summaries.post(dumped=True)
         status.update_err(utils.RUNTIME_ERROR_MSG)
 
-    summaries.wm_file.add_header(
+    summaries.items["wm_file"].add_header(
         f"[{lyr_name}] Verified associated files for integrated mains:"
     )
-    summaries.wm_file.add_item(
+    summaries.items["wm_file"].add_item(
         f"{num_exists:n} existant, {num_not_exists:} non-existant."
     )
-    summaries.wm_file.add_item(f"{len(unique_comments):n} unique non-existant files.")
-    summaries.wm_file.add_item(f"{num_exists + num_not_exists:n} total files checked.")
+    summaries.items["wm_file"].add_item(f"{len(unique_comments):n} unique non-existant files.")
+    summaries.items["wm_file"].add_item(f"{num_exists + num_not_exists:n} total files checked.")
 
 
 def _wm_datasource_qc(
@@ -252,17 +251,17 @@ def _wm_datasource_qc(
     num_missing_unk = 0
     where_wrong = "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)"
 
-    summaries.wm_datasource.add_header(
+    summaries.items["wm_datasource"].add_header(
         f"[{lyr_name}] Missing or unknown data sources (object ID, datasource):"
     )
-    summaries.wm_datasource.add_header(utils.CSV_PROCESSING_MSG)
+    summaries.items["wm_datasource"].add_header(utils.CSV_PROCESSING_MSG)
 
     try:
         with arcpy.da.SearchCursor(lyr_path, fields, where_wrong) as cursor:
             for row in cursor:
                 oid = row[0]
                 datasource = utils.process_attr(row[1], csv=True)
-                summaries.wm_datasource.add_item(f"{oid}, {datasource}")
+                summaries.items["wm_datasource"].add_item(f"{oid}, {datasource}")
                 num_missing_unk += 1
     # arcpy should only ever throw RuntimeError here, but you never know
     except Exception:
@@ -270,7 +269,7 @@ def _wm_datasource_qc(
         summaries.post(dumped=True)
         status.update_err(utils.RUNTIME_ERROR_MSG)
 
-    summaries.wm_datasource.add_header(
+    summaries.items["wm_datasource"].add_header(
         f"[{lyr_name}] Missing or unknown data sources for integrated mains:"
     )
-    summaries.wm_datasource.add_item(f"{num_missing_unk:n} missing or unknown.")
+    summaries.items["wm_datasource"].add_item(f"{num_missing_unk:n} missing or unknown.")
