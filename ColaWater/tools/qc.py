@@ -138,7 +138,7 @@ def _fid_format_qc(
                 summaries.fid_format.add_header(utils.CSV_PROCESSING_MSG)
                 for row in cursor:
                     oid = row[0]
-                    fid = utils.process_nullable_attr(row[1], csv=True)
+                    fid = utils.process_attr(row[1], csv=True)
                     if not r.fullmatch(fid):
                         summaries.fid_format.add_item(f"{oid}, {fid}")
         # arcpy should only ever throw RuntimeError here, but you never know
@@ -188,7 +188,7 @@ def _wm_assoc_file_qc(
         with arcpy.da.SearchCursor(lyr_path, fields, where_integrated) as cursor:
             for row in cursor:
                 oid = row[0]
-                comments = utils.process_nullable_attr(row[1], csv=True)
+                comments = utils.process_attr(row[1], csv=True)
                 unique_comments.add(comments)
 
                 if comments == "<Null>":
@@ -262,7 +262,7 @@ def _wm_datasource_qc(
         with arcpy.da.SearchCursor(lyr_path, fields, where_wrong) as cursor:
             for row in cursor:
                 oid = row[0]
-                datasource = utils.process_nullable_attr(row[1], csv=True)
+                datasource = utils.process_attr(row[1], csv=True)
                 summaries.wm_datasource.add_item(f"{oid}, {datasource}")
                 num_missing_unk += 1
     # arcpy should only ever throw RuntimeError here, but you never know
