@@ -1,5 +1,6 @@
 import arcpy
 from colawater import tools
+from typing import Any
 
 
 class Toolbox(object):
@@ -27,7 +28,7 @@ class CalculateFacilityIdentifiers(object):
     def updateMessages(self, parameters: list[arcpy.Parameter]) -> None:
         tools.fids.update_messages(parameters)
 
-    def execute(self, parameters: list[arcpy.Parameter], messages) -> None:
+    def execute(self, parameters: list[arcpy.Parameter], messages: Any) -> None:
         tools.fids.execute(parameters)
 
     def postExecute(self, parameters: list[arcpy.Parameter]) -> None:
@@ -54,7 +55,7 @@ class QualityControl(object):
     def updateMessages(self, parameters: list[arcpy.Parameter]) -> None:
         tools.qc.update_messages(parameters)
 
-    def execute(self, parameters: list[arcpy.Parameter], messages) -> None:
+    def execute(self, parameters: list[arcpy.Parameter], messages: Any) -> None:
         tools.qc.execute(parameters)
 
     def postExecute(self, parameters: list[arcpy.Parameter]) -> None:
