@@ -1,6 +1,6 @@
 import arcpy
+from colawater import utils
 from functools import cache
-import utils
 
 
 def get_layer_path(layer: arcpy._mp.Layer) -> str:
@@ -18,7 +18,7 @@ def is_existing_scan(filename: str) -> bool:
     # consider changing to @lru_cache(n) to deal with memory issues
 
     # takes advantage of short-circuiting to avoid filesystem ops where possible
-    return filename and (
+    return bool(filename) and (
         (
             # valid scans only ever have these extensions
             # and appear in this order of frequency
@@ -30,7 +30,7 @@ def is_existing_scan(filename: str) -> bool:
     )
 
 
-def process_attr(attr: str, csv=False) -> str:
+def process_attr(attr: str, csv: bool = False) -> str:
     """Return a more understandable representation of a nullable field value and
     optionally make it more easily ingested into a CSV."""
     # only check for none as empty strings are also falsy and
@@ -40,6 +40,6 @@ def process_attr(attr: str, csv=False) -> str:
     elif csv:
         # some fields have erroneous whitespace or contain commas or quotes
         # remove these to make use as csv possible
-        return attr.strip().replace(",", "").replace("\"", "")
+        return attr.strip().replace(",", "").replace('"', "")
 
     return attr

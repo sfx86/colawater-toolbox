@@ -7,14 +7,14 @@ class StatusUpdater:
     def __init__(self) -> None:
         pass
 
-    def update_warn(self, content: str, bump=True) -> None:
+    def update_warn(self, content: str, bump: bool = True) -> None:
         """Add a warning message and update the progressor label and position."""
         arcpy.AddWarning(content)
         self.update_label(content)
         if bump:
             self.bump_progressor()
 
-    def update_info(self, content: str, bump=True) -> None:
+    def update_info(self, content: str, bump: bool = True) -> None:
         """Add a message and update the progressor label and position."""
         arcpy.AddMessage(content)
         self.update_label(content)
@@ -29,6 +29,6 @@ class StatusUpdater:
     def update_label(self, content: str) -> None:
         arcpy.SetProgressorLabel(content)
 
-    def bump_progressor(self, position=1) -> None:
+    def bump_progressor(self, position: int = 1) -> None:
         """Increment progressor by a given value."""
         arcpy.SetProgressorPosition(position)

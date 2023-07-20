@@ -4,8 +4,8 @@ import arcpy
 class SummaryBuilder:
     """A helper class for iteratively building tool execution summaries."""
 
-    def __init__(self):
-        self._summary_content = []
+    def __init__(self) -> None:
+        self._summary_content: list[str] = []
 
     def add_header(self, content: str) -> None:
         """Add a header to the summary's content."""
@@ -22,7 +22,7 @@ class SummaryBuilder:
         """Clear the summary's content."""
         self._summary_content.clear()
 
-    def post(self, dumped=False) -> None:
+    def post(self, dumped: bool = False) -> None:
         """Add a message with the summary's content."""
         arcpy.AddMessage("".join(self._summary_content))
         if dumped:
@@ -32,7 +32,7 @@ class SummaryBuilder:
 class SummaryContainer:
     """A wrapper class for SummaryBuilder that can handle multiple summaries at once."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def add_summary(self, name: str) -> None:
@@ -44,7 +44,7 @@ class SummaryContainer:
         for s in summaries:
             self.add_summary(s)
 
-    def post(self, dumped=False) -> None:
+    def post(self, dumped: bool = False) -> None:
         """Invoke post() for each summary in the container."""
         for s in self.__dict__.values():
             s.post(dumped=dumped)

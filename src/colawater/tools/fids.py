@@ -1,6 +1,5 @@
 import arcpy
-from dataclasses import dataclass
-import utils
+from colawater import utils
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
@@ -33,7 +32,7 @@ def parameters() -> list[arcpy.Parameter]:
         ("wm_lyr", "Water Main"),
     )
     # layer param list
-    input_layers = []
+    input_layers: list[arcpy.Parameter] = []
     for abbrev, disp_name in templates:
         input_layers.extend(_water_param_pair(abbrev, disp_name))
     # facility identifier placeholder initials
@@ -143,7 +142,9 @@ def _calc_fids(
                         cursor.updateRow(row)
                         incr += interval
             else:
-                with arcpy.da.UpdateCursor(lyr_path, fields[0], where_initials) as cursor:
+                with arcpy.da.UpdateCursor(
+                    lyr_path, fields[0], where_initials
+                ) as cursor:
                     for row in cursor:
                         # leave FACILITYIDINDEX alone; logic is otherwise identicial
                         row[0] = f"{prefix}{incr}{suffix}"
