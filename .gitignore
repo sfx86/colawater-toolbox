@@ -1,6 +1,8 @@
+*.zip
+.vs/
+
+.mypy_cache
+
+__pycache__/
 *$py.class
 *.py[cod]
-*.zip
-.mypy_cache
-.vs/
-__pycache__/
