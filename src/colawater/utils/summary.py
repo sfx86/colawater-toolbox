@@ -1,4 +1,5 @@
 import arcpy
+from typing import Optional
 
 
 class SummaryBuilder:
@@ -32,12 +33,14 @@ class SummaryBuilder:
 class SummaryContainer:
     """A wrapper class for SummaryBuilder that can handle multiple summaries at once."""
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, summaries: Optional[list[str]] = None) -> None:
+        self.items: dict[str, SummaryBuilder] = {}
+        if summaries is not None:
+            self.add_summaries(summaries)
 
     def add_summary(self, name: str) -> None:
         """Add a summary to the container."""
-        self.__dict__[name] = SummaryBuilder()
+        self.items[name] = SummaryBuilder()
 
     def add_summaries(self, summaries: list[str]) -> None:
         """Invoke add_summary() for each item in the list."""
@@ -46,7 +49,7 @@ class SummaryContainer:
 
     def post(self, dumped: bool = False) -> None:
         """Invoke post() for each summary in the container."""
-        for s in self.__dict__.values():
+        for s in self.items.values():
             s.post(dumped=dumped)
 
     def clear(self) -> None:
