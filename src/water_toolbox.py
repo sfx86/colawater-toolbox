@@ -1,9 +1,9 @@
 import arcpy
-import tools
+from colawater import tools
 
 
 class Toolbox(object):
-    def __init__(self):
+    def __init__(self) -> None:
         self.label = "Columbia Water"
         self.alias = "ColaWater"
         self.tools = [CalculateFacilityIdentifiers, QualityControl]
@@ -35,7 +35,7 @@ class CalculateFacilityIdentifiers(object):
 
 
 class QualityControl(object):
-    def __init__(self):
+    def __init__(self) -> None:
         self.label = "Water Quality Control"
         self.description = (
             "Executes selected quality control checks on specified water layers."

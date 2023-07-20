@@ -1,7 +1,6 @@
 import arcpy
-from pathlib import Path
+from colawater import utils
 import re
-import utils
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
@@ -59,7 +58,7 @@ def parameters() -> list[arcpy.Parameter]:
         for abbrev, disp in check_templates
     ]
 
-    check_templates = (
+    lyr_templates = (
         ("ca_lyr", "Casing"),
         ("cv_lyr", "Control Valve"),
         ("ft_lyr", "Fitting"),
@@ -78,7 +77,7 @@ def parameters() -> list[arcpy.Parameter]:
             parameterType="Optional",
             direction="Input",
         )
-        for disp, disp in check_templates
+        for disp, disp in lyr_templates
     ]
 
     return [*checks, *layers]
@@ -159,6 +158,7 @@ def _wm_assoc_file_qc(
     )
 
     lyr = water_main_layer.value
+    lyr_disp_name = water_main_layer.displayName
     lyr_name = water_main_layer.valueAsText
 
     status.update_info(
@@ -172,7 +172,6 @@ def _wm_assoc_file_qc(
         return
 
     fields = ("OBJECTID", "COMMENTS")
-    lyr_disp_name = water_main_layer.displayName
     lyr_path = utils.get_layer_path(lyr)
     num_not_exists = 0
     num_exists = 0
@@ -235,6 +234,7 @@ def _wm_datasource_qc(
     arcpy.SetProgressor("default", "Verifying data sources for integrated mains...")
 
     lyr = water_main_layer.value
+    lyr_disp_name = water_main_layer.displayName
     lyr_name = water_main_layer.valueAsText
 
     status.update_info(
@@ -248,7 +248,6 @@ def _wm_datasource_qc(
         return
 
     fields = ("OBJECTID", "DATASOURCE")
-    lyr_disp_name = water_main_layer.displayName
     lyr_path = utils.get_layer_path(lyr)
     num_missing_unk = 0
     where_wrong = "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)"
