@@ -30,7 +30,7 @@ def is_existing_scan(filename: str) -> bool:
     )
 
 
-def process_nullable_attr(attr: str, csv=False) -> str:
+def process_attr(attr: str, csv=False) -> str:
     """Return a more understandable representation of a nullable field value and
     optionally make it more easily ingested into a CSV."""
     # only check for none as empty strings are also falsy and
