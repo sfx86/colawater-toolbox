@@ -199,7 +199,7 @@ def _fid_format_qc(
             status.update_err(RUNTIME_ERROR_MSG)
         summaries.items["fid_format"].add_result(
             lyr_name_long,
-            f"{num_no_match:n} incorrectly formatted facility identifiers."
+            f"{num_no_match:n} incorrectly formatted facility identifiers.",
         )
 
 
