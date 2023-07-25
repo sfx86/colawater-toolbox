@@ -1,8 +1,14 @@
+# misc
 *.zip
 .vs/
 
+# sphinx
+docs/build/
+
+# mypy
 .mypy_cache
 
+# bytecode etc.
 __pycache__/
 *$py.class
 *.py[cod]
