@@ -190,7 +190,6 @@ def _fid_format_qc(
                     fid = process_attr(row[1], csv=True)
                     if not r.fullmatch(fid):
                         summaries.items["fid_format"].add_item(f"{oid}, {fid}")
-                summaries.items["fid_format"].add_result(lyr_name_long, "")
         # arcpy should only ever throw RuntimeError here, but you never know
         except Exception:
             # post existing summaries as to not lose information
