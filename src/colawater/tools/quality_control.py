@@ -171,6 +171,7 @@ def _fid_format_qc(
         fields = ("OBJECTID", "FACILITYID")
         lyr_name_long = l.valueAsText
         lyr_path = get_layer_path(lyr)
+        num_no_match = 0
 
         status.update_info(
             f"Finding incorrectly formatted facility identifiers in [{lyr_name_long}]..."
@@ -178,7 +179,7 @@ def _fid_format_qc(
 
         try:
             with arcpy.da.SearchCursor(lyr_path, fields) as cursor:
-                summaries.items["fid_format"].add_header(
+                summaries.items["fid_format"].add_result(
                     lyr_name_long,
                     "Incorrectly formatted facility identifiers (object ID, facility identifier):",
                 )
@@ -190,11 +191,16 @@ def _fid_format_qc(
                     fid = process_attr(row[1], csv=True)
                     if not r.fullmatch(fid):
                         summaries.items["fid_format"].add_item(f"{oid}, {fid}")
+                        num_no_match += 1
         # arcpy should only ever throw RuntimeError here, but you never know
         except Exception:
             # post existing summaries as to not lose information
             summaries.post(dumped=True)
             status.update_err(RUNTIME_ERROR_MSG)
+        summaries.items["fid_format"].add_result(
+            lyr_name_long,
+            f"{num_no_match:n} incorrectly formatted facility identifiers."
+        )
 
 
 def _wm_assoc_file_qc(
@@ -238,7 +244,7 @@ def _wm_assoc_file_qc(
     unique_comments = set()
     where_integrated = "INTEGRATIONSTATUS = 'Y'"
 
-    summaries.items["wm_file"].add_header(
+    summaries.items["wm_file"].add_result(
         lyr_name_long, "Non-existant associated files (object ID, comments):"
     )
     summaries.items["wm_file"].add_note(lyr_name_long, CSV_PROCESSING_MSG)
@@ -275,17 +281,17 @@ def _wm_assoc_file_qc(
         summaries.post(dumped=True)
         status.update_err(RUNTIME_ERROR_MSG)
 
-    summaries.items["wm_file"].add_header(
-        lyr_name_long, "Verified associated files for integrated mains:"
+    summaries.items["wm_file"].add_result(
+        lyr_name_long,
+        f"{num_exists:n} existant and {num_not_exists:} non-existant files for integrated mains.",
     )
-    summaries.items["wm_file"].add_item(
-        f"{num_exists:n} existant, {num_not_exists:} non-existant."
+    summaries.items["wm_file"].add_result(
+        lyr_name_long,
+        f"{len(unique_comments):n} unique non-existant files files for integrated mains.",
     )
-    summaries.items["wm_file"].add_item(
-        f"{len(unique_comments):n} unique non-existant files."
-    )
-    summaries.items["wm_file"].add_item(
-        f"{num_exists + num_not_exists:n} total files checked."
+    summaries.items["wm_file"].add_result(
+        lyr_name_long,
+        f"{num_exists + num_not_exists:n} total files checked for integrated mains.",
     )
 
 
@@ -305,20 +311,19 @@ def _wm_datasource_qc(
     Raises:
         ExecutionError: An error ocurred in the tool execution.
     """
-    arcpy.SetProgressor("default", "Verifying data sources for integrated mains...")
+    arcpy.SetProgressor("step", "Validating facility identifiers...", 0, 7)
 
     lyr = water_main_layer.value
     lyr_name = water_main_layer.displayName
     lyr_name_long = water_main_layer.valueAsText
 
     status.update_info(
-        f"Verifying data sources for integrated mains in [{lyr_name_long}]...",
-        increment=False,
+        f"Verifying data sources for integrated mains in [{lyr_name_long}]..."
     )
 
     # guard against None
     if not lyr:
-        status.update_warn(f"Layer omitted: {lyr_name}", increment=False)
+        status.update_warn(f"Layer omitted: {lyr_name}")
         return
 
     fields = ("OBJECTID", "DATASOURCE")
@@ -326,7 +331,7 @@ def _wm_datasource_qc(
     num_missing_unk = 0
     where_wrong = "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)"
 
-    summaries.items["wm_datasource"].add_header(
+    summaries.items["wm_datasource"].add_result(
         lyr_name_long, "Missing or unknown data sources (object ID, datasource):"
     )
     summaries.items["wm_datasource"].add_note(lyr_name_long, CSV_PROCESSING_MSG)
@@ -344,9 +349,7 @@ def _wm_datasource_qc(
         summaries.post(dumped=True)
         status.update_err(RUNTIME_ERROR_MSG)
 
-    summaries.items["wm_datasource"].add_header(
-        lyr_name_long, "Missing or unknown data sources for integrated mains:"
-    )
-    summaries.items["wm_datasource"].add_item(
-        f"{num_missing_unk:n} missing or unknown."
+    summaries.items["wm_datasource"].add_result(
+        lyr_name_long,
+        f"{num_missing_unk:n} missing or unknown data sources for integrated mains.",
     )
