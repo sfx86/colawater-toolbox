@@ -42,7 +42,7 @@ OUTPUT_DUMPED_MSG = "[OUTPUT DUMPED DUE TO ERROR]"
 Error message text to display when output is dumped due to an error.
 """
 
-CSV_PROCESSING_MSG: str = "Note: commas, leading and trailing whitespace, and quotation marks have been removed so this output can be consumed properly as a CSV."
+CSV_PROCESSING_MSG: str = "Commas, leading and trailing whitespace, and quotation marks have been removed so this output can be consumed properly as a CSV."
 """
 Message text to display when the following output has been modified for CSV use.
 """
