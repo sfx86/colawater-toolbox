@@ -1,6 +1,7 @@
 # misc
 *.zip
 .vs/
+.vscode/
 
 # sphinx
 docs/build/
