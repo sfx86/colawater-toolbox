@@ -42,7 +42,7 @@ html_theme = "furo"
 html_static_path = ["_static"]
 
 project_tagline = "ArcGIS geoprocessing tools for Columbia Water"
-html_title = f"{project} {release}<br><small>{project_tagline}</small>"
+html_title = f"{project} {release} <br><small>{project_tagline}</small>"
 
 
 html_theme_options = {
