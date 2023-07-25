@@ -66,15 +66,15 @@ See [CHANGELOG.md][changelog].
 
 # Roadmap
 
-- 🏗 Quality Control Tool
-    - 🏗 Deduplicate facility identifiers
-    - Ensure values conform to domains
-    - ✅ Ensure integrated mains have a data source that is not missing or unknown 
-    - ✅ Ensure integrated mains have an associated file that exists
-    - ✅ Validate facility identifier format
-- Documentation (Sphinx)
-    - top-level usage instructions
-    - coverage of internal APIs
+* 🏗 Quality Control Tool
+    * 🏗 Deduplicate facility identifiers
+    * Ensure values conform to domains
+    * ✅ Ensure integrated mains have a data source that is not missing or unknown 
+    * ✅ Ensure integrated mains have an associated file that exists
+    * ✅ Validate facility identifier format
+* Documentation (Sphinx)
+    * top-level usage instructions
+    * coverage of internal APIs
 
 # Versioning
 
