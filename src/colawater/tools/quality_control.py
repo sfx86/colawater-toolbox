@@ -3,13 +3,16 @@ Contains the functions used by the Water Quality Control tool
 tool and other helper functions.
 """
 
-import arcpy
 import re
+from typing import Sequence
+
+import arcpy
+
+from colawater.utils.constants import CSV_PROCESSING_MSG, RUNTIME_ERROR_MSG
+from colawater.utils.functions import (get_layer_path, is_existing_scan,
+                                       process_attr)
 from colawater.utils.status import StatusUpdater
 from colawater.utils.summary import SummaryCollection
-from colawater.utils.functions import get_layer_path, is_existing_scan, process_attr
-from colawater.utils.constants import CSV_PROCESSING_MSG, RUNTIME_ERROR_MSG
-from typing import Sequence
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:

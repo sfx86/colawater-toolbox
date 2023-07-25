@@ -19,9 +19,11 @@ Examples:
         attr = process_attr(attr) # Returns "<Null>"
 """
 
-import arcpy
-from colawater.utils.constants import SCAN_DIR
 from functools import cache
+
+import arcpy
+
+from colawater.utils.constants import SCAN_DIR
 
 
 def get_layer_path(layer: arcpy._mp.Layer) -> str:

@@ -19,9 +19,11 @@ Examples:
         summaries.post() # Invokes post() for each summary in the collection
 """
 
-import arcpy
-from colawater.utils.constants import OUTPUT_DUMPED_MSG
 from typing import Optional
+
+import arcpy
+
+from colawater.utils.constants import OUTPUT_DUMPED_MSG
 
 
 class SummaryBuilder:

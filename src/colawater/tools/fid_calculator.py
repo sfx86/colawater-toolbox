@@ -4,6 +4,7 @@ tool and other helper functions.
 """
 
 import arcpy
+
 from colawater.utils.constants import RUNTIME_ERROR_MSG
 from colawater.utils.functions import get_layer_path
 from colawater.utils.status import StatusUpdater
