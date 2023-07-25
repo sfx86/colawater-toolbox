@@ -20,7 +20,7 @@ Examples:
 """
 
 import arcpy
-from colawater import utils
+from colawater.utils.constants import SCAN_DIR
 from functools import cache
 
 
@@ -69,7 +69,7 @@ def is_existing_scan(filename: str) -> bool:
             or filename.endswith(".pdf")
             or filename.endswith(".dwg")
         )
-        and (utils.SCAN_DIR / filename).exists()
+        and (SCAN_DIR / filename).exists()
     )
 
 
@@ -91,10 +91,11 @@ def process_attr(attr: str, csv: bool = False) -> str:
     """
     # only check for none as empty strings are also falsy and
     # naming those <Null> would cause confusion
-    attr = str(attr)
     if attr is None:
         return "<Null>"
-    elif csv:
+
+    attr = str(attr)
+    if csv:
         # some fields have erroneous whitespace or contain commas or quotes
         # remove these to make use as csv possible
         return attr.strip().replace(",", "").replace('"', "")
