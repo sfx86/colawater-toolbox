@@ -23,7 +23,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     arcpy.SetProgressor("step", "Calculating facility identifiers...", 0, 13)
     status = StatusUpdater()
     summary = SummaryBuilder()
-    summary.add_header("New start values:")
+    summary.add_result("TOOL", "New start values:")
 
     _calc_fids(parameters, status, summary)
 
