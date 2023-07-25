@@ -2,9 +2,11 @@
 Contains the main geoprocessing toolbox and tools.
 """
 
-import arcpy
-from colawater import tools
 from typing import Any
+
+import arcpy
+
+from colawater import tools
 
 
 class Toolbox:
