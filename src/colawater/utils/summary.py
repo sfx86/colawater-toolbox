@@ -41,17 +41,18 @@ class SummaryBuilder:
         """
         return "".join(self._summary_list)
 
-    def add_header(self, content: str) -> None:
+    def add_header(self, layer_name: str, content: str) -> None:
         """
         Adds a header to the summary's content.
 
         Arguments:
+            layer_name (str): The name of the layer relevant to the header.
             content (str): The header content to be added.
         """
         if self._summary_list:
-            self._summary_list.append(f"\n{content}")
+            self._summary_list.append(f"\n[{layer_name}] {content}")
         else:
-            self._summary_list.append(content)
+            self._summary_list.append(f"[{layer_name}] {content}")
 
     def add_item(self, content: str) -> None:
         """
@@ -61,6 +62,30 @@ class SummaryBuilder:
             content (str): The item content to be added.
         """
         self._summary_list.append(f"\n\t{content}")
+
+    def add_result(self, layer_name: str, content: str) -> None:
+        """
+        Adds a result header to the summary's content.
+
+        Same behavior as ``add_header()`` but prepends the content with '[RESULT]'.
+
+        Arguments:
+            layer_name (str): The name of the layer relevant to the result.
+            content (str): The result content to be added.
+        """
+        self._summary_list.append(f"[RESULT] [{layer_name}] {content}")
+
+    def add_note(self, layer_name: str, content: str) -> None:
+        """
+        Adds a result header to the summary's content.
+
+        Same behavior as ``add_header()`` but prepends the content with '[NOTE]'.
+
+        Arguments:
+            layer_name (str): The name of the layer relevant to the note.
+            content (str): The note content to be added.
+        """
+        self._summary_list.append(f"[NOTE] [{layer_name}] {content}")
 
     def clear(self) -> None:
         """
@@ -79,9 +104,9 @@ class SummaryBuilder:
             dumped (bool): Whether to add a message indicating the summary was
                            dumped due to an error.
         """
-        arcpy.AddMessage(self.summary)
         if dumped:
             arcpy.AddMessage("[OUTPUT DUMPED DUE TO ERROR]")
+        arcpy.AddMessage(self.summary)
 
 
 class SummaryCollection:

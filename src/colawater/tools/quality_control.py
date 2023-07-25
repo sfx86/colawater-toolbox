@@ -9,6 +9,7 @@ from colawater.utils.status import StatusUpdater
 from colawater.utils.summary import SummaryCollection
 from colawater.utils.functions import get_layer_path, is_existing_scan, process_attr
 from colawater.utils.constants import CSV_PROCESSING_MSG, RUNTIME_ERROR_MSG
+from typing import Sequence
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
@@ -135,7 +136,7 @@ def update_messages(parameters: list[arcpy.Parameter]) -> None:
 
 def _fid_format_qc(
     layers: list[arcpy._mp.Layer],
-    regexes: list[re.Pattern],
+    regexes: Sequence[re.Pattern],
     status: StatusUpdater,
     summaries: SummaryCollection,
 ) -> None:
@@ -178,14 +179,18 @@ def _fid_format_qc(
         try:
             with arcpy.da.SearchCursor(lyr_path, fields) as cursor:
                 summaries.items["fid_format"].add_header(
-                    f"[{lyr_name_long}] Incorrectly formatted facility identifiers (object ID, facility identifier):"
+                    lyr_name_long,
+                    "Incorrectly formatted facility identifiers (object ID, facility identifier):",
                 )
-                summaries.items["fid_format"].add_header(CSV_PROCESSING_MSG)
+                summaries.items["fid_format"].add_note(
+                    lyr_name_long, CSV_PROCESSING_MSG
+                )
                 for row in cursor:
                     oid = row[0]
                     fid = process_attr(row[1], csv=True)
                     if not r.fullmatch(fid):
                         summaries.items["fid_format"].add_item(f"{oid}, {fid}")
+                summaries.items["fid_format"].add_result(lyr_name_long, "")
         # arcpy should only ever throw RuntimeError here, but you never know
         except Exception:
             # post existing summaries as to not lose information
@@ -235,9 +240,9 @@ def _wm_assoc_file_qc(
     where_integrated = "INTEGRATIONSTATUS = 'Y'"
 
     summaries.items["wm_file"].add_header(
-        f"[{lyr_name_long}] Non-existant associated files (object ID, comments):"
+        lyr_name_long, "Non-existant associated files (object ID, comments):"
     )
-    summaries.items["wm_file"].add_header(CSV_PROCESSING_MSG)
+    summaries.items["wm_file"].add_note(lyr_name_long, CSV_PROCESSING_MSG)
 
     try:
         with arcpy.da.SearchCursor(lyr_path, fields, where_integrated) as cursor:
@@ -272,7 +277,7 @@ def _wm_assoc_file_qc(
         status.update_err(RUNTIME_ERROR_MSG)
 
     summaries.items["wm_file"].add_header(
-        f"[{lyr_name_long}] Verified associated files for integrated mains:"
+        lyr_name_long, "Verified associated files for integrated mains:"
     )
     summaries.items["wm_file"].add_item(
         f"{num_exists:n} existant, {num_not_exists:} non-existant."
@@ -323,9 +328,9 @@ def _wm_datasource_qc(
     where_wrong = "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)"
 
     summaries.items["wm_datasource"].add_header(
-        f"[{lyr_name_long}] Missing or unknown data sources (object ID, datasource):"
+        lyr_name_long, "Missing or unknown data sources (object ID, datasource):"
     )
-    summaries.items["wm_datasource"].add_header(CSV_PROCESSING_MSG)
+    summaries.items["wm_datasource"].add_note(lyr_name_long, CSV_PROCESSING_MSG)
 
     try:
         with arcpy.da.SearchCursor(lyr_path, fields, where_wrong) as cursor:
@@ -341,7 +346,7 @@ def _wm_datasource_qc(
         status.update_err(RUNTIME_ERROR_MSG)
 
     summaries.items["wm_datasource"].add_header(
-        f"[{lyr_name_long}] Missing or unknown data sources for integrated mains:"
+        lyr_name_long, "Missing or unknown data sources for integrated mains:"
     )
     summaries.items["wm_datasource"].add_item(
         f"{num_missing_unk:n} missing or unknown."
