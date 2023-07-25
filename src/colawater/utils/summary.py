@@ -20,6 +20,7 @@ Examples:
 """
 
 import arcpy
+from colawater.utils.constants import OUTPUT_DUMPED_MSG
 from typing import Optional
 
 
@@ -41,7 +42,9 @@ class SummaryBuilder:
         """
         return "".join(self._summary_list)
 
-    def add_header(self, layer_name: str, content: str) -> None:
+    def add_header(
+        self, layer_name: str, content: str, qualifier: Optional[str] = None
+    ) -> None:
         """
         Adds a header to the summary's content.
 
@@ -49,10 +52,15 @@ class SummaryBuilder:
             layer_name (str): The name of the layer relevant to the header.
             content (str): The header content to be added.
         """
-        if self._summary_list:
-            self._summary_list.append(f"\n[{layer_name}] {content}")
+        if qualifier:
+            contents = f"[{qualifier}] [{layer_name}] {content}"
         else:
-            self._summary_list.append(f"[{layer_name}] {content}")
+            contents = f"[{layer_name}] {content}"
+
+        if self._summary_list:
+            self._summary_list.append(f"\n{contents}")
+        else:
+            self._summary_list.append(contents)
 
     def add_item(self, content: str) -> None:
         """
@@ -73,7 +81,7 @@ class SummaryBuilder:
             layer_name (str): The name of the layer relevant to the result.
             content (str): The result content to be added.
         """
-        self._summary_list.append(f"[RESULT] [{layer_name}] {content}")
+        self.add_header(layer_name, content, "RESULT")
 
     def add_note(self, layer_name: str, content: str) -> None:
         """
@@ -85,7 +93,7 @@ class SummaryBuilder:
             layer_name (str): The name of the layer relevant to the note.
             content (str): The note content to be added.
         """
-        self._summary_list.append(f"[NOTE] [{layer_name}] {content}")
+        self.add_header(layer_name, content, "NOTE")
 
     def clear(self) -> None:
         """
@@ -105,7 +113,7 @@ class SummaryBuilder:
                            dumped due to an error.
         """
         if dumped:
-            arcpy.AddMessage("[OUTPUT DUMPED DUE TO ERROR]")
+            arcpy.AddMessage(OUTPUT_DUMPED_MSG)
         arcpy.AddMessage(self.summary)
 
 
