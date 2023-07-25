@@ -1,13 +1,29 @@
+"""
+Contains the functions used by the Water Quality Control tool 
+tool and other helper functions.
+"""
+
 import arcpy
-from colawater import utils
 import re
+from colawater.utils.status import StatusUpdater
+from colawater.utils.summary import SummaryCollection
+from colawater.utils.functions import get_layer_path, is_existing_scan, process_attr
+from colawater.utils.constants import CSV_PROCESSING_MSG, RUNTIME_ERROR_MSG
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
-    """Entry point for Quality Control."""
+    """
+    Entry point for Water Quality Control.
+
+    Raises:
+        ExecutionError: An error ocurred in the tool execution.
+    """
     arcpy.SetProgressor("default", "Starting quality control checks...")
-    status = utils.StatusUpdater()
-    summaries = utils.SummaryContainer(["fid_format", "wm_file", "wm_datasource"])
+    status = StatusUpdater()
+    # functions are coupled to these keys,
+    # they don't check to make sure they exist
+    # beware of KeyErrors
+    summaries = SummaryCollection(["fid_format", "wm_file", "wm_datasource"])
 
     LAYER_START = 3
     checks = parameters[:LAYER_START]
@@ -18,7 +34,18 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     is_wm_ds_check = checks[2].value
 
     if is_fid_format_check:
-        _fid_format_qc(lyrs, status, summaries)
+        # regexes correspond 1:1 with layer parameters
+        regexes = (
+            re.compile(r"^\d+CA$"),
+            re.compile(r"^\d+CV$"),
+            re.compile(r"^\d+FT$"),
+            re.compile(r"^\d+HYD$"),
+            re.compile(r"^\d+SERV$"),
+            re.compile(r"^\d+STR$"),
+            re.compile(r"^\d+SV$"),
+            re.compile(r"^000015-WATER-000\d+$"),
+        )
+        _fid_format_qc(lyrs, regexes, status, summaries)
 
     if is_wm_file_check:
         _wm_assoc_file_qc(lyr_wm, status, summaries)
@@ -33,12 +60,20 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
 
 def post_execute(parameters: list[arcpy.Parameter]) -> None:
-    """Unimplemented for this tool."""
+    """
+    Note:
+        Unimplemented for this tool.
+    """
     pass
 
 
 def parameters() -> list[arcpy.Parameter]:
-    """Return a list of parameter definitions."""
+    """
+    Returns the parameters for Water Quality Control.
+
+    Returns:
+        list[arcpy.Parameter]: The list of parameters.
+    """
     check_templates = (
         # make sure to increment LAYER_START if adding a check here
         ("fid_check", "Check facility identifiers"),
@@ -48,13 +83,13 @@ def parameters() -> list[arcpy.Parameter]:
 
     checks = [
         arcpy.Parameter(
-            displayName=disp,
+            displayName=name,
             name=abbrev,
             datatype="GPBoolean",
             parameterType="Optional",
             direction="Input",
         )
-        for abbrev, disp in check_templates
+        for abbrev, name in check_templates
     ]
 
     lyr_templates = (
@@ -68,125 +103,147 @@ def parameters() -> list[arcpy.Parameter]:
         ("wm_lyr", "Water Main"),
     )
 
-    layers = [
+    lyrs = [
         arcpy.Parameter(
-            displayName=disp,
-            name=disp,
+            displayName=name,
+            name=abbrev,
             datatype="GPFeatureLayer",
             parameterType="Optional",
             direction="Input",
         )
-        for disp, disp in lyr_templates
+        for abbrev, name in lyr_templates
     ]
 
-    return [*checks, *layers]
+    return [*checks, *lyrs]
 
 
 def update_parameters(parameters: list[arcpy.Parameter]) -> None:
-    """Unimplemented for this tool."""
+    """
+    Note:
+        Unimplemented for this tool.
+    """
     pass
 
 
 def update_messages(parameters: list[arcpy.Parameter]) -> None:
-    """Unimplemented for this tool."""
+    """
+    Note:
+        Unimplemented for this tool.
+    """
     pass
 
 
 def _fid_format_qc(
     layers: list[arcpy._mp.Layer],
-    status: utils.StatusUpdater,
-    summaries: utils.SummaryContainer,
+    regexes: list[re.Pattern],
+    status: StatusUpdater,
+    summaries: SummaryCollection,
 ) -> None:
-    """Finds all incorrectly formatted facility identifiers."""
+    """
+    Finds all incorrectly formatted facility identifiers.
+
+    Arguments:
+        layers (list[arcpy._mp.Layer]): List of layers to check.
+        regexes (list[re.Pattern]): List of regexes to use to check the layers'
+                                    facility identifiers.
+        status (StatusUpdater): The status for this tool.
+        summaries (SummaryCollection): The summaries for this tool.
+
+    Raises:
+        ExecutionError: An error ocurred in the tool execution.
+
+    Note:
+        ``layers`` and ``regexes`` should correspond 1:1; otherwise,
+        the check will stop when the shortest list is exhausted.
+    """
     arcpy.SetProgressor("step", "Validating facility identifiers...", 0, 7)
-    # regexes correspond 1:1 with layer parameters
-    regexes = (
-        re.compile(r"^\d+CA$"),
-        re.compile(r"^\d+CV$"),
-        re.compile(r"^\d+FT$"),
-        re.compile(r"^\d+HYD$"),
-        re.compile(r"^\d+SERV$"),
-        re.compile(r"^\d+STR$"),
-        re.compile(r"^\d+SV$"),
-        re.compile(r"^000015-WATER-000\d+$"),
-    )
 
     for l, r in zip(layers, regexes):
         lyr = l.value
-        lyr_disp_name = l.displayName
+        lyr_name = l.displayName
 
         # guard against None
         if not lyr:
-            status.update_warn(f"Layer omitted: {lyr_disp_name}")
+            status.update_warn(f"Layer omitted: {lyr_name}")
             continue
 
         fields = ("OBJECTID", "FACILITYID")
-        lyr_name = l.valueAsText
-        lyr_path = utils.get_layer_path(lyr)
+        lyr_name_long = l.valueAsText
+        lyr_path = get_layer_path(lyr)
 
         status.update_info(
-            f"Finding incorrectly formatted facility identifiers in [{lyr_name}]..."
+            f"Finding incorrectly formatted facility identifiers in [{lyr_name_long}]..."
         )
 
         try:
             with arcpy.da.SearchCursor(lyr_path, fields) as cursor:
                 summaries.items["fid_format"].add_header(
-                    f"[{lyr_name}] Incorrectly formatted facility identifiers (object ID, facility identifier):"
+                    f"[{lyr_name_long}] Incorrectly formatted facility identifiers (object ID, facility identifier):"
                 )
-                summaries.items["fid_format"].add_header(utils.CSV_PROCESSING_MSG)
+                summaries.items["fid_format"].add_header(CSV_PROCESSING_MSG)
                 for row in cursor:
                     oid = row[0]
-                    fid = utils.process_attr(row[1], csv=True)
+                    fid = process_attr(row[1], csv=True)
                     if not r.fullmatch(fid):
                         summaries.items["fid_format"].add_item(f"{oid}, {fid}")
         # arcpy should only ever throw RuntimeError here, but you never know
         except Exception:
             # post existing summaries as to not lose information
             summaries.post(dumped=True)
-            status.update_err(utils.RUNTIME_ERROR_MSG)
+            status.update_err(RUNTIME_ERROR_MSG)
 
 
 def _wm_assoc_file_qc(
     water_main_layer: arcpy._mp.Layer,
-    status: utils.StatusUpdater,
-    summaries: utils.SummaryContainer,
+    status: StatusUpdater,
+    summaries: SummaryCollection,
 ) -> None:
-    """Verifies that each integrated main has an associated file that exists."""
+    """
+    Verifies that each integrated main has an associated file that exists.
+
+    Arguments:
+        water_main_layer (arpcy._mp.Layer): The water main layer.
+        status (StatusUpdater): The status for this tool.
+        summaries (SummaryCollection): The summaries for this tool.
+
+    Raises:
+        ExecutionError: An error ocurred in the tool execution.
+    """
     arcpy.SetProgressor(
         "default", "Verifying assiociated files for integrated mains..."
     )
 
     lyr = water_main_layer.value
-    lyr_disp_name = water_main_layer.displayName
-    lyr_name = water_main_layer.valueAsText
+    lyr_name = water_main_layer.displayName
+    lyr_name_long = water_main_layer.valueAsText
 
     status.update_info(
-        f"Verifying associated file exists for integrated mains in [{lyr_name}]...",
-        bump=False,
+        f"Verifying associated file exists for integrated mains in [{lyr_name_long}]...",
+        increment=False,
     )
 
     # guard against None
     if not lyr:
-        status.update_warn(f"Layer omitted: {lyr_disp_name}", bump=False)
+        status.update_warn(f"Layer omitted: {lyr_name}", increment=False)
         return
 
     fields = ("OBJECTID", "COMMENTS")
-    lyr_path = utils.get_layer_path(lyr)
+    lyr_path = get_layer_path(lyr)
     num_not_exists = 0
     num_exists = 0
     unique_comments = set()
     where_integrated = "INTEGRATIONSTATUS = 'Y'"
 
     summaries.items["wm_file"].add_header(
-        f"[{lyr_name}] Non-existant associated files (object ID, comments):"
+        f"[{lyr_name_long}] Non-existant associated files (object ID, comments):"
     )
-    summaries.items["wm_file"].add_header(utils.CSV_PROCESSING_MSG)
+    summaries.items["wm_file"].add_header(CSV_PROCESSING_MSG)
 
     try:
         with arcpy.da.SearchCursor(lyr_path, fields, where_integrated) as cursor:
             for row in cursor:
                 oid = row[0]
-                comments = utils.process_attr(row[1], csv=True)
+                comments = process_attr(row[1], csv=True)
                 unique_comments.add(comments)
 
                 if comments == "<Null>":
@@ -194,7 +251,7 @@ def _wm_assoc_file_qc(
                     num_not_exists += 1
                     continue
 
-                if utils.is_existing_scan(comments):
+                if is_existing_scan(comments):
                     num_exists += 1
                 else:
                     summaries.items["wm_file"].add_item(f"{oid}, {comments}")
@@ -212,10 +269,10 @@ def _wm_assoc_file_qc(
     except Exception:
         # post existing summaries as to not lose information
         summaries.post(dumped=True)
-        status.update_err(utils.RUNTIME_ERROR_MSG)
+        status.update_err(RUNTIME_ERROR_MSG)
 
     summaries.items["wm_file"].add_header(
-        f"[{lyr_name}] Verified associated files for integrated mains:"
+        f"[{lyr_name_long}] Verified associated files for integrated mains:"
     )
     summaries.items["wm_file"].add_item(
         f"{num_exists:n} existant, {num_not_exists:} non-existant."
@@ -230,51 +287,61 @@ def _wm_assoc_file_qc(
 
 def _wm_datasource_qc(
     water_main_layer: arcpy._mp.Layer,
-    status: utils.StatusUpdater,
-    summaries: utils.SummaryContainer,
+    status: StatusUpdater,
+    summaries: SummaryCollection,
 ) -> None:
-    """Verifies that each integrated main's data source is set and not Unknown."""
+    """
+    Verifies that each integrated main's data source is set and not Unknown.
+
+    Arguments:
+        water_main_layer (arpcy._mp.Layer): The water main layer.
+        status (StatusUpdater): The status for this tool.
+        summaries (SummaryCollection): The summaries for this tool.
+
+    Raises:
+        ExecutionError: An error ocurred in the tool execution.
+    """
     arcpy.SetProgressor("default", "Verifying data sources for integrated mains...")
 
     lyr = water_main_layer.value
-    lyr_disp_name = water_main_layer.displayName
-    lyr_name = water_main_layer.valueAsText
+    lyr_name = water_main_layer.displayName
+    lyr_name_long = water_main_layer.valueAsText
 
     status.update_info(
-        f"Verifying data sources for integrated mains in [{lyr_name}]...",
-        bump=False,
+        f"Verifying data sources for integrated mains in [{lyr_name_long}]...",
+        increment=False,
     )
 
     # guard against None
     if not lyr:
-        status.update_warn(f"Layer omitted: {lyr_disp_name}", bump=False)
+        status.update_warn(f"Layer omitted: {lyr_name}", increment=False)
         return
 
     fields = ("OBJECTID", "DATASOURCE")
-    lyr_path = utils.get_layer_path(lyr)
+    lyr_path = get_layer_path(lyr)
     num_missing_unk = 0
     where_wrong = "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)"
 
     summaries.items["wm_datasource"].add_header(
-        f"[{lyr_name}] Missing or unknown data sources (object ID, datasource):"
+        f"[{lyr_name_long}] Missing or unknown data sources (object ID, datasource):"
     )
-    summaries.items["wm_datasource"].add_header(utils.CSV_PROCESSING_MSG)
+    summaries.items["wm_datasource"].add_header(CSV_PROCESSING_MSG)
 
     try:
         with arcpy.da.SearchCursor(lyr_path, fields, where_wrong) as cursor:
             for row in cursor:
                 oid = row[0]
-                datasource = utils.process_attr(row[1], csv=True)
+                datasource = process_attr(row[1], csv=True)
                 summaries.items["wm_datasource"].add_item(f"{oid}, {datasource}")
                 num_missing_unk += 1
     # arcpy should only ever throw RuntimeError here, but you never know
     except Exception:
         # post existing summaries as to not lose information
         summaries.post(dumped=True)
-        status.update_err(utils.RUNTIME_ERROR_MSG)
+        status.update_err(RUNTIME_ERROR_MSG)
 
     summaries.items["wm_datasource"].add_header(
-        f"[{lyr_name}] Missing or unknown data sources for integrated mains:"
+        f"[{lyr_name_long}] Missing or unknown data sources for integrated mains:"
     )
     summaries.items["wm_datasource"].add_item(
         f"{num_missing_unk:n} missing or unknown."
