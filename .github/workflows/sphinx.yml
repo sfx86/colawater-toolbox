@@ -3,6 +3,10 @@ name: Sphinx build
 on:
   release:
     types: [published]
+  push:
+    paths:
+      - 'docs/'
+
 
 jobs:
   build:
