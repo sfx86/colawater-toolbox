@@ -1,6 +1,6 @@
-from re import template
-import sys
 import os
+import sys
+from re import template
 
 sys.path.insert(0, os.path.abspath("../../src"))
 # Configuration file for the Sphinx documentation builder.
@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.abspath("../../src"))
 project = "ColaWaterToolbox"
 copyright = "2023, Columbia Water"
 author = "Columbia Water"
-release = "2.2.0"
+release = "2.3.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
