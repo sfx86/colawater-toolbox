@@ -1,11 +1,10 @@
-# 2.2.0
+# 2.3.0
 
 # Minor Changes
 
+- Documented codebase and preliminary tool usage information
 - Internal refactoring
 
 # Patch changes
 
-- Updated tool output to indicate error dumping 
-- Fixed type issues from mypy
-- Enforced black formatting
+- Added qualifiers to tool output (à la `logging`)
