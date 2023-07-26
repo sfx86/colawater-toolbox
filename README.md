@@ -34,7 +34,8 @@ Make sure all of the associated `.py` files are in the same directory as the `.p
 
 # Documentation
 
-Internal documentation is coming, but for now, see the [ArcPy reference][arcpy-reference].
+Documentation for ColaWaterToolbox is hosted on GitHub pages [here][docs].
+Also see the [ArcPy reference][arcpy-reference] for arcpy specific information.
 
 # Tools
 
@@ -72,9 +73,6 @@ See [CHANGELOG.md][changelog].
     * ✅ Ensure integrated mains have a data source that is not missing or unknown 
     * ✅ Ensure integrated mains have an associated file that exists
     * ✅ Validate facility identifier format
-* Documentation (Sphinx)
-    * top-level usage instructions
-    * coverage of internal APIs
 
 # Versioning
 
@@ -88,3 +86,4 @@ Changes to documentation, wording, small backward-compatible bugfixes, etc. will
 [arcpy-reference]: https://pro.arcgis.com/en/pro-app/latest/arcpy/main/arcgis-pro-arcpy-reference.htm
 [changelog]: https://github.com/felix-quark/ColaWaterToolbox/blob/main/CHANGELOG.md
 [releases]: https://github.com/felix-quark/ColaWaterToolbox/releases
+[docs]: https://felix-quark.github.io/ColaWaterToolbox
