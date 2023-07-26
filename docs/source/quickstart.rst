@@ -1,7 +1,6 @@
 ﻿Quickstart
 ==========
 
-
 ColaWaterToolbox is distributed via a Github repository.
 To get set up using it in ArcGIS:
 
