@@ -6,9 +6,7 @@ ArcGIS geoprocessing tools for Columbia Water
 *********************************************
 
 .. note::
-
     This project is under active development.
-
 
 What is this for?
 =================
