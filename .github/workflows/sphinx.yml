@@ -5,7 +5,7 @@ on:
     types: [published]
   push:
     paths:
-      - 'docs/'
+      - 'docs/**'
 
 
 jobs:
