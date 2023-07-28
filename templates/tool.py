@@ -1,4 +1,5 @@
 import arcpy
+
 from colawater.utils.constants import *
 from colawater.utils.functions import *
 from colawater.utils.status import StatusUpdater
@@ -17,7 +18,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     arcpy.SetProgressor("step", "", 0, 99)
     status = StatusUpdater()
     summary = SummaryBuilder()
-    summary.add_header("")
 
     #
 
