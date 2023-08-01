@@ -33,7 +33,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     cw2020_file FILELOCATIONCW2020
     =========== ==================
 
-    The where clause that selects the mains is implemented like so, 
+    The where clause that selects the mains is implemented like so,
     with the values in curly braces
     being substituted with the supplied parameter values:
 
