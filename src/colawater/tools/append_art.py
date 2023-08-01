@@ -1,3 +1,8 @@
+"""
+Contains the functions used by the Append to ART tool 
+tool and other helper functions.
+"""
+
 import getpass
 from datetime import datetime, timedelta
 
@@ -27,6 +32,22 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     COMMENTS    SCANNAME
     cw2020_file FILELOCATIONCW2020
     =========== ==================
+
+    The where clause that selects the mains is implemented like so, 
+    with the values in curly braces
+    being substituted with the supplied parameter values:
+
+    .. code-block:: sql
+
+        INTEGRATIONSTATUS = 'Y'
+        AND LASTEDITOR = '{last_editor}'
+        AND LASTUPDATE >= timestamp '{on_after_date}'
+        AND LIFECYCLESTATUS = 'Active'
+        AND OWNEDBY = 1
+        AND (
+          DATASOURCE = 'SURVGPS'
+          OR DATASOURCE = 'ASB'
+        )
 
     Raises:
         ExecutionError: An error ocurred in the tool execution.
