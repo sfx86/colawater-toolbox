@@ -4,16 +4,13 @@ A collection of constants common to and useful in many tools.
 Examples:
     .. code-block:: python
 
+        # CW2020_SCAN_DIR is also a Path object; it is usable in the same way.
         for file in SCAN_DIR.iterdir():
-            do_something()
-
-    .. code-block:: python
+            if something_breaks():
+                raise arcpy.ExecutionError(RUNTIME_ERROR_MSG)
 
         arcpy.AddMessage(CSV_PROCESSING_MSG)
 
-    .. code-block:: python
-        
-        raise arcpy.ExecutionError(RUNTIME_ERROR_MSG)
 """
 
 from pathlib import Path
@@ -21,6 +18,13 @@ from pathlib import Path
 SCAN_DIR: Path = Path("M:\\Util&Eng\\Dept_Staff\\Scans\\")
 """
 Known static location of scan directory.
+"""
+
+CW2020_SCAN_DIR: Path = Path(
+    "R:\\Projects\\Active\\CW2020_Master\\Source\\RecordDrawings\\Phong\\Scans\\"
+)
+"""
+Known static location of CleanWater 2020 scan directory.
 """
 
 RUNTIME_ERROR_MSG: str = "\n".join(

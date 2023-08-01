@@ -4,7 +4,7 @@ tool and other helper functions.
 """
 
 import re
-from typing import Sequence
+from typing import Any, Sequence
 
 import arcpy
 
@@ -138,7 +138,7 @@ def update_messages(parameters: list[arcpy.Parameter]) -> None:
 
 def _fid_format_qc(
     layers: list[arcpy._mp.Layer],
-    regexes: Sequence[re.Pattern],
+    regexes: Sequence[re.Pattern[Any]],
     status: StatusUpdater,
     summaries: SummaryCollection,
 ) -> None:

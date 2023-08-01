@@ -42,6 +42,21 @@ def get_layer_path(layer: arcpy._mp.Layer) -> str:
     return f"{desc.path}\\{desc.name}"
 
 
+def get_layer_workspace(layer: arcpy._mp.Layer) -> str:
+    """
+    Returns the absolute path to a layer's workspace.
+
+    Uses ``arcpy.Describe(layer)`` to get layer information and build a path.
+
+    Arguments:
+        layer (arcpy._mp.Layer): A layer object.
+
+    Returns:
+        str: The absolute path to the layer's workspace.
+    """
+    return str(arcpy.Describe(layer).path)
+
+
 @cache
 def is_existing_scan(filename: str) -> bool:
     """
