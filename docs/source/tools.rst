@@ -1,6 +1,23 @@
 ﻿Tools
 =====
 
+Append to ART
+-------------
+
+Appends new water mains to the Asset Reference Drawing Table using this 
+field mapping:
+
+=========== ==================
+Source      ART Destination
+=========== ==================
+city_file   FILELOCATIONCITY
+DATASOURCE  DRAWINGTYPE
+INSTALLDATE DRAWINGDATE
+FACILIITYID ASSETFACILITYID
+COMMENTS    SCANNAME
+cw2020_file FILELOCATIONCW2020
+=========== ==================
+
 Calculate Facility Identifiers
 ------------------------------
 
