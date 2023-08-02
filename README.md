@@ -80,7 +80,8 @@ Available quality control checks:
 See [CHANGELOG.md][changelog].
 
 # Roadmap
-
+* ✅ Calculate Facility Identifiers Tool
+* ✅ Append to Art Tool
 * 🏗 Quality Control Tool
     * 🏗 Deduplicate facility identifiers
     * Ensure values conform to domains
