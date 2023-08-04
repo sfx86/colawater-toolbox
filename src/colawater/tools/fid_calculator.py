@@ -5,10 +5,11 @@ tool and other helper functions.
 
 import arcpy
 
-from colawater.utils.constants import RUNTIME_ERROR_MSG
-from colawater.utils.functions import get_layer_path
-from colawater.utils.status import StatusUpdater
-from colawater.utils.summary import SummaryBuilder
+import colawater.layer as ly
+import colawater.status.logging as log
+import colawater.status.progressor as pg
+import colawater.status.summary as sy
+from colawater.error import fallible
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
@@ -19,24 +20,36 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     placeholder initials starting from a given start value.
 
     Raises:
-        ExecutionError: An error ocurred in the tool execution.
+        ExecuteError: An error ocurred in the tool execution.
     """
-    arcpy.SetProgressor("step", "Calculating facility identifiers...", 0, 13)
-    status = StatusUpdater()
-    summary = SummaryBuilder()
-    summary.add_result("TOOL", "New start values:")
+    arcpy.SetProgressor("step", "Calculating facility identifiers...", 0, 6)
 
-    _calc_fids(parameters, status, summary)
+    initials = parameters[0].value
+    interval = parameters[1].value
 
-    summary.post()
+    # first two parameters are not needed for the tight loop
+    items = zip(
+        (p for p in parameters[2:] if p.name.endswith("_lyr")),
+        (p for p in parameters[2:] if p.name.endswith("_start")),
+    )
 
+    sy.add_result("TOOL", "New start values:")
 
-def post_execute(parameters: list[arcpy.Parameter]) -> None:
-    """
-    Note:
-        Unimplemented for this tool.
-    """
-    pass
+    for layer, start in items:
+        if not (layer.value and start.value):
+            log.warning(f"Layer or start value omitted: skipping [{layer.displayName}]")
+            pg.increment()
+            continue
+
+        log.info(f"Calculating facility identifiers for [{layer.valueAsText}]...")
+
+        new_fid = _calc_fids(layer, start, interval, initials)
+
+        sy.add_item(f"{layer.displayName}: {new_fid}")
+        log.info(f"[{layer.valueAsText}] finished.")
+        pg.increment()
+
+    sy.post()
 
 
 def parameters() -> list[arcpy.Parameter]:
@@ -103,111 +116,60 @@ def update_parameters(parameters: list[arcpy.Parameter]) -> None:
             p.value = 1 if p.value and p.value < 1 else p.value
 
 
-def update_messages(parameters: list[arcpy.Parameter]) -> None:
-    """
-    Note:
-        Unimplemented for this tool.
-    """
-    pass
-
-
+@fallible
 def _calc_fids(
-    parameters: list[arcpy.Parameter],
-    status: StatusUpdater,
-    summary: SummaryBuilder,
-) -> None:
+    layer: arcpy.Parameter,
+    start: arcpy.Parameter,
+    interval: int,
+    initials: str,
+) -> str:
     """
-    Calculates the facility identifiers for the layers in the parameter list.
+    Calculates the facility identifiers for the provided layer.
 
     Arguments:
-        parameters (list[arcpy.Parameter]): The list of parameters for this tool.
-        status (StatusUpdater): The status for this tool.
-        summary (SummaryBuilder): The summary for this tool.
+        layer (arcpy.Parameter): The layer parameter.
+        start (arpcy.Parameter): The start value parameter.
+        interval (int): The interval to increment the facility identifier.
+        initials (str): The initials to replace with the calculated facility identifiers.
 
     Raises:
-        ExecutionError: An error ocurred in the tool execution.
+        ExecuteError: An error ocurred in the tool execution.
     """
-    initials = parameters[0].value
-    interval = parameters[1].value
 
-    # first two parameters are not needed for the tight loop
-    p_iter = iter(parameters[2:])
+    # map of layer abbreviation to its affixes
+    affix_map = {
+        "ca_lyr": ("", "CA"),
+        "cv_lyr": ("", "CV"),
+        "ft_lyr": ("", "FT"),
+        "hy_lyr": ("", "HYD"),
+        "sl_lyr": ("", "SERV"),
+        "st_lyr": ("", "STR"),
+        "sv_lyr": ("", "SV"),
+        "wm_lyr": ("000015-WATER-000", ""),
+    }
+    fields = ("FACILITYID", "FACILITYIDINDEX")
+    where_initials = f"FACILITYID = '{initials}'"
 
-    for p in p_iter:
-        lyr = p.value
-        # associated start value is always next
-        # using next inside of a for loop is sketchy, but given that the parameter
-        # list is of a known shape, domain knowledge allows for this pattern
-        #
-        # it also prevents the need to filter() the list or have some if condition,
-        # which is cool
-        start = next(p_iter).value
+    incr = start.value
+    lyr_path = ly.get_path(layer.value)
+    workspace = ly.get_workspace(layer.value)
+    prefix, suffix = affix_map[layer.name]
 
-        # guard against None
-        if not (lyr and start):
-            status.update_warn(
-                f"Layer or start value omitted: skipping [{p.displayName}]"
-            )
-            # non-warn runs increment the progressor twice
-            status.increment_progressor()
-            continue
+    with arcpy.da.Editor(workspace):  # type: ignore
+        # only these layers have FACILITYIDINDEX
+        if layer.name in ("ca_lyr", "cv_lyr", "ft_lyr", "hy_lyr", "wm_lyr"):
+            with arcpy.da.UpdateCursor(lyr_path, fields, where_initials) as cursor:  # type: ignore
+                for _ in cursor:
+                    cursor.updateRow((f"{prefix}{incr}{suffix}", incr))
+                    incr += interval
+        else:
+            with arcpy.da.UpdateCursor(lyr_path, fields[0], where_initials) as cursor:  # type: ignore
+                for _ in cursor:
+                    # leave FACILITYIDINDEX alone; logic is otherwise identicial
+                    cursor.updateRow((f"{prefix}{incr}{suffix}"))
+                    incr += interval
 
-        # map of layer abbreviation to its affixes
-        affix_map = {
-            "ca_lyr": ("", "CA"),
-            "cv_lyr": ("", "CV"),
-            "ft_lyr": ("", "FT"),
-            "hy_lyr": ("", "HYD"),
-            "sl_lyr": ("", "SERV"),
-            "st_lyr": ("", "STR"),
-            "sv_lyr": ("", "SV"),
-            "wm_lyr": ("000015-WATER-000", ""),
-        }
-        fields = ("FACILITYID", "FACILITYIDINDEX")
-        incr = start
-        lyr_abbrev = p.name
-        lyr_name = p.displayName
-        lyr_name_long = p.valueAsText
-        lyr_path = get_layer_path(lyr)
-        prefix, suffix = affix_map[lyr_abbrev]
-        where_initials = f"FACILITYID = '{initials}'"
-
-        status.update_info(f"Calculating facility identifiers for [{lyr_name_long}]...")
-
-        try:
-            # only these layers have FACILITYIDINDEX
-            if lyr_abbrev in (
-                "ca_lyr",
-                "cv_lyr",
-                "ft_lyr",
-                "hy_lyr",
-                "wm_lyr",
-            ):
-                with arcpy.da.UpdateCursor(lyr_path, fields, where_initials) as cursor:
-                    for row in cursor:
-                        # update fid and fid index with incr value
-                        row[0] = f"{prefix}{incr}{suffix}"
-                        row[1] = incr
-                        cursor.updateRow(row)
-                        incr += interval
-            else:
-                with arcpy.da.UpdateCursor(
-                    lyr_path, fields[0], where_initials
-                ) as cursor:
-                    for row in cursor:
-                        # leave FACILITYIDINDEX alone; logic is otherwise identicial
-                        row[0] = f"{prefix}{incr}{suffix}"
-                        cursor.updateRow(row)
-                        incr += interval
-        # arcpy should only ever throw RuntimeError here, but you never know
-        except Exception:
-            # post existing summaries as to not lose information
-            summary.post()
-            status.update_err(RUNTIME_ERROR_MSG)
-
-        status.update_info(f"[{lyr_name_long}] finished.")
-        new_fid = f"{prefix}{incr}{suffix}"
-        summary.add_item(f"{lyr_name}: {new_fid}")
+    return f"{prefix}{incr}{suffix}"
 
 
 def _water_param_pair(

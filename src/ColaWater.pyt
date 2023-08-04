@@ -12,21 +12,14 @@ class Toolbox:
     ArcGIS ingests this class and uses it to create the geoprocessing tools' UIs
     and use their functionality by calling known methods on the classes included in
     ``self.tools``.
-    Said methods can be found in the `Python toolbox template <template_>`_.
-
 
     Attributes:
         label (str): The toolbox label.
         alias (str): The toolbox alias.
         tools (list[Any]): A list of the tools associated with this toolbox.
-
-    .. _template: https://pro.arcgis.com/en/pro-app/latest/arcpy/geoprocessing_and_python/a-template-for-python-toolboxes.htm
     """
 
     def __init__(self) -> None:
-        """
-        Initialize toolbox metadata.
-        """
         self.label = "Columbia Water"
         self.alias = "ColaWater"
         self.tools = [
@@ -64,9 +57,6 @@ class WaterQualityControl:
         return tools.quality_control.parameters()
 
     def execute(self, parameters: list[arcpy.Parameter], messages: Any) -> None:
-        """
-        Entry point for the tool.
-        """
         tools.quality_control.execute(parameters)
 
 
@@ -80,7 +70,4 @@ class AppendToART:
         return tools.append_art.parameters()
 
     def execute(self, parameters: list[arcpy.Parameter], messages: Any) -> None:
-        """
-        Entry point for the tool.
-        """
         tools.append_art.execute(parameters)
