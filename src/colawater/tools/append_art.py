@@ -4,14 +4,18 @@ tool and other helper functions.
 """
 
 import getpass
+from collections.abc import Iterable
 from datetime import datetime, timedelta
 
 import arcpy
 
-from colawater.utils.constants import CW2020_SCAN_DIR, RUNTIME_ERROR_MSG, SCAN_DIR
-from colawater.utils.functions import get_layer_workspace
-from colawater.utils.status import StatusUpdater
-from colawater.utils.summary import SummaryBuilder
+import colawater.layer as ly
+import colawater.scan as scan
+import colawater.status.logging as log
+import colawater.status.progressor as pg
+import colawater.status.summary as sy
+from colawater import attribute as attr
+from colawater.error import fallible
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
@@ -20,58 +24,16 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
     Appends recent integrated and well-sourced mains from a given editor to the
     Asset Reference Table.
-    It maps the fields like so:
-
-    =========== ==================
-    Source      ART Destination
-    =========== ==================
-    city_file   FILELOCATIONCITY
-    DATASOURCE  DRAWINGTYPE
-    INSTALLDATE DRAWINGDATE
-    FACILIITYID ASSETFACILITYID
-    COMMENTS    SCANNAME
-    cw2020_file FILELOCATIONCW2020
-    =========== ==================
-
-    The where clause that selects the mains is implemented like so,
-    with the values in curly braces
-    being substituted with the supplied parameter values:
-
-    .. code-block:: sql
-
-        INTEGRATIONSTATUS = 'Y'
-        AND LASTEDITOR = '{last_editor}'
-        AND LASTUPDATE >= timestamp '{on_after_date}'
-        AND LIFECYCLESTATUS = 'Active'
-        AND OWNEDBY = 1
-        AND (
-          DATASOURCE = 'SURVGPS'
-          OR DATASOURCE = 'ASB'
-        )
 
     Raises:
-        ExecutionError: An error ocurred in the tool execution.
+        ExecuteError:
     """
     arcpy.SetProgressor("default", "Appending mains to ART...")
-    status = StatusUpdater()
-    summary = SummaryBuilder()
 
     last_editor = parameters[0].valueAsText
     on_after_date = parameters[1].valueAsText
     wm_lyr = parameters[2]
-    wm_lyr_name_long = wm_lyr.valueAsText
     art_table = parameters[3]
-    art_table_name_long = art_table.valueAsText
-    art_fields = (
-        "FILELOCATIONCITY",
-        "DRAWINGTYPE",
-        "DRAWINGDATE",
-        "ASSETFACILITYID",
-        "ASSETTYPE",
-        "SCANNAME",
-        "FILELOCATIONCW2020",
-    )
-    wm_fields = ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS")
     where_water = " ".join(
         (
             "INTEGRATIONSTATUS = 'Y'",
@@ -82,51 +44,17 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             "AND (DATASOURCE = 'SURVGPS' OR DATASOURCE = 'ASB')",
         )
     )
-    workspace = get_layer_workspace(wm_lyr.value)
-    num_appended = 0
 
-    status.update_info(
-        f"Appending mains from [{wm_lyr_name_long}] to [{art_table_name_long}]...",
-        increment=False,
+    log.info(
+        f"Appending mains from [{wm_lyr.valueAsText}] to [{art_table.valueAsText}]..."
     )
 
-    try:
-        with arcpy.da.Editor(workspace):
-            with arcpy.da.SearchCursor(
-                wm_lyr.value, wm_fields, where_water
-            ) as search_cursor, arcpy.da.InsertCursor(
-                art_table.value, art_fields
-            ) as insert_cursor:
-                for row in search_cursor:
-                    fid, install_date, datasource, comments = row
-                    asset_type = "WAM"
-                    cw2020_file = str(CW2020_SCAN_DIR / comments)
-                    city_file = str(SCAN_DIR / comments)
-                    row = [
-                        city_file,
-                        datasource,
-                        install_date,
-                        fid,
-                        asset_type,
-                        comments,
-                        cw2020_file,
-                    ]
-                    insert_cursor.insertRow(row)
-                    num_appended += 1
-    except Exception:
-        summary.post()
-        status.update_err(RUNTIME_ERROR_MSG)
+    mains_appended = _append_to_art(wm_lyr.value, where_water, art_table.value)
+    for m in mains_appended:
+        sy.add_item(", ".join(m))
 
-    summary.add_result("TOOL", f"{num_appended:n} mains appended to ART.")
-    summary.post()
-
-
-def post_execute(parameters: list[arcpy.Parameter]) -> None:
-    """
-    Note:
-        Unimplemented for this tool.
-    """
-    pass
+    sy.add_result("TOOL", f"{len(mains_appended):n} mains appended to ART.")
+    sy.post()
 
 
 def parameters() -> list[arcpy.Parameter]:
@@ -173,17 +101,61 @@ def parameters() -> list[arcpy.Parameter]:
     return [last_editor, on_after_date, water_main_layer, art_table]
 
 
-def update_parameters(parameters: list[arcpy.Parameter]) -> None:
+@fallible
+def _append_to_art(
+    wm_lyr: arcpy._mp.Layer,  # type: ignore
+    wm_where_clause: str,
+    art_table: arcpy._mp.Layer,  # type: ignore
+) -> list[tuple[str, str, str, str]]:
     """
-    Note:
-        Unimplemented for this tool.
-    """
-    pass
+    Appends recent integrated and well-sourced mains from a given editor to the
+    Asset Reference Table.
 
+    Raises:
+        ExecuteError: An error ocurred in the tool execution.
+    """
+    mains_appended: list[tuple[str, str, str, str]] = []
 
-def update_messages(parameters: list[arcpy.Parameter]) -> None:
-    """
-    Note:
-        Unimplemented for this tool.
-    """
-    pass
+    with arcpy.da.Editor(ly.get_workspace(wm_lyr)):  # type: ignore
+        with (
+            arcpy.da.SearchCursor(  # type: ignore
+                ly.get_path(wm_lyr),
+                ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
+                wm_where_clause,
+            ) as wm_search_cursor,
+            arcpy.da.InsertCursor(  # type: ignore
+                ly.get_path(art_table),
+                (
+                    "FILELOCATIONCITY",
+                    "DRAWINGTYPE",
+                    "DRAWINGDATE",
+                    "ASSETFACILITYID",
+                    "ASSETTYPE",
+                    "SCANNAME",
+                    "FILELOCATIONCW2020",
+                ),
+            ) as art_insert_cursor,
+        ):
+            for wm_row in wm_search_cursor:
+                fid, install_date, datasource, comments = wm_row
+                asset_type = "WAM"
+                cw2020_file = str(scan.CW2020_DIR / comments)
+                city_file = str(scan.CITY_DIR / comments)
+                art_row = [
+                    city_file,
+                    datasource,
+                    install_date,
+                    fid,
+                    asset_type,
+                    comments,
+                    cw2020_file,
+                ]
+                art_insert_cursor.insertRow(art_row)
+                mains_appended.append(
+                    tuple(
+                        attr.process(i)
+                        for i in (fid, install_date, datasource, comments)
+                    )
+                )
+
+    return mains_appended

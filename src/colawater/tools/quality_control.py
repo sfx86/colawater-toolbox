@@ -4,14 +4,18 @@ tool and other helper functions.
 """
 
 import re
-from typing import Any, Sequence
+from collections.abc import Collection
+from typing import Any, Optional
 
 import arcpy
 
-from colawater.utils.constants import CSV_PROCESSING_MSG, RUNTIME_ERROR_MSG
-from colawater.utils.functions import get_layer_path, is_existing_scan, process_attr
-from colawater.utils.status import StatusUpdater
-from colawater.utils.summary import SummaryCollection
+import colawater.attribute as attr
+import colawater.layer as ly
+import colawater.status.logging as log
+import colawater.status.progressor as pg
+import colawater.status.summary as sy
+from colawater import scan
+from colawater.error import fallible
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
@@ -19,55 +23,111 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Entry point for Water Quality Control.
 
     Raises:
-        ExecutionError: An error ocurred in the tool execution.
+        ExecuteError: An error ocurred in the tool execution.
     """
     arcpy.SetProgressor("default", "Starting quality control checks...")
-    status = StatusUpdater()
-    # functions are coupled to these keys,
-    # they don't check to make sure they exist
-    # beware of KeyErrors
-    summaries = SummaryCollection(["fid_format", "wm_file", "wm_datasource"])
 
     LAYER_START = 3
     checks = parameters[:LAYER_START]
-    lyrs = parameters[LAYER_START:]
-    lyr_wm = lyrs[-1]
+    layers = parameters[LAYER_START:]
+    wm_layer = layers[-1]
     is_fid_format_check = checks[0].value
     is_wm_file_check = checks[1].value
     is_wm_ds_check = checks[2].value
 
     if is_fid_format_check:
+        arcpy.SetProgressor("step", "Validating facility identifiers...", 0, 7)
         # regexes correspond 1:1 with layer parameters
         regexes = (
-            re.compile(r"^\d+CA$"),
-            re.compile(r"^\d+CV$"),
-            re.compile(r"^\d+FT$"),
-            re.compile(r"^\d+HYD$"),
-            re.compile(r"^\d+SERV$"),
-            re.compile(r"^\d+STR$"),
-            re.compile(r"^\d+SV$"),
-            re.compile(r"^000015-WATER-000\d+$"),
+            r"^\d+CA$",
+            r"^\d+CV$",
+            r"^\d+FT$",
+            r"^\d+HYD$",
+            r"^\d+SERV$",
+            r"^\d+STR$",
+            r"^\d+SV$",
+            r"^000015-WATER-000\d+$",
         )
-        _fid_format_qc(lyrs, regexes, status, summaries)
+
+        for l, r in zip(layers, regexes):
+            # guard against None
+            if not l.value:
+                log.warning(f"Layer omitted: {l.displayName}")
+                pg.increment()
+                continue
+
+            log.info(f"Searching in [{l.valueAsText}]...")
+
+            inc_fids = _find_incorrect_fids(l, r)
+
+            pg.increment()
+            sy.add_result(
+                l.valueAsText,
+                "Incorrectly formatted facility identifiers (object ID, facility identifier):",
+            )
+
+            for i in inc_fids:
+                sy.add_item(", ".join(i))
+
+            sy.add_result(
+                l.valueAsText,
+                f"{len(inc_fids):n} incorrectly formatted facility identifiers.",
+            )
+
+    if not wm_layer.value:
+        log.warning(
+            f"Layer omitted: {wm_layer.valueAsText}, skipping water main checks."
+        )
+        return
+
+    arcpy.SetProgressor("default")
 
     if is_wm_file_check:
-        _wm_assoc_file_qc(lyr_wm, status, summaries)
+        pg.label("Verifying assiociated files for integrated mains...")
+
+        nonexistent_files = _find_nonexistent_assoc_files(wm_layer)
+
+        sy.add_result(
+            wm_layer.valueAsText, "Nonexistent associated files (object ID, comments):"
+        )
+        sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
+
+        for oid, file in nonexistent_files:
+            sy.add_item(", ".join((oid, attr.process(file, csv=True))))
+
+        sy.add_result(
+            wm_layer.valueAsText,
+            f"{len(nonexistent_files):n} nonexistent files for integrated mains.",
+        )
+        sy.add_result(
+            wm_layer.valueAsText,
+            f"{len(set(nonexistent_files)):n} unique nonexistent files files for integrated mains.",
+        )
 
     if is_wm_ds_check:
-        _wm_datasource_qc(lyr_wm, status, summaries)
+        log.info(
+            f"Verifying data sources for integrated mains in [{wm_layer.valueAsText}]..."
+        )
+
+        inc_datasources = _find_incorrect_datasources(wm_layer)
+
+        sy.add_result(
+            wm_layer.valueAsText,
+            "Missing or unknown data sources (object ID, datasource):",
+        )
+
+        for i in inc_datasources:
+            sy.add_item(", ".join(i))
+
+        sy.add_result(
+            wm_layer.valueAsText,
+            f"{len(inc_datasources):n} missing or unknown data sources for integrated mains.",
+        )
 
     # TODO: deduplication
     # TODO: domain conformation
 
-    summaries.post()
-
-
-def post_execute(parameters: list[arcpy.Parameter]) -> None:
-    """
-    Note:
-        Unimplemented for this tool.
-    """
-    pass
+    sy.post()
 
 
 def parameters() -> list[arcpy.Parameter]:
@@ -120,238 +180,91 @@ def parameters() -> list[arcpy.Parameter]:
     return [*checks, *lyrs]
 
 
-def update_parameters(parameters: list[arcpy.Parameter]) -> None:
+@fallible
+def _find_incorrect_fids(
+    layer: arcpy._mp.Layer,  # type: ignore
+    regex: re.Pattern[Any],
+) -> list[tuple[str, str]]:
     """
-    Note:
-        Unimplemented for this tool.
-    """
-    pass
-
-
-def update_messages(parameters: list[arcpy.Parameter]) -> None:
-    """
-    Note:
-        Unimplemented for this tool.
-    """
-    pass
-
-
-def _fid_format_qc(
-    layers: list[arcpy._mp.Layer],
-    regexes: Sequence[re.Pattern[Any]],
-    status: StatusUpdater,
-    summaries: SummaryCollection,
-) -> None:
-    """
-    Finds all incorrectly formatted facility identifiers.
+    Returns all incorrectly formatted facility identifiers from the given layer
+    matching the given regular expression.
 
     Arguments:
-        layers (list[arcpy._mp.Layer]): List of layers to check.
-        regexes (list[re.Pattern]): List of regexes to use to check the layers'
-                                    facility identifiers.
-        status (StatusUpdater): The status for this tool.
-        summaries (SummaryCollection): The summaries for this tool.
+        layer (arcpy._mp.Layer): The layer to check.
+        regex (re.Pattern[Any]): The regular expression to use to check the facility
+                                 identifiers in the layer.
+
+    Returns:
+        list[str]: The list of incorrectly formatted facility identifiers.
 
     Raises:
-        ExecutionError: An error ocurred in the tool execution.
-
-    Note:
-        ``layers`` and ``regexes`` should correspond 1:1; otherwise,
-        the check will stop when the shortest list is exhausted.
+        ExecuteError: An error ocurred in the tool execution.
     """
-    arcpy.SetProgressor("step", "Validating facility identifiers...", 0, 7)
+    with arcpy.da.SearchCursor(  # type: ignore
+        ly.get_path(layer), ("OBJECTID", "FACILITYID")
+    ) as cursor:
+        inc_fids = [
+            (oid, fid_proc)
+            for oid, fid in cursor
+            if not regex.fullmatch(fid_proc := attr.process(fid))
+        ]
 
-    for l, r in zip(layers, regexes):
-        lyr = l.value
-        lyr_name = l.displayName
-
-        # guard against None
-        if not lyr:
-            status.update_warn(f"Layer omitted: {lyr_name}")
-            continue
-
-        fields = ("OBJECTID", "FACILITYID")
-        lyr_name_long = l.valueAsText
-        lyr_path = get_layer_path(lyr)
-        num_no_match = 0
-
-        status.update_info(
-            f"Finding incorrectly formatted facility identifiers in [{lyr_name_long}]..."
-        )
-
-        try:
-            with arcpy.da.SearchCursor(lyr_path, fields) as cursor:
-                summaries.items["fid_format"].add_result(
-                    lyr_name_long,
-                    "Incorrectly formatted facility identifiers (object ID, facility identifier):",
-                )
-                summaries.items["fid_format"].add_note(
-                    lyr_name_long, CSV_PROCESSING_MSG
-                )
-                for row in cursor:
-                    oid = row[0]
-                    fid = process_attr(row[1], csv=True)
-                    if not r.fullmatch(fid):
-                        summaries.items["fid_format"].add_item(f"{oid}, {fid}")
-                        num_no_match += 1
-        # arcpy should only ever throw RuntimeError here, but you never know
-        except Exception:
-            # post existing summaries as to not lose information
-            summaries.post(dumped=True)
-            status.update_err(RUNTIME_ERROR_MSG)
-        summaries.items["fid_format"].add_result(
-            lyr_name_long,
-            f"{num_no_match:n} incorrectly formatted facility identifiers.",
-        )
+    return inc_fids
 
 
-def _wm_assoc_file_qc(
-    water_main_layer: arcpy._mp.Layer,
-    status: StatusUpdater,
-    summaries: SummaryCollection,
-) -> None:
+@fallible
+def _find_nonexistent_assoc_files(wm_layer: arcpy._mp.Layer) -> list[tuple[str, str]]:  # type: ignore
     """
-    Verifies that each integrated main has an associated file that exists.
+    Returns a list of object ID and nonexistent associated file pairs for the integrated mains
+    in the given water main layer.
 
     Arguments:
-        water_main_layer (arpcy._mp.Layer): The water main layer.
-        status (StatusUpdater): The status for this tool.
-        summaries (SummaryCollection): The summaries for this tool.
+        wm_layer (arpcy._mp.Layer): The water main layer.
+
+    Returns:
+        list[tuple[str, str]: A list of Object ID and comment field tuples corresponding
+                              to water mains from the layer.
 
     Raises:
-        ExecutionError: An error ocurred in the tool execution.
+        ExecuteError: An error ocurred in the tool execution.
     """
-    arcpy.SetProgressor(
-        "default", "Verifying assiociated files for integrated mains..."
-    )
+    with arcpy.da.SearchCursor(  # type: ignore
+        ly.get_path(wm_layer.value),
+        ("OBJECTID", "COMMENTS"),
+        "INTEGRATIONSTATUS = 'Y'",
+    ) as cursor:
+        nonexistent_files = [
+            (oid, attr.process(comments))
+            for oid, comments in cursor
+            if scan.exists(comments)
+        ]
 
-    lyr = water_main_layer.value
-    lyr_name = water_main_layer.displayName
-    lyr_name_long = water_main_layer.valueAsText
-
-    status.update_info(
-        f"Verifying associated file exists for integrated mains in [{lyr_name_long}]...",
-        increment=False,
-    )
-
-    # guard against None
-    if not lyr:
-        status.update_warn(f"Layer omitted: {lyr_name}", increment=False)
-        return
-
-    fields = ("OBJECTID", "COMMENTS")
-    lyr_path = get_layer_path(lyr)
-    num_not_exists = 0
-    num_exists = 0
-    unique_comments = set()
-    where_integrated = "INTEGRATIONSTATUS = 'Y'"
-
-    summaries.items["wm_file"].add_result(
-        lyr_name_long, "Non-existant associated files (object ID, comments):"
-    )
-    summaries.items["wm_file"].add_note(lyr_name_long, CSV_PROCESSING_MSG)
-
-    try:
-        with arcpy.da.SearchCursor(lyr_path, fields, where_integrated) as cursor:
-            for row in cursor:
-                oid = row[0]
-                comments = process_attr(row[1], csv=True)
-                unique_comments.add(comments)
-
-                if comments == "<Null>":
-                    summaries.items["wm_file"].add_item(f"{oid}, {comments}")
-                    num_not_exists += 1
-                    continue
-
-                if is_existing_scan(comments):
-                    num_exists += 1
-                else:
-                    summaries.items["wm_file"].add_item(f"{oid}, {comments}")
-                    num_not_exists += 1
-                # there's so many files that the progressor only needs updating
-                # every couple of files
-                # the progressor queues the updates anyways,
-                # so might as well not hit it as often
-                # ~3k files per second, so (total mod 1500) will update ~2x/s
-                if (num_exists + num_not_exists) % 1500 == 0:
-                    status.update_label(
-                        f"Associated file count (existant : non-existant): {num_exists:>9n} : {num_not_exists:<9n}"
-                    )
-    # arcpy should only ever throw RuntimeError here, but you never know
-    except Exception:
-        # post existing summaries as to not lose information
-        summaries.post(dumped=True)
-        status.update_err(RUNTIME_ERROR_MSG)
-
-    summaries.items["wm_file"].add_result(
-        lyr_name_long,
-        f"{num_exists:n} existant and {num_not_exists:} non-existant files for integrated mains.",
-    )
-    summaries.items["wm_file"].add_result(
-        lyr_name_long,
-        f"{len(unique_comments):n} unique non-existant files files for integrated mains.",
-    )
-    summaries.items["wm_file"].add_result(
-        lyr_name_long,
-        f"{num_exists + num_not_exists:n} total files checked for integrated mains.",
-    )
+    return nonexistent_files
 
 
-def _wm_datasource_qc(
-    water_main_layer: arcpy._mp.Layer,
-    status: StatusUpdater,
-    summaries: SummaryCollection,
-) -> None:
+@fallible
+def _find_incorrect_datasources(wm_layer: arcpy._mp.Layer) -> list[tuple[str, str]]:  # type: ignore
     """
-    Verifies that each integrated main's data source is set and not Unknown.
+    Returns a list of object ID and incorrect data source pairs for the integrated mains
+    in the given water main layer.
 
     Arguments:
-        water_main_layer (arpcy._mp.Layer): The water main layer.
-        status (StatusUpdater): The status for this tool.
-        summaries (SummaryCollection): The summaries for this tool.
+        wm_layer (arpcy._mp.Layer): The water main layer.
+
+    Returns:
+        list[tuple[str, str]]: A list of Object ID and data source field tuples corresponding
+                               to water mains from the layer.
 
     Raises:
-        ExecutionError: An error ocurred in the tool execution.
+        ExecuteError: An error ocurred in the tool execution.
     """
-    arcpy.SetProgressor("step", "Validating facility identifiers...", 0, 7)
+    with arcpy.da.SearchCursor(  # type: ignore
+        ly.get_path(wm_layer.value),
+        ("OBJECTID", "DATASOURCE"),
+        "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)",
+    ) as cursor:
+        inc_datasources = [
+            (oid, attr.process(datasource)) for oid, datasource in cursor
+        ]
 
-    lyr = water_main_layer.value
-    lyr_name = water_main_layer.displayName
-    lyr_name_long = water_main_layer.valueAsText
-
-    status.update_info(
-        f"Verifying data sources for integrated mains in [{lyr_name_long}]..."
-    )
-
-    # guard against None
-    if not lyr:
-        status.update_warn(f"Layer omitted: {lyr_name}")
-        return
-
-    fields = ("OBJECTID", "DATASOURCE")
-    lyr_path = get_layer_path(lyr)
-    num_missing_unk = 0
-    where_wrong = "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)"
-
-    summaries.items["wm_datasource"].add_result(
-        lyr_name_long, "Missing or unknown data sources (object ID, datasource):"
-    )
-    summaries.items["wm_datasource"].add_note(lyr_name_long, CSV_PROCESSING_MSG)
-
-    try:
-        with arcpy.da.SearchCursor(lyr_path, fields, where_wrong) as cursor:
-            for row in cursor:
-                oid = row[0]
-                datasource = process_attr(row[1], csv=True)
-                summaries.items["wm_datasource"].add_item(f"{oid}, {datasource}")
-                num_missing_unk += 1
-    # arcpy should only ever throw RuntimeError here, but you never know
-    except Exception:
-        # post existing summaries as to not lose information
-        summaries.post(dumped=True)
-        status.update_err(RUNTIME_ERROR_MSG)
-
-    summaries.items["wm_datasource"].add_result(
-        lyr_name_long,
-        f"{num_missing_unk:n} missing or unknown data sources for integrated mains.",
-    )
+    return inc_datasources
