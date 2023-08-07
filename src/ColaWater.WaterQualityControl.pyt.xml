@@ -13,8 +13,7 @@
 		</scaleRange>
 		<ArcGISProfile>ItemDescription</ArcGISProfile>
 	</Esri>
-	<tool name="WaterQualityControl" displayname="Water Quality Control" toolboxalias="ColaWater"
-		xmlns="">
+	<tool name="WaterQualityControl" displayname="Water Quality Control" toolboxalias="ColaWater" xmlns="">
 		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
 		<parameters>
 			<param name="fid_check" displayname="Check facility identifiers" type="Optional" direction="Input" datatype="Boolean" expression="{fid_check}">
