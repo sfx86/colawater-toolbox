@@ -17,13 +17,18 @@ extensions = [
 ]
 templates_path = ["_templates"]
 exclude_patterns = []
-
 # napoleon
 napoleon_numpy_docstring = False
 # autoapi
 autoapi_dirs = ["../../src"]
 autoapi_root = "api-reference"
 autoapi_template_dir = f"{templates_path[0]}/_autoapi_templates"
+autoapi_options = [
+    "imported-members",
+    "members",
+    "show-inheritance",
+    "show-module-summary",
+]
 # include shared links at the end of every file
 rst_epilog = ".. include:: /include/links.rst"
 
