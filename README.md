@@ -1,4 +1,4 @@
-﻿<h1 align="center">ColaWaterToolbox</h1>
+﻿<h1 align="center">colawater-toolbox</h1>
 <h2 align="center">ArcGIS geoprocessing tools for Columbia Water</h2>
 <p align="center">
 <a href="https://felix-quark.github.io/ColaWaterToolbox/"><img alt="Docs: ColaWaterToolbox" src="https://img.shields.io/badge/docs-ColaWaterToolbox-purple"></a>
@@ -24,11 +24,11 @@
 # Usage
 
 Navigate to the `Catalog Pane` and open the `Toolboxes` dropdown.
-Open the `ColaWater.pyt` toolbox, then select a tool from the toolbox's dropdown menu.
+Open the `colawater.pyt` toolbox, then select a tool from the toolbox's dropdown menu.
 
 # Installation
 
-Download and unzip the `ColaWaterToolbox.zip` from the [latest release][releases]
+Download and unzip the `colawater-toolbox.zip` from the [latest release][releases]
 and [add the toolbox][add-a-toolbox] to ArcGIS. 
 Make sure all of the associated `.py` files are in the same directory as the `.pyt` file.
 
@@ -99,6 +99,6 @@ Changes to documentation, wording, small backward-compatible bugfixes, etc. will
 
 [add-a-toolbox]: https://pro.arcgis.com/en/pro-app/latest/help/projects/connect-to-a-toolbox.htm
 [arcpy-reference]: https://pro.arcgis.com/en/pro-app/latest/arcpy/main/arcgis-pro-arcpy-reference.htm
-[changelog]: https://github.com/felix-quark/ColaWaterToolbox/blob/main/CHANGELOG.md
-[releases]: https://github.com/felix-quark/ColaWaterToolbox/releases
-[docs]: https://felix-quark.github.io/ColaWaterToolbox
+[changelog]: https://github.com/sfx86/colawater-toolbox/blob/main/CHANGELOG.md
+[releases]: https://github.com/sfx86/colawater-toolbox/releases
+[docs]: https://sfx86.github.io/colawater-toolbox
