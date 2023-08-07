@@ -11,6 +11,8 @@ import colawater.status.progressor as pg
 import colawater.status.summary as sy
 from colawater.error import fallible
 
+_LAYER_START = 2
+
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
     """
@@ -29,8 +31,8 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
     # first two parameters are not needed for the tight loop
     items = zip(
-        (p for p in parameters[2:] if p.name.endswith("_lyr")),
-        (p for p in parameters[2:] if p.name.endswith("_start")),
+        (p for p in parameters[_LAYER_START:] if p.name.endswith("_lyr")),
+        (p for p in parameters[_LAYER_START:] if p.name.endswith("_start")),
     )
 
     sy.add_result("TOOL", "New start values:")
@@ -59,6 +61,23 @@ def parameters() -> list[arcpy.Parameter]:
     Returns:
         list[arcpy.Parameter]: The list of parameters.
     """
+    initials = arcpy.Parameter(
+        displayName="Initials",
+        name="initials",
+        datatype="GPString",
+        parameterType="Required",
+        direction="Input",
+    )
+
+    interval = arcpy.Parameter(
+        displayName="Global Interval",
+        name="interval",
+        datatype="GPLong",
+        parameterType="Required",
+        direction="Input",
+    )
+    interval.value = 2
+
     templates = (
         ("ca_lyr", "Casing"),
         ("cv_lyr", "Control Valve"),
@@ -69,51 +88,46 @@ def parameters() -> list[arcpy.Parameter]:
         ("sv_lyr", "System Valve"),
         ("wm_lyr", "Water Main"),
     )
-    # layer param list
-    input_layers: list[arcpy.Parameter] = []
-    for abbrev, name in templates:
-        input_layers.extend(_water_param_pair(abbrev, name))
-    # facility identifier placeholder initials
-    initials = arcpy.Parameter(
-        displayName="Initials",
-        name="initials",
-        datatype="GPString",
-        parameterType="Required",
-        direction="Input",
-    )
-    # interval to increment the start each loop
-    interval = arcpy.Parameter(
-        displayName="Global Interval",
-        name="interval",
-        datatype="GPLong",
-        parameterType="Required",
-        direction="Input",
-    )
-    interval.value = 2
+
+    input_layers = [
+        f(abbrev, name)
+        for abbrev, name in templates
+        for f in (
+            lambda abbrev, name: arcpy.Parameter(
+                displayName=name,
+                name=abbrev,
+                datatype="GPFeatureLayer",
+                parameterType="Optional",
+                direction="Input",
+            ),
+            lambda abbrev, name: arcpy.Parameter(
+                displayName=f"{name} Start Value",
+                name=f"{abbrev}_start",
+                datatype="GPLong",
+                parameterType="Optional",
+                direction="Input",
+            ),
+        )
+    ]
 
     return [initials, interval, *input_layers]
 
 
 def update_parameters(parameters: list[arcpy.Parameter]) -> None:
     """
-    Update parameters to ensure their correctness.
-
     Enables layer start values if their associated layer is set and
     ensures start values are greater than zero.
 
     Arguments:
         parameters (list[arcpy.Parameter]): The list of parameters.
     """
-    for i, p in enumerate(parameters):
-        lyr = p.value
-        lyr_abbrev = p.name
-        if lyr_abbrev.endswith("_lyr"):
-            # showing or hiding the start value if the layer is set or not
-            start = parameters[i + 1]
-            start.enabled = True if lyr else False
-        elif lyr_abbrev.endswith("_start"):
-            # short circuiting prevents NoneType and Int comparision
-            p.value = 1 if p.value and p.value < 1 else p.value
+    for l, s in zip(
+        (p for p in parameters[_LAYER_START:] if p.name.endswith("_lyr")),
+        (p for p in parameters[_LAYER_START:] if p.name.endswith("_start")),
+    ):
+        s.enabled = True if l.value else False
+        # short circuiting prevents NoneType and Int comparision
+        s.value = 1 if s.value is not None and s.value < 1 else s.value
 
 
 @fallible
@@ -170,36 +184,3 @@ def _calc_fids(
                     incr += interval
 
     return f"{prefix}{incr}{suffix}"
-
-
-def _water_param_pair(
-    abbrev: str, name: str
-) -> tuple[arcpy.Parameter, arcpy.Parameter]:
-    """
-    Returns a tuple of a layer parameter and start value parameter.
-
-    Arguments:
-        abbrev (str): The new layer's abbreviated name.
-        name (str): The new layer's display name.
-
-    Returns:
-        tuple[arcpy.Parameter, arcpy.Parameter]: The parameter pair.
-    """
-    return (
-        # layer portion
-        arcpy.Parameter(
-            displayName=name,
-            name=abbrev,
-            datatype="GPFeatureLayer",
-            parameterType="Optional",
-            direction="Input",
-        ),
-        # start value portion
-        arcpy.Parameter(
-            displayName=f"{name} Start Value",
-            name=f"{abbrev}_start",
-            datatype="GPLong",
-            parameterType="Optional",
-            direction="Input",
-        ),
-    )

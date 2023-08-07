@@ -17,6 +17,7 @@ import colawater.status.summary as sy
 from colawater import scan
 from colawater.error import fallible
 
+_LAYER_START = 3
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
     """
@@ -27,9 +28,8 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     """
     arcpy.SetProgressor("default", "Starting quality control checks...")
 
-    LAYER_START = 3
-    checks = parameters[:LAYER_START]
-    layers = parameters[LAYER_START:]
+    checks = parameters[:_LAYER_START]
+    layers = parameters[_LAYER_START:]
     wm_layer = layers[-1]
     is_fid_format_check = checks[0].value
     is_wm_file_check = checks[1].value
