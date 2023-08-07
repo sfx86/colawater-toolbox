@@ -140,11 +140,18 @@ def _calc_fids(
     """
     Calculates the facility identifiers for the provided layer.
 
+    Also updates the substituted initials with the new facility identifiers
+    in the provided layer.
+
     Arguments:
         layer (arcpy.Parameter): The layer parameter.
         start (arpcy.Parameter): The start value parameter.
         interval (int): The interval to increment the facility identifier.
         initials (str): The initials to replace with the calculated facility identifiers.
+
+    Returns:
+        str: The final facility identifier plus one interval to be used
+             as an input for the next tool execution.
 
     Raises:
         ExecuteError: An error ocurred in the tool execution.
@@ -172,12 +179,16 @@ def _calc_fids(
     with arcpy.da.Editor(workspace):  # type: ignore
         # only these layers have FACILITYIDINDEX
         if layer.name in ("ca_lyr", "cv_lyr", "ft_lyr", "hy_lyr", "wm_lyr"):
-            with arcpy.da.UpdateCursor(lyr_path, fields, where_initials) as cursor:  # type: ignore
+            with arcpy.da.UpdateCursor(  # type: ignore
+                lyr_path, fields, where_initials
+            ) as cursor:
                 for _ in cursor:
                     cursor.updateRow((f"{prefix}{incr}{suffix}", incr))
                     incr += interval
         else:
-            with arcpy.da.UpdateCursor(lyr_path, fields[0], where_initials) as cursor:  # type: ignore
+            with arcpy.da.UpdateCursor(  # type: ignore
+                lyr_path, fields[0], where_initials
+            ) as cursor:
                 for _ in cursor:
                     # leave FACILITYIDINDEX alone; logic is otherwise identicial
                     cursor.updateRow((f"{prefix}{incr}{suffix}"))

@@ -4,7 +4,6 @@ tool and other helper functions.
 """
 
 import getpass
-from collections.abc import Iterable
 from datetime import datetime, timedelta
 
 import arcpy
@@ -12,7 +11,6 @@ import arcpy
 import colawater.layer as ly
 import colawater.scan as scan
 import colawater.status.logging as log
-import colawater.status.progressor as pg
 import colawater.status.summary as sy
 from colawater import attribute as attr
 from colawater.error import fallible
@@ -106,7 +104,7 @@ def _append_to_art(
     wm_lyr: arcpy._mp.Layer,  # type: ignore
     wm_where_clause: str,
     art_table: arcpy._mp.Layer,  # type: ignore
-) -> list[tuple[str, str, str, str]]:
+) -> list[tuple[str, ...]]:
     """
     Appends recent integrated and well-sourced mains from a given editor to the
     Asset Reference Table.
@@ -114,7 +112,7 @@ def _append_to_art(
     Raises:
         ExecuteError: An error ocurred in the tool execution.
     """
-    mains_appended: list[tuple[str, str, str, str]] = []
+    mains_appended = []
 
     with arcpy.da.Editor(ly.get_workspace(wm_lyr)):  # type: ignore
         with (
@@ -151,11 +149,6 @@ def _append_to_art(
                     cw2020_file,
                 ]
                 art_insert_cursor.insertRow(art_row)
-                mains_appended.append(
-                    tuple(
-                        attr.process(i)
-                        for i in (fid, install_date, datasource, comments)
-                    )
-                )
+                mains_appended.append(tuple(attr.process(i) for i in wm_row))
 
     return mains_appended

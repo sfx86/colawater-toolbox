@@ -11,7 +11,6 @@ Examples:
 
 """
 
-from dataclasses import dataclass
 from enum import Enum, unique
 
 import arcpy
