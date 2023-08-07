@@ -5,7 +5,7 @@ import sys
 sys.path.insert(0, os.path.abspath("../../src"))
 
 # project info
-project = "ColaWaterToolbox"
+project = "colawater-toolbox"
 copyright = "2023, Columbia Water"
 author = "Columbia Water"
 release = "3.0.0"
