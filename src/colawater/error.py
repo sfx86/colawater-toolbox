@@ -49,7 +49,7 @@ def fallible(f: Callable[..., T]) -> Callable[..., Union[T, NoReturn]]:
     """
 
     @wraps(f)
-    def wrapper(*args, **kwargs) -> Union[T, NoReturn]:
+    def wrapper(*args: Any, **kwargs: Any) -> Union[T, NoReturn]:
         def post_log_exit(err: BaseException, msg: str) -> NoReturn:
             sy.post(dumped=True)
             log.error(f"Error: {type(err).__name__}\n{msg}")

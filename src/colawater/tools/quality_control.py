@@ -4,8 +4,7 @@ tool and other helper functions.
 """
 
 import re
-from collections.abc import Collection
-from typing import Any, Optional
+from typing import Any
 
 import arcpy
 
@@ -18,6 +17,7 @@ from colawater import scan
 from colawater.error import fallible
 
 _LAYER_START = 3
+
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
     """
@@ -213,7 +213,9 @@ def _find_incorrect_fids(
 
 
 @fallible
-def _find_nonexistent_assoc_files(wm_layer: arcpy._mp.Layer) -> list[tuple[str, str]]:  # type: ignore
+def _find_nonexistent_assoc_files(
+    wm_layer: arcpy._mp.Layer,  # type: ignore
+) -> list[tuple[str, str]]:
     """
     Returns a list of object ID and nonexistent associated file pairs for the integrated mains
     in the given water main layer.
@@ -243,7 +245,9 @@ def _find_nonexistent_assoc_files(wm_layer: arcpy._mp.Layer) -> list[tuple[str, 
 
 
 @fallible
-def _find_incorrect_datasources(wm_layer: arcpy._mp.Layer) -> list[tuple[str, str]]:  # type: ignore
+def _find_incorrect_datasources(
+    wm_layer: arcpy._mp.Layer,  # type: ignore
+) -> list[tuple[str, str]]:
     """
     Returns a list of object ID and incorrect data source pairs for the integrated mains
     in the given water main layer.
