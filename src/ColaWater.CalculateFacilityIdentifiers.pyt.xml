@@ -13,7 +13,8 @@
 		</scaleRange>
 		<ArcGISProfile>ItemDescription</ArcGISProfile>
 	</Esri>
-	<tool name="CalculateFacilityIdentifiers" displayname="Calculate Facility Identifiers" toolboxalias="ColaWater" xmlns="">
+	<tool name="CalculateFacilityIdentifiers" displayname="Calculate Facility Identifiers" toolboxalias="colawater"
+		xmlns="">
 		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
 		<parameters>
 			<param name="initials" displayname="Initials" type="Required" direction="Input" datatype="String" expression="initials">
