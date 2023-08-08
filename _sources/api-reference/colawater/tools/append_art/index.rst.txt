@@ -1,0 +1,44 @@
+:py:mod:`colawater.tools.append_art`
+====================================
+
+.. py:module:: colawater.tools.append_art
+
+.. autoapi-nested-parse::
+
+   Contains the functions used by the Append to ART tool
+   tool and other helper functions.
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.tools.append_art.execute
+   colawater.tools.append_art.parameters
+
+
+
+.. py:function:: execute(parameters: list[arcpy.Parameter]) -> None
+
+   Entry point for Append to ART.
+
+   Appends recent integrated and well-sourced mains from a given editor to the
+   Asset Reference Table.
+
+   :raises ExecuteError:
+
+
+.. py:function:: parameters() -> list[arcpy.Parameter]
+
+   Return the parameters for Append to ART.
+
+   :returns: The list of parameters.
+   :rtype: list[arcpy.Parameter]
+
+

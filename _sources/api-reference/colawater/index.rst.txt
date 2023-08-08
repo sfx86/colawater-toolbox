@@ -1,0 +1,28 @@
+:py:mod:`colawater`
+===================
+
+.. py:module:: colawater
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   status/index.rst
+   tools/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   attribute/index.rst
+   error/index.rst
+   layer/index.rst
+   scan/index.rst
+
+

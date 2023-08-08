@@ -1,0 +1,54 @@
+:py:mod:`colawater.tools.fid_calculator`
+========================================
+
+.. py:module:: colawater.tools.fid_calculator
+
+.. autoapi-nested-parse::
+
+   Contains the functions used by the Calculate Facility Identifiers
+   tool and other helper functions.
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.tools.fid_calculator.execute
+   colawater.tools.fid_calculator.parameters
+   colawater.tools.fid_calculator.update_parameters
+
+
+
+.. py:function:: execute(parameters: list[arcpy.Parameter]) -> None
+
+   Entry point for Calculate Facility Identifiers.
+
+   Calculates the new facility identifiers for features with given
+   placeholder initials starting from a given start value.
+
+   :raises ExecuteError: An error ocurred in the tool execution.
+
+
+.. py:function:: parameters() -> list[arcpy.Parameter]
+
+   Return the parameters for Calculate Facility Identifiers.
+
+   :returns: The list of parameters.
+   :rtype: list[arcpy.Parameter]
+
+
+.. py:function:: update_parameters(parameters: list[arcpy.Parameter]) -> None
+
+   Enables layer start values if their associated layer is set and
+   ensures start values are greater than zero.
+
+   :param parameters: The list of parameters.
+   :type parameters: list[arcpy.Parameter]
+
+

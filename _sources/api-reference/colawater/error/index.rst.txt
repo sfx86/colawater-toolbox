@@ -1,0 +1,96 @@
+:py:mod:`colawater.error`
+=========================
+
+.. py:module:: colawater.error
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.error.fallible
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.error.SYSTEM_ERROR_MSG
+   colawater.error.UNEXPECTED_ERROR_MSG
+   colawater.error.T
+
+
+.. py:data:: SYSTEM_ERROR_MSG
+   :type: str
+   :value: Multiline-String
+
+    .. raw:: html
+
+        <details><summary>Show Value</summary>
+
+    .. code-block:: python
+
+        """How to resolve common errors:
+        'RuntimeError: An expected Field was not found or could not be retrieved properly.'
+            You probably selected the wrong layer in the dropdown.
+        'RuntimeError: Attribute column not found'
+            You probably selected the wrong layer in the dropdown.
+        'RuntimeError: Cannot acquire a lock.'
+            Close the attribute tables of the layers with which you are trying to use this tool.
+        'RuntimeError: Objects in this class cannot be updated outside an edit session'
+            You probably selected a layer from cypress by mistake.
+        """
+
+    .. raw:: html
+
+        </details>
+
+   Error message text to display on ``SystemError``
+
+   .. note:: The error message output almost always says 'RuntimeError' when a SystemError occurs.
+
+.. py:data:: UNEXPECTED_ERROR_MSG
+   :type: str
+   :value: Multiline-String
+
+    .. raw:: html
+
+        <details><summary>Show Value</summary>
+
+    .. code-block:: python
+
+        """An unexpected error occurred :(
+        Go find whomever wrote this tool and ask them about it."""
+
+    .. raw:: html
+
+        </details>
+
+   Error message text to display on ``Exception`` (not including ``SystemError``).
+
+.. py:data:: T
+
+   
+
+.. py:function:: fallible(f: Callable[Ellipsis, T]) -> Callable[Ellipsis, Union[T, NoReturn]]
+
+   Wraps the decorated function in a try-catch block that handles
+   ``RuntimeError`` and ``Exception``, dumping the tool summary
+   and printing a relevant error message if either exception is raised.
+
+   :returns:
+
+             The return value of the wrapped function, or an exception is caught,
+                                 an ``ExecuteError`` is raised, and the function does not return.
+   :rtype: Union[T, NoReturn]
+
+   :raises ExecuteError: An exception was caught, so this was raised in its place.
+
+

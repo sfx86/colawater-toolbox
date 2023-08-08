@@ -1,0 +1,65 @@
+:py:mod:`colawater.layer`
+=========================
+
+.. py:module:: colawater.layer
+
+.. autoapi-nested-parse::
+
+   Utilities for working with layers.
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       layer = layer_from_somewhere()
+       path = get_layer_path(layer) # Returns "path/to/layer".
+       workspace = get_workspace_path(layer) # Returns "path/to/workspace.
+                                             # This is the same as the value in ``path``,
+                                             # but without the layer name.
+
+   Note:
+       Layer names include the groups of which they are a part.
+       E.g., layer "foo" in group "bar" has a layer name of "bar\foo"
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.layer.get_path
+   colawater.layer.get_workspace
+
+
+
+.. py:function:: get_path(layer: arcpy._mp.Layer) -> str
+
+   Returns the absolute path to a layer.
+
+   Uses ``arcpy.Describe(layer)`` to get layer information and build a path.
+
+   :param layer: A layer object.
+   :type layer: arcpy._mp.Layer
+
+   :returns: The absolute path to the layer.
+   :rtype: str
+
+
+.. py:function:: get_workspace(layer: arcpy._mp.Layer) -> str
+
+   Returns the absolute path to a layer's workspace.
+
+   Uses ``arcpy.Describe(layer)`` to get layer information and build a path.
+
+   :param layer: A layer object.
+   :type layer: arcpy._mp.Layer
+
+   :returns: The absolute path to the layer's workspace.
+   :rtype: str
+
+

@@ -1,0 +1,17 @@
+:py:mod:`colawater.status`
+==========================
+
+.. py:module:: colawater.status
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   logging/index.rst
+   progressor/index.rst
+   summary/index.rst
+
+

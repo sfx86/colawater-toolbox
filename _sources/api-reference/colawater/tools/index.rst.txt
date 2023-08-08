@@ -1,0 +1,17 @@
+:py:mod:`colawater.tools`
+=========================
+
+.. py:module:: colawater.tools
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   append_art/index.rst
+   fid_calculator/index.rst
+   quality_control/index.rst
+
+

@@ -1,0 +1,61 @@
+:py:mod:`colawater.attribute`
+=============================
+
+.. py:module:: colawater.attribute
+
+.. autoapi-nested-parse::
+
+   Utilities for handling attribute values.
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       attr = None
+       attr = process_attr(attr) # Returns "<Null>".
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.attribute.process
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.attribute.CSV_PROCESSING_MSG
+
+
+.. py:data:: CSV_PROCESSING_MSG
+   :type: str
+   :value: 'Commas, leading and trailing whitespace, and quotation marks have been removed so this output...'
+
+   Message text to display when the following output has been modified for CSV use.
+
+.. py:function:: process(attr: Optional[Union[str, int]], csv: bool = False) -> str
+
+   Returns a human readable string representation of a nullable field value.
+
+   Turns a ``None`` value into ``"<Null>"`` and optionally strips out whitespace,
+   commas, and quotation marks.
+
+   :param attr: The attribute value to be processed.
+   :type attr: Optional[str]
+   :param csv: Whether to apply CSV pre-processing.
+   :type csv: bool
+
+   :returns: The processed attribute value.
+   :rtype: str
+
+

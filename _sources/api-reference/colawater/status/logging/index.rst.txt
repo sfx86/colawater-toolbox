@@ -1,0 +1,67 @@
+:py:mod:`colawater.status.logging`
+==================================
+
+.. py:module:: colawater.status.logging
+
+.. autoapi-nested-parse::
+
+   A wrapper for the arcpy messages and progressor APIs.
+
+   The functions provided here correspond to the arcpy warning levels:
+   ``info()`` adds a message of severity 0, ``warning()`` of severity 1, and
+   ``error()`` of severity 2.
+   ``info()`` and ``warning()`` both update the progressor label with their ``content``,
+   whereas ``error()`` adds an error message and raises ``ExecuteError`` to cause the tool
+   to exit.
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       import colawater.status.logging as log
+
+       log.info("helpful message")
+       log.warning("warning message")
+       log.error("error message") # Raises ExecuteError
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.status.logging.info
+   colawater.status.logging.warning
+   colawater.status.logging.error
+
+
+
+.. py:function:: info(content: str) -> None
+
+   Adds a message and updates the progressor label.
+
+   :param content: The message content to be added.
+   :type content: str
+
+
+.. py:function:: warning(content: str) -> None
+
+   Adds a warning message and updates the progressor label.
+
+   :param content: The message content to be added.
+   :type content: str
+
+
+.. py:function:: error(content: str) -> None
+
+   Adds an error message.
+
+   :param content: The message content to be added.
+   :type content: str
+
+
