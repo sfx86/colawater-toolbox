@@ -8,7 +8,7 @@ ArcPy is the Python library provided by ESRI for interacting with ArcGIS Pro.
 The `ArcPy reference <reference_>`_ is their comprehensive documentation explaining 
 the public API and providing examples on how to use said API.
 Reading through and exploring the reference is a good way to get familiar with the 
-library's offerings and to also understand colawater-toolbox's own code, which heavily
+library's offerings and also to understand colawater-toolbox's own code, which heavily
 relies on ArcPy and uses it extensively.
 
 Specific helpful resources
