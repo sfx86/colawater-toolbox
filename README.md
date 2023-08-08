@@ -29,8 +29,8 @@ Open the `colawater.pyt` toolbox, then select a tool from the toolbox's dropdown
 # Installation
 
 Download and unzip the `colawater-toolbox.zip` from the [latest release][releases]
-and [add the toolbox][add-a-toolbox] to ArcGIS. 
-Make sure all of the associated `.py` files are in the same directory as the `.pyt` file.
+and [add the toolbox][add-a-toolbox] named `colawater.pyt` to ArcGIS. 
+Make sure to not alter the file structure; the toolbox will not work otherwise.
 
 # Documentation
 
