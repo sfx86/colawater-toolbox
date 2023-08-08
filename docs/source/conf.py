@@ -24,10 +24,13 @@ autoapi_dirs = ["../../src"]
 autoapi_root = "api-reference"
 autoapi_template_dir = f"{templates_path[0]}/_autoapi_templates"
 autoapi_options = [
-    "imported-members",
     "members",
+    "undoc-members",  # removing makes the API reference empty for some reason
+    # "private-members",
     "show-inheritance",
     "show-module-summary",
+    # "special-members",
+    "imported-members",
 ]
 # include shared links at the end of every file
 rst_epilog = ".. include:: /include/links.rst"
