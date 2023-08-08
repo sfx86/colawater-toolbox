@@ -13,6 +13,7 @@
 - [Installation](#installation)
 - [Documentation](#documentation)
 - [Tools](#tools)
+    - [Append to ART](#append-to-art)
     - [Calculate Facility Identifiers](#calculate-facility-identifiers)
     - [Water Quality Control](#water-quality-control)
 - [Changes](#changes)
