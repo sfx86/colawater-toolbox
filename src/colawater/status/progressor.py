@@ -9,12 +9,13 @@ Examples:
         pg.label("helpful message")
         pg.increment(10) # Defaults to 1
 """
-from enum import Enum, auto
+from enum import Enum, auto, unique
 from typing import Any
 
 import arcpy
 
 
+@unique
 class _ProgressorType(Enum):
     DEFAULT = auto()
     STEP = auto()
