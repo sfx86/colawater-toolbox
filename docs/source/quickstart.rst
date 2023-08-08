@@ -1,8 +1,8 @@
 ﻿Quickstart
 ==========
 
-colawater-toolbox is distributed via a Github repository.
-To get set up using it in ArcGIS:
+colawater-toolbox is distributed via GitHub.
+To get started in ArcGIS:
 
 #. Download the ``colawater-toolbox.zip`` asset from the `latest release <releases_>`_
    or clone the repository:
