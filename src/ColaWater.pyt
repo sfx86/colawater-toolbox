@@ -21,7 +21,7 @@ class Toolbox:
 
     def __init__(self) -> None:
         self.label = "Columbia Water"
-        self.alias = "ColaWater"
+        self.alias = "colawater"
         self.tools = [
             AppendToART,
             CalculateFacilityIdentifiers,
