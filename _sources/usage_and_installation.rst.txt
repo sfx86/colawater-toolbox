@@ -2,7 +2,7 @@ Usage
 =====
 
 Navigate to the ``Catalog Pane`` and open the ``Toolboxes`` dropdown.
-Open the ``colawater-toolbox.pyt`` toolbox, then select a tool from the
+Open the ``colawater.pyt`` toolbox, then select a tool from the
 toolbox's dropdown menu.
 
 Installation
