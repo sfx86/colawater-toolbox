@@ -2,7 +2,7 @@ from typing import Any
 
 import arcpy
 
-from colawater import tools
+from colawater.tools import append_art, fid_calculator, quality_control
 
 
 class Toolbox:
@@ -36,13 +36,13 @@ class CalculateFacilityIdentifiers:
         self.canRunInBackground = False
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
-        return tools.fid_calculator.parameters()
+        return fid_calculator.parameters()
 
     def updateParameters(self, parameters: list[arcpy.Parameter]) -> None:
-        tools.fid_calculator.update_parameters(parameters)
+        fid_calculator.update_parameters(parameters)
 
     def execute(self, parameters: list[arcpy.Parameter], messages: Any) -> None:
-        tools.fid_calculator.execute(parameters)
+        fid_calculator.execute(parameters)
 
 
 class WaterQualityControl:
@@ -54,10 +54,10 @@ class WaterQualityControl:
         self.canRunInBackground = False
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
-        return tools.quality_control.parameters()
+        return quality_control.parameters()
 
     def execute(self, parameters: list[arcpy.Parameter], messages: Any) -> None:
-        tools.quality_control.execute(parameters)
+        quality_control.execute(parameters)
 
 
 class AppendToART:
@@ -67,7 +67,7 @@ class AppendToART:
         self.canRunInBackground = False
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
-        return tools.append_art.parameters()
+        return append_art.parameters()
 
     def execute(self, parameters: list[arcpy.Parameter], messages: Any) -> None:
-        tools.append_art.execute(parameters)
+        append_art.execute(parameters)
