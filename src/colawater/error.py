@@ -1,6 +1,5 @@
-import inspect
 from functools import wraps
-from typing import Any, Callable, NoReturn, Optional, TypeVar, Union
+from typing import Any, Callable, NoReturn, TypeVar, Union
 
 import arcpy
 
@@ -52,7 +51,9 @@ def fallible(f: Callable[..., T]) -> Callable[..., Union[T, NoReturn]]:
     def wrapper(*args: Any, **kwargs: Any) -> Union[T, NoReturn]:
         def post_log_exit(err: BaseException, msg: str) -> NoReturn:
             sy.post(dumped=True)
-            log.error(f"Error: {type(err).__name__}\n{msg}")
+            log.error(
+                f"Error: {type(err).__name__} [{getattr(err, 'message', repr(err))}]\n{msg}"
+            )
             raise arcpy.ExecuteError
 
         try:
