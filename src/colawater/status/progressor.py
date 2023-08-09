@@ -34,6 +34,8 @@ def set_progressor(*args: Any, **kwargs: Any) -> None:
         *args (Any): The positional arguments to ``arcpy.SetProgressor()``
         **kwargs (Any): The keyword arguments to ``arcpy.SetProgressor()``
     """
+    arcpy.SetProgressor(*args, **kwargs)
+
     global _progressor_type
 
     local_prog_type = str(args[0]).lower()
@@ -42,8 +44,6 @@ def set_progressor(*args: Any, **kwargs: Any) -> None:
         _progressor_type = _ProgressorType.STEP
     else:
         _progressor_type = _ProgressorType.DEFAULT
-
-    arcpy.SetProgressor(*args, **kwargs)
 
 
 def label(content: str) -> None:
