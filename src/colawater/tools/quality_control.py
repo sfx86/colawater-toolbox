@@ -76,7 +76,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
     if not wm_layer.value:
         log.warning(
-            f"Layer omitted: {wm_layer.valueAsText}, skipping water main checks."
+            f"Layer omitted: {wm_layer.displayName}, skipping water main checks."
         )
         return
 
