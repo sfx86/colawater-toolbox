@@ -11,6 +11,7 @@ import arcpy
 import colawater.layer as ly
 import colawater.scan as scan
 import colawater.status.logging as log
+import colawater.status.progressor as pg
 import colawater.status.summary as sy
 from colawater import attribute as attr
 from colawater.error import fallible
@@ -26,7 +27,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Raises:
         ExecuteError: An error occurred in the tool execution.
     """
-    arcpy.SetProgressor("default", "Appending mains to ART...")
+    pg.set_progressor("default", "Appending mains to ART...")
 
     last_editor = parameters[0].valueAsText
     on_after_date = parameters[1].valueAsText
