@@ -24,7 +24,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Raises:
         ExecuteError: An error ocurred in the tool execution.
     """
-    arcpy.SetProgressor("step", "Calculating facility identifiers...", 0, 6)
+    pg.set_progressor("step", "Calculating facility identifiers...", 0, 6)
 
     initials = parameters[0].value
     interval = parameters[1].value

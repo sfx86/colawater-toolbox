@@ -26,7 +26,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Raises:
         ExecuteError: An error ocurred in the tool execution.
     """
-    arcpy.SetProgressor("default", "Starting quality control checks...")
+    pg.set_progressor("default", "Starting quality control checks...")
 
     checks = parameters[:_LAYER_START]
     layers = parameters[_LAYER_START:]
@@ -36,7 +36,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     is_wm_ds_check = checks[2].value
 
     if is_fid_format_check:
-        arcpy.SetProgressor("step", "Validating facility identifiers...", 0, 7)
+        pg.set_progressor("step", "Validating facility identifiers...", 0, 7)
         # regexes correspond 1:1 with layer parameters
         regexes = (
             r"^\d+CA$",
@@ -80,7 +80,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         )
         return
 
-    arcpy.SetProgressor("default")
+    pg.set_progressor("default")
 
     if is_wm_file_check:
         pg.label("Verifying assiociated files for integrated mains...")
