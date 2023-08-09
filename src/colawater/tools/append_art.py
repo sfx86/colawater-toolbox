@@ -24,7 +24,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Asset Reference Table.
 
     Raises:
-        ExecuteError:
+        ExecuteError: An error occurred in the tool execution.
     """
     arcpy.SetProgressor("default", "Appending mains to ART...")
 
@@ -57,7 +57,9 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
 def parameters() -> list[arcpy.Parameter]:
     """
-    Return the parameters for Append to ART.
+    Returns the parameters for Append to ART.
+
+    Parameters are of type GPString, GPDate, GPFeatureLayer, and GPTableView.
 
     Returns:
         list[arcpy.Parameter]: The list of parameters.

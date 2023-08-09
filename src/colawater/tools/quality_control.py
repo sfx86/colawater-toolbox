@@ -134,6 +134,8 @@ def parameters() -> list[arcpy.Parameter]:
     """
     Returns the parameters for Water Quality Control.
 
+    Parameters are 3 of type GPBoolean and 7 of type GPFeatureLayer.
+
     Returns:
         list[arcpy.Parameter]: The list of parameters.
     """

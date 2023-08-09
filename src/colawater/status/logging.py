@@ -4,18 +4,16 @@ A wrapper for the arcpy messages and progressor APIs.
 The functions provided here correspond to the arcpy warning levels:
 ``info()`` adds a message of severity 0, ``warning()`` of severity 1, and
 ``error()`` of severity 2.
-``info()`` and ``warning()`` both update the progressor label with their ``content``,
-whereas ``error()`` adds an error message and raises ``ExecuteError`` to cause the tool
-to exit.
+All of these functions also update the progressor label.
 
 Examples:
     .. code-block:: python
-    
+
         import colawater.status.logging as log
 
         log.info("helpful message")
         log.warning("warning message")
-        log.error("error message") # Raises ExecuteError
+        log.error("error message")
 """
 
 import arcpy

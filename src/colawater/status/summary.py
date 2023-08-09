@@ -1,5 +1,5 @@
 """
-Contains helper functions for managing tool summaries.
+Utilities for managing tool summaries.
 
 Examples:
     .. code-block:: python
@@ -7,7 +7,8 @@ Examples:
         import colawater.status.summary as sy
 
         sy.add_header("a subject", "helpful message")
-        sy.add_item("helpful message")
+        sy.add_item("helpful message") # etc. for other methods
+        sy.post()
 
 """
 
@@ -26,7 +27,7 @@ class _ContentType(Enum):
     """
     The various content types.
 
-    Enumerated values are the prefixes for the messages.
+    Enumerated values are the prefixes or infixes for the messages.
     """
 
     HEADER = ""
@@ -120,7 +121,7 @@ def add_note(subject: str, content: str) -> None:
 
     Arguments:
         subject (str): The subject of the header.
-        content (str): The result content to be added.
+        content (str): The note content to be added.
     """
     _summary.append(_subject_str(subject, content), _ContentType.NOTE)
 
@@ -145,8 +146,9 @@ def clear() -> None:
 
 def post(dumped: bool = False) -> None:
     """
-    Adds a message with the summary's content.
+    Adds a message with the summary's full text.
 
+    Assembles all of the headers and miscellaneous messages in the order added.
     Optionally add an additional message indicating the summary was
     dumped due to an error.
 
