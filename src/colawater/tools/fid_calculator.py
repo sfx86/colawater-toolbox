@@ -56,7 +56,9 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
 def parameters() -> list[arcpy.Parameter]:
     """
-    Return the parameters for Calculate Facility Identifiers.
+    Returns the parameters for Calculate Facility Identifiers.
+
+    Parameters are of type GPString, GPLong, and 7 pairs of GPFeatureLayer and GPLong.
 
     Returns:
         list[arcpy.Parameter]: The list of parameters.
@@ -115,8 +117,7 @@ def parameters() -> list[arcpy.Parameter]:
 
 def update_parameters(parameters: list[arcpy.Parameter]) -> None:
     """
-    Enables layer start values if their associated layer is set and
-    ensures start values are greater than zero.
+    Enables layer start values if their associated layer is set and ensures start values are greater than zero.
 
     Arguments:
         parameters (list[arcpy.Parameter]): The list of parameters.

@@ -1,3 +1,15 @@
+"""
+Utilities for handling errors from arcpy.
+
+Examples:
+    .. code-block:: python
+
+        from colawater.errror import fallible
+
+        @fallible
+        def foo(bar: str) -> None:
+            something_that_raises_exceptions()
+"""
 from functools import wraps
 from typing import Any, Callable, NoReturn, TypeVar, Union
 
@@ -18,9 +30,6 @@ SYSTEM_ERROR_MSG: str = """How to resolve common errors:
 """
 """
 Error message text to display on ``SystemError``
-
-Note:
-    The error message output almost always says 'RuntimeError' when a SystemError occurs.
 """
 
 UNEXPECTED_ERROR_MSG: str = """An unexpected error occurred :(
@@ -31,17 +40,24 @@ Error message text to display on ``Exception`` (not including ``SystemError``).
 
 
 T = TypeVar("T")
+"""
+Type variable for generic function return types.
+"""
 
 
 def fallible(f: Callable[..., T]) -> Callable[..., Union[T, NoReturn]]:
     """
     Wraps the decorated function in a try-catch block that handles
-    ``RuntimeError`` and ``Exception``, dumping the tool summary
+    ``SystemError`` and ``Exception``, dumping the tool summary
     and printing a relevant error message if either exception is raised.
 
+    Note:
+        The default error message output in ArcGIS almost always says 'RuntimeError'
+        when a SystemError occurs.
+
     Returns:
-        Union[T, NoReturn]: The return value of the wrapped function, or an exception is caught,
-                            an ``ExecuteError`` is raised, and the function does not return.
+        Union[T, NoReturn]: The return value of the wrapped function.
+        Or, if an exception is caught, an ``ExecuteError`` is raised, and the function does not return.
 
     Raises:
         ExecuteError: An exception was caught, so this was raised in its place.

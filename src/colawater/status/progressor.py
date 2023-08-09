@@ -2,12 +2,13 @@
 A wrapper for some arcpy progressor methods.
 
 Examples:
-    .. code-block: python
+    .. code-block:: python
 
         import colawater.status.progressor as pg
 
+        pg.set_progressor("step")
         pg.label("helpful message")
-        pg.increment(10) # Defaults to 1
+        pg.increment() # Defaults to 1, will raise TypeError if used on a default progressor
 """
 from enum import Enum, auto, unique
 from typing import Any
@@ -59,13 +60,11 @@ def increment(position: int = 1) -> None:
     """
     Increments the progressor by a given value.
 
-    Raises an exception if used with a DEFAULT progressor.
-
     Arguments:
         position (int): The amount to increment the progressor.
 
     Raises:
-        TypeError: this function was called with an active progressor of type DEFAULT.
+        TypeError: The active progressor is not of type STEP.
     """
     if _progressor_type == _ProgressorType.DEFAULT:
         raise TypeError("Cannot call `increment` on a progressor of type DEFAULT.")

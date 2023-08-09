@@ -4,8 +4,10 @@ Utilities for handling attribute values.
 Examples:
     .. code-block:: python
 
-        attr = None
-        attr = process_attr(attr) # Returns "<Null>".
+        import colawater.attribute as attr
+
+        foo = None
+        foo = attr.process(foo) # Returns "<Null>".
 """
 from typing import Optional, Union
 
@@ -20,10 +22,10 @@ def process(attr: Optional[Union[str, int]], csv: bool = False) -> str:
     Returns a human readable string representation of a nullable field value.
 
     Turns a ``None`` value into ``"<Null>"`` and optionally strips out whitespace,
-    commas, and quotation marks.
+    commas, and quotation marks for ease of use as a CSV.
 
     Arguments:
-        attr (Optional[str]): The attribute value to be processed.
+        attr (Optional[Union[str, int]]): The attribute value to be processed.
         csv (bool): Whether to apply CSV pre-processing.
 
     Returns:

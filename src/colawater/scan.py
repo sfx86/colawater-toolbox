@@ -3,10 +3,11 @@ Utilities for working with scan files.
 
 Examples:
     .. code-block:: python
+    
+        from colawater import scan
 
-        files = filter(is_existing_file, CITY_DIR.iterdir())
-        for file in files:
-            do_something()
+        for file in (f for f in scan.CITY_DIR.iterdir() if scan.exists(f)):
+            do_something(file)
 """
 from functools import cache
 from pathlib import Path
@@ -31,7 +32,7 @@ def exists(filename: str) -> bool:
 
     Applies some heuristics to detect if the string is a valid
     scan file name and only checks the filesystem if those heuristics pass.
-    Caches arguments and results to avoid erroneous filesystem accesses.
+    Uses an unbounded LRU cache to store arguments and results to avoid erroneous filesystem accesses.
 
     Arguments:
         filename (str): The name of a file.
@@ -39,8 +40,8 @@ def exists(filename: str) -> bool:
     Returns:
         bool: Whether a scan with ``filename`` exists.
     """
-    # this function is extremely hot and many of the arguments are identical, hence
-    # the @cache decorator
+    # this function is extremely hot and many of the arguments
+    # are identical, hence the @cache decorator
     # if the amount of filenames processed ever gets particularly high,
     # consider changing to @lru_cache(n) to deal with memory issues
 
