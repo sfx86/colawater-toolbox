@@ -3,8 +3,9 @@ Contains the functions used by the Append to ART tool
 tool and other helper functions.
 """
 
-import getpass
 from datetime import datetime, timedelta
+from getpass import getuser
+from typing import Optional
 
 import arcpy
 
@@ -31,7 +32,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
     last_editor = parameters[0].valueAsText
     on_after_date = parameters[1].valueAsText
-    wm_lyr = parameters[2]
+    wm_layer = parameters[2]
     art_table = parameters[3]
     where_water = " ".join(
         (
@@ -45,13 +46,17 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     )
 
     log.info(
-        f"Appending mains from [{wm_lyr.valueAsText}] to [{art_table.valueAsText}]..."
+        f"Appending mains from [{wm_layer.valueAsText}] to [{art_table.valueAsText}]..."
     )
 
-    mains_appended = _append_to_art(wm_lyr.value, where_water, art_table.value)
-    for m in mains_appended:
-        sy.add_item(", ".join(m))
+    mains_appended = _append_to_art(wm_layer.value, where_water, art_table.value)
 
+    sy.add_result(
+        wm_layer.valueAsText,
+        "Water Mains appended to ART (facility identifier, install date, data source, comments)",
+    )
+    sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
+    sy.add_items(mains_appended, csv=True)
     sy.add_result("TOOL", f"{len(mains_appended):n} mains appended to ART.")
     sy.post()
 
@@ -72,7 +77,7 @@ def parameters() -> list[arcpy.Parameter]:
         parameterType="Required",
         direction="Input",
     )
-    last_editor.value = getpass.getuser().upper()
+    last_editor.value = getuser().upper()
 
     on_after_date = arcpy.Parameter(
         displayName="On or after date",
@@ -107,13 +112,16 @@ def _append_to_art(
     wm_lyr: arcpy._mp.Layer,  # type: ignore
     wm_where_clause: str,
     art_table: arcpy._mp.Layer,  # type: ignore
-) -> list[tuple[str, ...]]:
+) -> list[tuple[Optional[str], ...]]:
     """
     Appends recent integrated and well-sourced mains from a given editor to the
     Asset Reference Table.
 
     Raises:
         ExecuteError: An error ocurred in the tool execution.
+
+    Returns:
+        list[tuple[Optional[str], ...]]: The appended mains.
     """
     mains_appended = []
 
@@ -137,8 +145,12 @@ def _append_to_art(
             for wm_row in wm_search_cursor:
                 fid, install_date, datasource, comments = wm_row
                 asset_type = "WAM"
-                cw2020_file = str(scan.CW2020_DIR / comments)
-                city_file = str(scan.CITY_DIR / comments)
+                cw2020_file = None
+                city_file = None
+                if comments is not None:
+                    cw2020_file = str(scan.CW2020_DIR / comments)
+                    city_file = str(scan.CITY_DIR / comments)
+
                 art_row = [
                     city_file,
                     datasource,
@@ -149,6 +161,6 @@ def _append_to_art(
                     cw2020_file,
                 ]
                 art_insert_cursor.insertRow(art_row)
-                mains_appended.append(tuple(attr.process(i) for i in wm_row))
+                mains_appended.append(wm_row)
 
     return mains_appended

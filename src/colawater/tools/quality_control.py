@@ -35,6 +35,9 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     is_wm_file_check = checks[1].value
     is_wm_ds_check = checks[2].value
 
+    _add_csv_msg = lambda s: sy.add_note(s, attr.CSV_PROCESSING_MSG)
+    _log_layer_with_info = lambda l, s: log.info(f"[{l}] {s}")
+
     if is_fid_format_check:
         pg.set_progressor("step", "Validating facility identifiers...", 0, 7)
         # regexes correspond 1:1 with layer parameters
@@ -56,19 +59,19 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
                 pg.increment()
                 continue
 
-            log.info(f"Searching in [{l.valueAsText}]...")
+            _log_layer_with_info(
+                l.valueAsText, "Checking facility identifier formatting..."
+            )
 
-            inc_fids = _find_incorrect_fids(l, r)
+            inc_fids = _find_incorrect_fids(l, re.compile(r))
 
             pg.increment()
             sy.add_result(
                 l.valueAsText,
                 "Incorrectly formatted facility identifiers (object ID, facility identifier):",
             )
-
-            for i in inc_fids:
-                sy.add_item(", ".join(i))
-
+            _add_csv_msg(wm_layer.valueAsText)
+            sy.add_items(inc_fids, csv=True)
             sy.add_result(
                 l.valueAsText,
                 f"{len(inc_fids):n} incorrectly formatted facility identifiers.",
@@ -83,30 +86,30 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     pg.set_progressor("default")
 
     if is_wm_file_check:
-        pg.label("Verifying assiociated files for integrated mains...")
+        _log_layer_with_info(
+            wm_layer.valueAsText, "Verifying assiociated files for integrated mains..."
+        )
 
         nonexistent_files = _find_nonexistent_assoc_files(wm_layer)
 
         sy.add_result(
             wm_layer.valueAsText, "Nonexistent associated files (object ID, comments):"
         )
-        sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
-
-        for oid, file in nonexistent_files:
-            sy.add_item(", ".join((oid, attr.process(file, csv=True))))
-
+        _add_csv_msg(wm_layer.valueAsText)
+        sy.add_items(nonexistent_files, csv=True)
         sy.add_result(
             wm_layer.valueAsText,
             f"{len(nonexistent_files):n} nonexistent files for integrated mains.",
         )
+        num_unique = len({list[1] for list in nonexistent_files})
         sy.add_result(
             wm_layer.valueAsText,
-            f"{len(set(nonexistent_files)):n} unique nonexistent files files for integrated mains.",
+            f"{num_unique:n} unique nonexistent files files for integrated mains.",
         )
 
     if is_wm_ds_check:
-        log.info(
-            f"Verifying data sources for integrated mains in [{wm_layer.valueAsText}]..."
+        _log_layer_with_info(
+            wm_layer.valueAsText, "Checking data sources for integrated mains..."
         )
 
         inc_datasources = _find_incorrect_datasources(wm_layer)
@@ -115,10 +118,8 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             wm_layer.valueAsText,
             "Missing or unknown data sources (object ID, datasource):",
         )
-
-        for i in inc_datasources:
-            sy.add_item(", ".join(i))
-
+        _add_csv_msg(wm_layer.valueAsText)
+        sy.add_items(inc_datasources, csv=True)
         sy.add_result(
             wm_layer.valueAsText,
             f"{len(inc_datasources):n} missing or unknown data sources for integrated mains.",
@@ -193,8 +194,7 @@ def _find_incorrect_fids(
 
     Arguments:
         layer (arcpy._mp.Layer): The layer to check.
-        regex (re.Pattern[Any]): The regular expression to use to check the facility
-                                 identifiers in the layer.
+        regex (re.Pattern[Any]): The regular expression to match against the facility identifiers in the layer.
 
     Returns:
         list[str]: The list of incorrectly formatted facility identifiers.
@@ -226,8 +226,7 @@ def _find_nonexistent_assoc_files(
         wm_layer (arpcy._mp.Layer): The water main layer.
 
     Returns:
-        list[tuple[str, str]: A list of Object ID and comment field tuples corresponding
-                              to water mains from the layer.
+        list[tuple[str, str]: A list of Object ID and comment field tuples corresponding to water mains from the layer.
 
     Raises:
         ExecuteError: An error ocurred in the tool execution.

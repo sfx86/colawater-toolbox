@@ -13,8 +13,11 @@ Examples:
 """
 
 from enum import Enum, unique
+from typing import Iterable, Optional
 
 import arcpy
+
+import colawater.attribute as attr
 
 OUTPUT_DUMPED_MSG = "OUTPUT DUMPED DUE TO ERROR"
 """
@@ -27,7 +30,7 @@ class _ContentType(Enum):
     """
     The various content types.
 
-    Enumerated values are the prefixes or infixes for the messages.
+    Enumerated values are the prefixes for the messages.
     """
 
     HEADER = ""
@@ -113,6 +116,20 @@ def add_item(content: str) -> None:
         content (str): The item content to be added.
     """
     _summary.append(content, _ContentType.ITEM)
+
+
+def add_items(contents: Iterable[Iterable[Optional[str]]], csv: bool = False) -> None:
+    """
+    Adds items from an interable of iterable to the summary's content.
+
+    Optionally apply ``attribute.process()`` to each item.
+
+    Arguments:
+        content (Iterable[Union[str, Iterable[str]]]): The contents to be added.
+        csv (bool): Whether to apply CSV pre-processing.
+    """
+    for i in contents:
+        add_item(", ".join(attr.process(j, csv=csv) for j in i))
 
 
 def add_note(subject: str, content: str) -> None:
