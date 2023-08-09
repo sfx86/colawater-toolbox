@@ -3,6 +3,8 @@ Contains the functions used by the Calculate Facility Identifiers
 tool and other helper functions.
 """
 
+from getpass import getuser
+
 import arcpy
 
 import colawater.layer as ly
@@ -70,6 +72,7 @@ def parameters() -> list[arcpy.Parameter]:
         parameterType="Required",
         direction="Input",
     )
+    initials.value = getuser()[:3].upper()
 
     interval = arcpy.Parameter(
         displayName="Global Interval",
@@ -179,7 +182,7 @@ def _calc_fids(
 
     with arcpy.da.Editor(workspace):  # type: ignore
         # only these layers have FACILITYIDINDEX
-        if layer.name in ("ca_lyr", "cv_lyr", "ft_lyr", "hy_lyr", "wm_lyr"):
+        if layer.name in {"ca_lyr", "cv_lyr", "ft_lyr", "hy_lyr", "wm_lyr"}:
             with arcpy.da.UpdateCursor(  # type: ignore
                 lyr_path, fields, where_initials
             ) as cursor:
