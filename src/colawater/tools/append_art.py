@@ -126,22 +126,25 @@ def _append_to_art(
     mains_appended = []
 
     with arcpy.da.Editor(ly.get_workspace(wm_lyr)):  # type: ignore
-        with arcpy.da.SearchCursor(  # type: ignore
-            ly.get_path(wm_lyr),
-            ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
-            wm_where_clause,
-        ) as wm_search_cursor, arcpy.da.InsertCursor(  # type: ignore
-            ly.get_path(art_table),
-            (
-                "FILELOCATIONCITY",
-                "DRAWINGTYPE",
-                "DRAWINGDATE",
-                "ASSETFACILITYID",
-                "ASSETTYPE",
-                "SCANNAME",
-                "FILELOCATIONCW2020",
-            ),
-        ) as art_insert_cursor:
+        with (
+            arcpy.da.SearchCursor(  # type: ignore
+                ly.get_path(wm_lyr),
+                ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
+                wm_where_clause,
+            ) as wm_search_cursor,
+            arcpy.da.InsertCursor(  # type: ignore
+                ly.get_path(art_table),
+                (
+                    "FILELOCATIONCITY",
+                    "DRAWINGTYPE",
+                    "DRAWINGDATE",
+                    "ASSETFACILITYID",
+                    "ASSETTYPE",
+                    "SCANNAME",
+                    "FILELOCATIONCW2020",
+                ),
+            ) as art_insert_cursor,
+        ):
             for wm_row in wm_search_cursor:
                 fid, install_date, datasource, comments = wm_row
                 asset_type = "WAM"
