@@ -4,6 +4,8 @@ tool and other helper functions.
 """
 
 import re
+from datetime import datetime
+from itertools import groupby
 from typing import Any
 
 import arcpy
@@ -16,7 +18,7 @@ import colawater.status.summary as sy
 from colawater import scan
 from colawater.error import fallible
 
-_LAYER_START = 3
+_LAYER_START = 4
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
@@ -32,13 +34,17 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     layers = parameters[_LAYER_START:]
     wm_layer = layers[-1]
     is_fid_format_check = checks[0].value
-    is_wm_file_check = checks[1].value
-    is_wm_ds_check = checks[2].value
+    is_fid_duplicate_check = checks[1].value
+    is_wm_file_check = checks[2].value
+    is_wm_ds_check = checks[3].value
 
     _log_layer_with_info = lambda l, s: log.info(f"[{l}] {s}")
 
+    for l in (l for l in layers if not l.value):
+        log.warning(f"Layer omitted: {l.displayName}")
+
     if is_fid_format_check:
-        pg.set_progressor("step", "Validating facility identifiers...", 0, 7)
+        pg.set_progressor("step", "Checking facility identifier formatting...", 0, 7)
         # regexes correspond 1:1 with layer parameters
         regexes = (
             r"^\d+CA$",
@@ -52,15 +58,11 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         )
 
         for l, r in zip(layers, regexes):
-            # guard against None
             if not l.value:
-                log.warning(f"Layer omitted: {l.displayName}")
                 pg.increment()
                 continue
 
-            _log_layer_with_info(
-                l.valueAsText, "Checking facility identifier formatting..."
-            )
+            log.info(f"[{l.valueAsText}] Checking facility identifier formatting...")
 
             inc_fids = _find_incorrect_fids(l, re.compile(r))
 
@@ -70,24 +72,55 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
                 "Incorrectly formatted facility identifiers (object ID, facility identifier):",
             )
             if inc_fids:
-                sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
+                sy.add_note(l.valueAsText, attr.CSV_PROCESSING_MSG)
             sy.add_items(inc_fids, csv=True)
             sy.add_result(
                 l.valueAsText,
                 f"{len(inc_fids):n} incorrectly formatted facility identifiers.",
             )
 
-    if not wm_layer.value:
+        pg.set_progressor("default")
+
+    if is_fid_duplicate_check:
+        pg.set_progressor(
+            "step", "Checking for duplicate facility identifiers...", 0, 7
+        )
+
+        for l in layers:
+            if not l.value:
+                pg.increment()
+                continue
+
+            log.info(
+                f"[{l.valueAsText}] Checking for duplicate facility identifiers..."
+            )
+
+            duplicate_fids = _find_duplicate_fids(l)
+
+            pg.increment()
+            sy.add_result(
+                l.valueAsText,
+                "Duplicate facility identifiers grouped on each line (fid, object IDs):",
+            )
+            sy.add_items(duplicate_fids)
+            # len(i) - 1 because the fid itself is the first value in the list
+            num_duplicate = sum(len(i) - 1 if len(i) > 0 else 0 for i in duplicate_fids)
+            sy.add_result(
+                l.valueAsText,
+                f"{num_duplicate:n} duplicate facility identifiers.",
+            )
+
+        pg.set_progressor("default")
+
+    if (is_wm_file_check or is_wm_ds_check) and not wm_layer.value:
         log.warning(
             f"Layer omitted: {wm_layer.displayName}, skipping water main checks."
         )
         return
 
-    pg.set_progressor("default")
-
     if is_wm_file_check:
-        _log_layer_with_info(
-            wm_layer.valueAsText, "Verifying assiociated files for integrated mains..."
+        log.info(
+            f"[{wm_layer.valueAsText}] Verifying assiociated files for integrated mains..."
         )
 
         nonexistent_files = _find_nonexistent_assoc_files(wm_layer)
@@ -109,8 +142,8 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         )
 
     if is_wm_ds_check:
-        _log_layer_with_info(
-            wm_layer.valueAsText, "Checking data sources for integrated mains..."
+        log.info(
+            f"[{wm_layer.valueAsText}] Checking data sources for integrated mains..."
         )
 
         inc_datasources = _find_incorrect_datasources(wm_layer)
@@ -127,7 +160,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             f"{len(inc_datasources):n} missing or unknown data sources for integrated mains.",
         )
 
-    # TODO: deduplication
     # TODO: domain conformation
 
     sy.post()
@@ -144,7 +176,8 @@ def parameters() -> list[arcpy.Parameter]:
     """
     check_templates = (
         # make sure to increment LAYER_START if adding a check here
-        ("fid_check", "Check facility identifiers"),
+        ("fid_check", "Check facility identifier format"),
+        ("fid_duplicate_check", "Check for duplicate facility identifiers"),
         ("wm_file_check", "Check water main files"),
         ("wm_datasource_check", "Check water main data sources"),
     )
@@ -199,7 +232,7 @@ def _find_incorrect_fids(
         regex (re.Pattern[Any]): The regular expression to match against the facility identifiers in the layer.
 
     Returns:
-        list[str]: The list of incorrectly formatted facility identifiers.
+        list[tuple[str, str]]: The list of object IDs and incorrectly formatted facility identifiers.
 
     Raises:
         ExecuteError: An error ocurred in the tool execution.
@@ -217,6 +250,68 @@ def _find_incorrect_fids(
 
 
 @fallible
+def _find_duplicate_fids(
+    layer: arcpy.Parameter,
+) -> list[tuple[str, ...]]:
+    """
+    Returns all duplicate facility identifiers from the given layer.
+
+    Arguments:
+        layer (arcpy._mp.Layer): The layer to check.
+
+    Returns:
+        list[tuple[str]]: The list of object IDs of duplicates, grouped by duplicate value, which is at the zeroth index.
+
+    Raises:
+        ExecuteError: An error ocurred in the tool execution.
+    """
+    scratch_gdb = arcpy.env.scratchGDB  # type: ignore
+    timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
+    scratch_layer_path = f"{scratch_gdb}\\{layer.name}_dup_fids_{timestamp}"
+    layer_path = ly.get_path(layer.value)
+
+    arcpy.management.FindIdentical(  # type: ignore
+        layer_path,
+        scratch_layer_path,
+        "FACILITYID",
+        output_record_option="ONLY_DUPLICATES",
+    )
+
+    oid_group_pairs = [
+        (oid, group)
+        for oid, group in arcpy.da.SearchCursor(  # type: ignore
+            scratch_layer_path, ("IN_FID", "FEAT_SEQ")
+        )
+    ]
+    oid_str = ", ".join(str(oid) for oid, _ in oid_group_pairs)
+
+    if not oid_str:
+        return [()]
+
+    where_oid = f"OBJECTID IN ({oid_str})"
+    oid_to_fid = dict(
+        arcpy.da.SearchCursor(  # type: ignore
+            layer_path, ("OBJECTID", "FACILITYID"), where_clause=where_oid
+        )
+    )
+    # sort by duplicate group
+    oid_group_pairs.sort(key=lambda l: l[1])
+    # list of list of identical groups without fid key
+    oid_groups = [
+        tuple(i[0] for i in data)
+        for _, data in groupby(oid_group_pairs, lambda l: l[1])
+    ]
+    dup_fids = []
+
+    for oids in oid_groups:
+        items = [oid_to_fid[oids[0]]]
+        items.extend(str(oid) for oid in oids)
+        dup_fids.append(tuple(items))
+
+    return dup_fids
+
+
+@fallible
 def _find_nonexistent_assoc_files(
     wm_layer: arcpy._mp.Layer,  # type: ignore
 ) -> list[tuple[str, str]]:
@@ -228,7 +323,7 @@ def _find_nonexistent_assoc_files(
         wm_layer (arpcy._mp.Layer): The water main layer.
 
     Returns:
-        list[tuple[str, str]: A list of Object ID and comment field tuples corresponding to water mains from the layer.
+        list[tuple[str, str]: The list of object ID and comment field tuples.
 
     Raises:
         ExecuteError: An error ocurred in the tool execution.
