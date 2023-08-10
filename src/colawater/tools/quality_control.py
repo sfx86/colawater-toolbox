@@ -35,7 +35,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     is_wm_file_check = checks[1].value
     is_wm_ds_check = checks[2].value
 
-    _add_csv_msg = lambda s: sy.add_note(s, attr.CSV_PROCESSING_MSG)
     _log_layer_with_info = lambda l, s: log.info(f"[{l}] {s}")
 
     if is_fid_format_check:
@@ -70,7 +69,8 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
                 l.valueAsText,
                 "Incorrectly formatted facility identifiers (object ID, facility identifier):",
             )
-            _add_csv_msg(wm_layer.valueAsText)
+            if inc_fids:
+                sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
             sy.add_items(inc_fids, csv=True)
             sy.add_result(
                 l.valueAsText,
@@ -95,7 +95,8 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         sy.add_result(
             wm_layer.valueAsText, "Nonexistent associated files (object ID, comments):"
         )
-        _add_csv_msg(wm_layer.valueAsText)
+        if nonexistent_files:
+            sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
         sy.add_items(nonexistent_files, csv=True)
         sy.add_result(
             wm_layer.valueAsText,
@@ -118,7 +119,8 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             wm_layer.valueAsText,
             "Missing or unknown data sources (object ID, datasource):",
         )
-        _add_csv_msg(wm_layer.valueAsText)
+        if inc_datasources:
+            sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
         sy.add_items(inc_datasources, csv=True)
         sy.add_result(
             wm_layer.valueAsText,
