@@ -166,6 +166,7 @@ def post(dumped: bool = False) -> None:
     Adds a message with the summary's full text.
 
     Assembles all of the headers and miscellaneous messages in the order added.
+    Clears summary content after posting message.
     Optionally add an additional message indicating the summary was
     dumped due to an error.
 
@@ -176,3 +177,4 @@ def post(dumped: bool = False) -> None:
     if dumped:
         add_header(OUTPUT_DUMPED_MSG, "")
     arcpy.AddMessage(_summary.text)
+    clear()
