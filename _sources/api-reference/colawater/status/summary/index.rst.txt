@@ -111,6 +111,7 @@ Attributes
    Adds a message with the summary's full text.
 
    Assembles all of the headers and miscellaneous messages in the order added.
+   Clears summary content after posting message.
    Optionally add an additional message indicating the summary was
    dumped due to an error.
 
