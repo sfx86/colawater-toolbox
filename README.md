@@ -9,16 +9,13 @@
 
 ---
 
-- [Usage](#usage)
-- [Installation](#installation)
-- [Documentation](#documentation)
-- [Tools](#tools)
-    - [Append to ART](#append-to-art)
-    - [Calculate Facility Identifiers](#calculate-facility-identifiers)
-    - [Water Quality Control](#water-quality-control)
-- [Changes](#changes)
-- [Roadmap](#roadmap)
-- [Versioning](#versioning)
+* [Usage](#usage)
+* [Installation](#installation)
+* [Documentation](#documentation)
+* [Tools](#tools)
+* [Changes](#changes)
+* [Roadmap](#roadmap)
+* [Versioning](#versioning)
 
 ---
 
@@ -40,8 +37,8 @@ Also see the [ArcPy reference][arcpy-reference] for arcpy specific information.
 
 # Tools
 
-## Append to ART
-
+<details>
+<summary>Append to ART</summary>
 Appends new water mains to the Asset Reference Drawing Table using this
 field mapping:
 
@@ -53,9 +50,10 @@ field mapping:
 | FACILIITYID | ASSETFACILITYID    |
 | COMMENTS    | SCANNAME           |
 | cw2020_file | FILELOCATIONCW2020 |
+</details>
 
-## Calculate Facility Identifiers
-
+<details>
+<summary>Calculate Facility Identifiers</summary>
 Automatically calculate the facility identifier fields according to the below table:
 
 | Layer          | Facility ID | Facility ID Index |
@@ -68,13 +66,16 @@ Automatically calculate the facility identifier fields according to the below ta
 | Structures     | ✅          | ❌                |
 | System Valves  | ✅          | ❌                |
 | Water Mains    | ✅          | ✅                |
+</details>
 
-## Water Quality Control
-
+<details>
+<summary>Water Quality Control</summary>
 Available quality control checks:
-- Check if the associated file exists for all integrated water mains 
-- Check if the data source is set and not unknown for all integrated water mains 
-- Find incorrectly formatted facility identifiers for all layers
+
+* Check if the associated file exists for all integrated water mains 
+* Check if the data source is set and not unknown for all integrated water mains 
+* Find incorrectly formatted facility identifiers for all layers
+</details>
 
 # Changes
 
