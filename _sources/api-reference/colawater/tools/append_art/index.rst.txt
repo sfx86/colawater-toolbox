@@ -31,12 +31,14 @@ Functions
    Appends recent integrated and well-sourced mains from a given editor to the
    Asset Reference Table.
 
-   :raises ExecuteError:
+   :raises ExecuteError: An error occurred in the tool execution.
 
 
 .. py:function:: parameters() -> list[arcpy.Parameter]
 
-   Return the parameters for Append to ART.
+   Returns the parameters for Append to ART.
+
+   Parameters are of type GPString, GPDate, GPFeatureLayer, and GPTableView.
 
    :returns: The list of parameters.
    :rtype: list[arcpy.Parameter]

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="colawater.error" href="../error/index.html" /><link rel="prev" title="colawater.tools.quality_control" href="../tools/quality_control/index.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>colawater.attribute - colawater-toolbox 3.0.0 ArcGIS geoprocessing tools for Columbia Water</title>
+        <title>colawater.attribute - colawater-toolbox 3.1.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">colawater-toolbox 3.0.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
+      <a href="../../../index.html"><div class="brand">colawater-toolbox 3.1.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">colawater-toolbox 3.0.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
+  <span class="sidebar-brand-text">colawater-toolbox 3.1.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -218,8 +218,10 @@
 <span id="colawater-attribute"></span><h1><a class="reference internal" href="#module-colawater.attribute" title="colawater.attribute"><code class="xref py py-mod docutils literal notranslate"><span class="pre">colawater.attribute</span></code></a><a class="headerlink" href="#module-colawater.attribute" title="Permalink to this heading">#</a></h1>
 <p>Utilities for handling attribute values.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">attr</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">attr</span> <span class="o">=</span> <span class="n">process_attr</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="c1"># Returns &quot;&lt;Null&gt;&quot;.</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">colawater.attribute</span> <span class="k">as</span> <span class="nn">attr</span>
+
+<span class="n">foo</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span> <span class="c1"># Returns &quot;&lt;Null&gt;&quot;.</span>
 </pre></div>
 </div>
 <section id="module-contents">
@@ -258,11 +260,11 @@
 <span class="sig-prename descclassname"><span class="pre">colawater.attribute.</span></span><span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#colawater.attribute.process" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a human readable string representation of a nullable field value.</p>
 <p>Turns a <code class="docutils literal notranslate"><span class="pre">None</span></code> value into <code class="docutils literal notranslate"><span class="pre">&quot;&lt;Null&gt;&quot;</span></code> and optionally strips out whitespace,
-commas, and quotation marks.</p>
+commas, and quotation marks for ease of use as a CSV.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>attr</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The attribute value to be processed.</p></li>
+<li><p><strong>attr</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>]</em>) – The attribute value to be processed.</p></li>
 <li><p><strong>csv</strong> (<em>bool</em>) – Whether to apply CSV pre-processing.</p></li>
 </ul>
 </dd>

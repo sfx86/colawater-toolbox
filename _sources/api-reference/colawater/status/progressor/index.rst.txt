@@ -9,12 +9,13 @@
 
    .. rubric:: Examples
 
-   .. code-block: python
+   .. code-block:: python
 
        import colawater.status.progressor as pg
 
+       pg.set_progressor("step")
        pg.label("helpful message")
-       pg.increment(10) # Defaults to 1
+       pg.increment() # Defaults to 1, will raise TypeError if used on a default progressor
 
 
 
@@ -56,11 +57,9 @@ Functions
 
    Increments the progressor by a given value.
 
-   Raises an exception if used with a DEFAULT progressor.
-
    :param position: The amount to increment the progressor.
    :type position: int
 
-   :raises TypeError: this function was called with an active progressor of type DEFAULT.
+   :raises TypeError: The active progressor is not of type STEP.
 
 

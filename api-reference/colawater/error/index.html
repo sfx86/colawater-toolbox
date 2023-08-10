@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="colawater.layer" href="../layer/index.html" /><link rel="prev" title="colawater.attribute" href="../attribute/index.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>colawater.error - colawater-toolbox 3.0.0 ArcGIS geoprocessing tools for Columbia Water</title>
+        <title>colawater.error - colawater-toolbox 3.1.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">colawater-toolbox 3.0.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
+      <a href="../../../index.html"><div class="brand">colawater-toolbox 3.1.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">colawater-toolbox 3.0.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
+  <span class="sidebar-brand-text">colawater-toolbox 3.1.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -216,6 +216,15 @@
         <article role="main">
           <section id="module-colawater.error">
 <span id="colawater-error"></span><h1><a class="reference internal" href="#module-colawater.error" title="colawater.error"><code class="xref py py-mod docutils literal notranslate"><span class="pre">colawater.error</span></code></a><a class="headerlink" href="#module-colawater.error" title="Permalink to this heading">#</a></h1>
+<p>Utilities for handling errors from arcpy.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">colawater.errror</span> <span class="kn">import</span> <span class="n">fallible</span>
+
+<span class="nd">@fallible</span>
+<span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">something_that_raises_exceptions</span><span class="p">()</span>
+</pre></div>
+</div>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">#</a></h2>
 <section id="functions">
@@ -242,7 +251,7 @@
 <td><p>Error message text to display on <code class="docutils literal notranslate"><span class="pre">Exception</span></code> (not including <code class="docutils literal notranslate"><span class="pre">SystemError</span></code>).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#colawater.error.T" title="colawater.error.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Type variable for generic function return types.</p></td>
 </tr>
 </tbody>
 </table>
@@ -265,10 +274,6 @@
 </div>
 </details></div></blockquote>
 <p>Error message text to display on <code class="docutils literal notranslate"><span class="pre">SystemError</span></code></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The error message output almost always says ‘RuntimeError’ when a SystemError occurs.</p>
-</div>
 </dd></dl>
 
 <dl class="py data">
@@ -286,21 +291,24 @@
 <dl class="py data">
 <dt class="sig sig-object py" id="colawater.error.T">
 <span class="sig-prename descclassname"><span class="pre">colawater.error.</span></span><span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#colawater.error.T" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Type variable for generic function return types.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="colawater.error.fallible">
 <span class="sig-prename descclassname"><span class="pre">colawater.error.</span></span><span class="sig-name descname"><span class="pre">fallible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">Ellipsis</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">Ellipsis</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NoReturn</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#colawater.error.fallible" title="Permalink to this definition">#</a></dt>
 <dd><p>Wraps the decorated function in a try-catch block that handles
-<code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code> and <code class="docutils literal notranslate"><span class="pre">Exception</span></code>, dumping the tool summary
+<code class="docutils literal notranslate"><span class="pre">SystemError</span></code> and <code class="docutils literal notranslate"><span class="pre">Exception</span></code>, dumping the tool summary
 and printing a relevant error message if either exception is raised.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The default error message output in ArcGIS almost always says ‘RuntimeError’
+when a SystemError occurs.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>The return value of the wrapped function, or an exception is caught,</dt><dd><p>an <code class="docutils literal notranslate"><span class="pre">ExecuteError</span></code> is raised, and the function does not return.</p>
-</dd>
-</dl>
-</p>
+<dd class="field-odd"><p>The return value of the wrapped function.
+Or, if an exception is caught, an <code class="docutils literal notranslate"><span class="pre">ExecuteError</span></code> is raised, and the function does not return.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Union[T, NoReturn]</p>

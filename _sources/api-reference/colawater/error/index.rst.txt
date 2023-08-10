@@ -3,6 +3,21 @@
 
 .. py:module:: colawater.error
 
+.. autoapi-nested-parse::
+
+   Utilities for handling errors from arcpy.
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       from colawater.errror import fallible
+
+       @fallible
+       def foo(bar: str) -> None:
+           something_that_raises_exceptions()
+
+
 
 Module Contents
 ---------------
@@ -54,8 +69,6 @@ Attributes
 
    Error message text to display on ``SystemError``
 
-   .. note:: The error message output almost always says 'RuntimeError' when a SystemError occurs.
-
 .. py:data:: UNEXPECTED_ERROR_MSG
    :type: str
    :value: Multiline-String
@@ -77,18 +90,21 @@ Attributes
 
 .. py:data:: T
 
-   
+   Type variable for generic function return types.
 
 .. py:function:: fallible(f: Callable[Ellipsis, T]) -> Callable[Ellipsis, Union[T, NoReturn]]
 
    Wraps the decorated function in a try-catch block that handles
-   ``RuntimeError`` and ``Exception``, dumping the tool summary
+   ``SystemError`` and ``Exception``, dumping the tool summary
    and printing a relevant error message if either exception is raised.
 
-   :returns:
+   .. note::
 
-             The return value of the wrapped function, or an exception is caught,
-                                 an ``ExecuteError`` is raised, and the function does not return.
+      The default error message output in ArcGIS almost always says 'RuntimeError'
+      when a SystemError occurs.
+
+   :returns: The return value of the wrapped function.
+             Or, if an exception is caught, an ``ExecuteError`` is raised, and the function does not return.
    :rtype: Union[T, NoReturn]
 
    :raises ExecuteError: An exception was caught, so this was raised in its place.

@@ -11,15 +11,19 @@
 
    .. code-block:: python
 
+       import colawater.layer as ly
+
        layer = layer_from_somewhere()
-       path = get_layer_path(layer) # Returns "path/to/layer".
-       workspace = get_workspace_path(layer) # Returns "path/to/workspace.
-                                             # This is the same as the value in ``path``,
-                                             # but without the layer name.
+       path = ly.get_path(layer) # Returns "path/to/layer".
+       workspace = ly.get_workspace(layer) # Returns "path/to/workspace.
+                                           # This is the same as the value in ``path``,
+                                           # but without the layer name.
 
    Note:
        Layer names include the groups of which they are a part.
-       E.g., layer "foo" in group "bar" has a layer name of "bar\foo"
+       Nested groups appear in parent-child order.
+       E.g., layer "foo" in subgroup "bar" in group "baz" has a
+       layer name of "baz\bar\foo"
 
 
 

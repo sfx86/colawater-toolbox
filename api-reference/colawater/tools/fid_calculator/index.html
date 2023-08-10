@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="colawater.tools.quality_control" href="../quality_control/index.html" /><link rel="prev" title="colawater.tools.append_art" href="../append_art/index.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>colawater.tools.fid_calculator - colawater-toolbox 3.0.0 ArcGIS geoprocessing tools for Columbia Water</title>
+        <title>colawater.tools.fid_calculator - colawater-toolbox 3.1.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">colawater-toolbox 3.0.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
+      <a href="../../../../index.html"><div class="brand">colawater-toolbox 3.1.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
   
-  <span class="sidebar-brand-text">colawater-toolbox 3.0.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
+  <span class="sidebar-brand-text">colawater-toolbox 3.1.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -229,10 +229,10 @@ tool and other helper functions.</p>
 <td><p>Entry point for Calculate Facility Identifiers.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#colawater.tools.fid_calculator.parameters" title="colawater.tools.fid_calculator.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a>(→ list[arcpy.Parameter])</p></td>
-<td><p>Return the parameters for Calculate Facility Identifiers.</p></td>
+<td><p>Returns the parameters for Calculate Facility Identifiers.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#colawater.tools.fid_calculator.update_parameters" title="colawater.tools.fid_calculator.update_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_parameters</span></code></a>(→ None)</p></td>
-<td><p>Enables layer start values if their associated layer is set and</p></td>
+<td><p>Enables layer start values if their associated layer is set and ensures start values are greater than zero.</p></td>
 </tr>
 </tbody>
 </table>
@@ -253,7 +253,8 @@ placeholder initials starting from a given start value.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="colawater.tools.fid_calculator.parameters">
 <span class="sig-prename descclassname"><span class="pre">colawater.tools.fid_calculator.</span></span><span class="sig-name descname"><span class="pre">parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">arcpy.Parameter</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#colawater.tools.fid_calculator.parameters" title="Permalink to this definition">#</a></dt>
-<dd><p>Return the parameters for Calculate Facility Identifiers.</p>
+<dd><p>Returns the parameters for Calculate Facility Identifiers.</p>
+<p>Parameters are of type GPString, GPLong, and 7 pairs of GPFeatureLayer and GPLong.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The list of parameters.</p>
@@ -267,8 +268,7 @@ placeholder initials starting from a given start value.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="colawater.tools.fid_calculator.update_parameters">
 <span class="sig-prename descclassname"><span class="pre">colawater.tools.fid_calculator.</span></span><span class="sig-name descname"><span class="pre">update_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">arcpy.Parameter</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#colawater.tools.fid_calculator.update_parameters" title="Permalink to this definition">#</a></dt>
-<dd><p>Enables layer start values if their associated layer is set and
-ensures start values are greater than zero.</p>
+<dd><p>Enables layer start values if their associated layer is set and ensures start values are greater than zero.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parameters</strong> (<em>list</em><em>[</em><em>arcpy.Parameter</em><em>]</em>) – The list of parameters.</p>

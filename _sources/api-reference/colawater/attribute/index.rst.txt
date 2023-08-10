@@ -11,8 +11,10 @@
 
    .. code-block:: python
 
-       attr = None
-       attr = process_attr(attr) # Returns "<Null>".
+       import colawater.attribute as attr
+
+       foo = None
+       foo = attr.process(foo) # Returns "<Null>".
 
 
 
@@ -48,10 +50,10 @@ Attributes
    Returns a human readable string representation of a nullable field value.
 
    Turns a ``None`` value into ``"<Null>"`` and optionally strips out whitespace,
-   commas, and quotation marks.
+   commas, and quotation marks for ease of use as a CSV.
 
    :param attr: The attribute value to be processed.
-   :type attr: Optional[str]
+   :type attr: Optional[Union[str, int]]
    :param csv: Whether to apply CSV pre-processing.
    :type csv: bool
 

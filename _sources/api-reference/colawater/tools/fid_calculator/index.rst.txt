@@ -37,7 +37,9 @@ Functions
 
 .. py:function:: parameters() -> list[arcpy.Parameter]
 
-   Return the parameters for Calculate Facility Identifiers.
+   Returns the parameters for Calculate Facility Identifiers.
+
+   Parameters are of type GPString, GPLong, and 7 pairs of GPFeatureLayer and GPLong.
 
    :returns: The list of parameters.
    :rtype: list[arcpy.Parameter]
@@ -45,8 +47,7 @@ Functions
 
 .. py:function:: update_parameters(parameters: list[arcpy.Parameter]) -> None
 
-   Enables layer start values if their associated layer is set and
-   ensures start values are greater than zero.
+   Enables layer start values if their associated layer is set and ensures start values are greater than zero.
 
    :param parameters: The list of parameters.
    :type parameters: list[arcpy.Parameter]

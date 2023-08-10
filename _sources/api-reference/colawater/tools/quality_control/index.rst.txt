@@ -35,6 +35,8 @@ Functions
 
    Returns the parameters for Water Quality Control.
 
+   Parameters are 3 of type GPBoolean and 7 of type GPFeatureLayer.
+
    :returns: The list of parameters.
    :rtype: list[arcpy.Parameter]
 

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="colawater.scan" href="../scan/index.html" /><link rel="prev" title="colawater.error" href="../error/index.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>colawater.layer - colawater-toolbox 3.0.0 ArcGIS geoprocessing tools for Columbia Water</title>
+        <title>colawater.layer - colawater-toolbox 3.1.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">colawater-toolbox 3.0.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
+      <a href="../../../index.html"><div class="brand">colawater-toolbox 3.1.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">colawater-toolbox 3.0.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
+  <span class="sidebar-brand-text">colawater-toolbox 3.1.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -218,16 +218,20 @@
 <span id="colawater-layer"></span><h1><a class="reference internal" href="#module-colawater.layer" title="colawater.layer"><code class="xref py py-mod docutils literal notranslate"><span class="pre">colawater.layer</span></code></a><a class="headerlink" href="#module-colawater.layer" title="Permalink to this heading">#</a></h1>
 <p>Utilities for working with layers.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">layer</span> <span class="o">=</span> <span class="n">layer_from_somewhere</span><span class="p">()</span>
-<span class="n">path</span> <span class="o">=</span> <span class="n">get_layer_path</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span> <span class="c1"># Returns &quot;path/to/layer&quot;.</span>
-<span class="n">workspace</span> <span class="o">=</span> <span class="n">get_workspace_path</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span> <span class="c1"># Returns &quot;path/to/workspace.</span>
-                                      <span class="c1"># This is the same as the value in ``path``,</span>
-                                      <span class="c1"># but without the layer name.</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">colawater.layer</span> <span class="k">as</span> <span class="nn">ly</span>
+
+<span class="n">layer</span> <span class="o">=</span> <span class="n">layer_from_somewhere</span><span class="p">()</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">ly</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span> <span class="c1"># Returns &quot;path/to/layer&quot;.</span>
+<span class="n">workspace</span> <span class="o">=</span> <span class="n">ly</span><span class="o">.</span><span class="n">get_workspace</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span> <span class="c1"># Returns &quot;path/to/workspace.</span>
+                                    <span class="c1"># This is the same as the value in ``path``,</span>
+                                    <span class="c1"># but without the layer name.</span>
 </pre></div>
 </div>
 <dl class="simple">
 <dt>Note:</dt><dd><p>Layer names include the groups of which they are a part.
-E.g., layer “foo” in group “bar” has a layer name of “barfoo”</p>
+Nested groups appear in parent-child order.
+E.g., layer “foo” in subgroup “bar” in group “baz” has a
+layer name of “bazbarfoo”</p>
 </dd>
 </dl>
 <section id="module-contents">
