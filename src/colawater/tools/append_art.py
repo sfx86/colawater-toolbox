@@ -55,7 +55,8 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         wm_layer.valueAsText,
         "Water Mains appended to ART (facility identifier, install date, data source, comments)",
     )
-    sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
+    if mains_appended:
+        sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
     sy.add_items(mains_appended, csv=True)
     sy.add_result("TOOL", f"{len(mains_appended):n} mains appended to ART.")
     sy.post()
