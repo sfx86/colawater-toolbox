@@ -34,16 +34,13 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     on_after_date = parameters[1].valueAsText
     wm_layer = parameters[2]
     art_table = parameters[3]
-    where_water = " ".join(
-        (
-            "INTEGRATIONSTATUS = 'Y'",
-            f"AND LASTEDITOR = '{last_editor}'",
-            f"AND LASTUPDATE >= timestamp '{on_after_date}'",
-            "AND LIFECYCLESTATUS = 'Active'",
-            "AND OWNEDBY = 1",
-            "AND (DATASOURCE = 'SURVGPS' OR DATASOURCE = 'ASB')",
-        )
-    )
+    where_water = f"""INTEGRATIONSTATUS = 'Y'
+AND LASTEDITOR = '{last_editor}'
+AND LASTUPDATE >= '{on_after_date}'
+AND LIFECYCLESTATUS = 'Active'
+AND OWNEDBY = 1
+AND (DATASOURCE = 'SURVGPS' OR DATASOURCE = 'ASB')
+"""
 
     log.info(
         f"Appending mains from [{wm_layer.valueAsText}] to [{art_table.valueAsText}]..."
