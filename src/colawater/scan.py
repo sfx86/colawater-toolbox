@@ -50,9 +50,13 @@ def exists(filename: str) -> bool:
         (
             # valid scans only ever have these extensions
             # and appear in this order of frequency
-            filename.endswith(".tif")
-            or filename.endswith(".pdf")
-            or filename.endswith(".dwg")
+            any(
+                (
+                    filename.endswith(".tif"),
+                    filename.endswith(".pdf"),
+                    filename.endswith(".dwg"),
+                )
+            )
         )
         and (CITY_DIR / filename).exists()
     )
