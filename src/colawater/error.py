@@ -48,11 +48,11 @@ Type variable for generic function return types.
 def fallible(f: Callable[..., T]) -> Callable[..., Union[T, NoReturn]]:
     """
     Wraps the decorated function in a try-catch block that handles
-    ``SystemError`` and ``Exception``, dumping the tool summary
+    ``SystemError``, ``RuntimeError``, and ``Exception``, dumping the tool summary
     and printing a relevant error message if either exception is raised.
 
     Note:
-        The default error message output in ArcGIS almost always says 'RuntimeError'
+        The default error message output in ArcGIS often says 'RuntimeError'
         when a SystemError occurs.
 
     Returns:
@@ -67,14 +67,12 @@ def fallible(f: Callable[..., T]) -> Callable[..., Union[T, NoReturn]]:
     def wrapper(*args: Any, **kwargs: Any) -> Union[T, NoReturn]:
         def post_log_exit(err: BaseException, msg: str) -> NoReturn:
             sy.post(dumped=True)
-            log.error(
-                f"Error: {type(err).__name__} [{getattr(err, 'message', repr(err))}]\n{msg}"
-            )
+            log.error(f"Error: {repr(err)}\n{msg}")
             raise arcpy.ExecuteError
 
         try:
             res: T = f(*args, **kwargs)
-        except SystemError as err:
+        except (SystemError, RuntimeError) as err:
             post_log_exit(err, SYSTEM_ERROR_MSG)
         except Exception as err:
             post_log_exit(err, UNEXPECTED_ERROR_MSG)
