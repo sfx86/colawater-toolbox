@@ -9,7 +9,7 @@ Examples:
         foo = None
         foo = attr.process(foo) # Returns "<Null>".
 """
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 CSV_PROCESSING_MSG: str = "Commas, leading and trailing whitespace, and quotation marks have been removed so this output can be consumed properly as a CSV."
 """
@@ -17,7 +17,7 @@ Message text to display when the following output has been modified for CSV use.
 """
 
 
-def process(attr: Optional[Union[str, int]], csv: bool = False) -> str:
+def process(attr: Optional[Any], csv: bool = False) -> str:
     """
     Returns a human readable string representation of a nullable field value.
 
@@ -36,8 +36,8 @@ def process(attr: Optional[Union[str, int]], csv: bool = False) -> str:
     if attr is None:
         return "<Null>"
 
-    attr = str(attr)  # convert other possible types to str
+    attr_str = str(attr)
     if csv:
-        return attr.strip().replace(",", "").replace('"', "")
+        return attr_str.strip().replace(",", "").replace('"', "")
 
-    return attr
+    return attr_str
