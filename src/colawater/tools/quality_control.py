@@ -4,19 +4,14 @@ tool and other helper functions.
 """
 
 import re
-from datetime import datetime
-from itertools import groupby
-from typing import Any
 
 import arcpy
 
 import colawater.attribute as attr
-import colawater.layer as ly
 import colawater.status.logging as log
 import colawater.status.progressor as pg
 import colawater.status.summary as sy
-from colawater import scan
-from colawater.error import fallible
+from colawater.tools.checks import fids, mains
 
 _LAYER_START = 4
 
@@ -30,15 +25,13 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     """
     pg.set_progressor("default", "Starting quality control checks...")
 
-    checks = parameters[:_LAYER_START]
+    is_checks = parameters[:_LAYER_START]
     layers = parameters[_LAYER_START:]
     wm_layer = layers[-1]
-    is_fid_format_check = checks[0].value
-    is_fid_duplicate_check = checks[1].value
-    is_wm_file_check = checks[2].value
-    is_wm_ds_check = checks[3].value
-
-    _log_layer_with_info = lambda l, s: log.info(f"[{l}] {s}")
+    is_fid_format_check = is_checks[0].value
+    is_fid_duplicate_check = is_checks[1].value
+    is_wm_file_check = is_checks[2].value
+    is_wm_ds_check = is_checks[3].value
 
     for l in (l for l in layers if not l.value):
         log.warning(f"Layer omitted: {l.displayName}")
@@ -64,7 +57,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
             log.info(f"[{l.valueAsText}] Checking facility identifier formatting...")
 
-            inc_fids = _find_incorrect_fids(l, re.compile(r))
+            inc_fids = fids.find_incorrect_fids(l, re.compile(r))
 
             pg.increment()
             sy.add_result(
@@ -95,7 +88,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
                 f"[{l.valueAsText}] Checking for duplicate facility identifiers..."
             )
 
-            duplicate_fids = _find_duplicate_fids(l)
+            duplicate_fids = fids.find_duplicate_fids(l)
 
             pg.increment()
             sy.add_result(
@@ -123,7 +116,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             f"[{wm_layer.valueAsText}] Verifying assiociated files for integrated mains..."
         )
 
-        nonexistent_files = _find_nonexistent_assoc_files(wm_layer)
+        nonexistent_files = mains.find_nonexistent_assoc_files(wm_layer)
 
         sy.add_result(
             wm_layer.valueAsText, "Nonexistent associated files (object ID, comments):"
@@ -146,7 +139,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             f"[{wm_layer.valueAsText}] Checking data sources for integrated mains..."
         )
 
-        inc_datasources = _find_incorrect_datasources(wm_layer)
+        inc_datasources = mains.find_incorrect_datasources(wm_layer)
 
         sy.add_result(
             wm_layer.valueAsText,
@@ -216,157 +209,3 @@ def parameters() -> list[arcpy.Parameter]:
     ]
 
     return [*checks, *lyrs]
-
-
-@fallible
-def _find_incorrect_fids(
-    layer: arcpy._mp.Layer,  # type: ignore
-    regex: re.Pattern[Any],
-) -> list[tuple[str, str]]:
-    """
-    Returns all incorrectly formatted facility identifiers from the given layer
-    matching the given regular expression.
-
-    Arguments:
-        layer (arcpy._mp.Layer): The layer to check.
-        regex (re.Pattern[Any]): The regular expression to match against the facility identifiers in the layer.
-
-    Returns:
-        list[tuple[str, str]]: The list of object IDs and incorrectly formatted facility identifiers.
-
-    Raises:
-        ExecuteError: An error ocurred in the tool execution.
-    """
-    with arcpy.da.SearchCursor(  # type: ignore
-        ly.get_path(layer), ("OBJECTID", "FACILITYID")
-    ) as cursor:
-        inc_fids = [
-            (oid, fid_proc)
-            for oid, fid in cursor
-            if not regex.fullmatch(fid_proc := attr.process(fid))
-        ]
-
-    return inc_fids
-
-
-@fallible
-def _find_duplicate_fids(
-    layer: arcpy.Parameter,
-) -> list[tuple[str, ...]]:
-    """
-    Returns all duplicate facility identifiers from the given layer.
-
-    Arguments:
-        layer (arcpy._mp.Layer): The layer to check.
-
-    Returns:
-        list[tuple[str]]: The list of object IDs of duplicates, grouped by duplicate value, which is at the zeroth index.
-
-    Raises:
-        ExecuteError: An error ocurred in the tool execution.
-    """
-    scratch_gdb = arcpy.env.scratchGDB  # type: ignore
-    timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
-    scratch_layer_path = f"{scratch_gdb}\\{layer.name}_dup_fids_{timestamp}"
-    layer_path = ly.get_path(layer.value)
-
-    arcpy.management.FindIdentical(  # type: ignore
-        layer_path,
-        scratch_layer_path,
-        "FACILITYID",
-        output_record_option="ONLY_DUPLICATES",
-    )
-
-    oid_group_pairs = [
-        (oid, group)
-        for oid, group in arcpy.da.SearchCursor(  # type: ignore
-            scratch_layer_path, ("IN_FID", "FEAT_SEQ")
-        )
-    ]
-    oid_str = ", ".join(str(oid) for oid, _ in oid_group_pairs)
-
-    if not oid_str:
-        return [()]
-
-    where_oid = f"OBJECTID IN ({oid_str})"
-    oid_to_fid = dict(
-        arcpy.da.SearchCursor(  # type: ignore
-            layer_path, ("OBJECTID", "FACILITYID"), where_clause=where_oid
-        )
-    )
-    # sort by duplicate group
-    oid_group_pairs.sort(key=lambda l: l[1])
-    # list of list of identical groups without fid key
-    oid_groups = [
-        tuple(i[0] for i in data)
-        for _, data in groupby(oid_group_pairs, lambda l: l[1])
-    ]
-    dup_fids = []
-
-    for oids in oid_groups:
-        items = [oid_to_fid[oids[0]]]
-        items.extend(str(oid) for oid in oids)
-        dup_fids.append(tuple(items))
-
-    return dup_fids
-
-
-@fallible
-def _find_nonexistent_assoc_files(
-    wm_layer: arcpy._mp.Layer,  # type: ignore
-) -> list[tuple[str, str]]:
-    """
-    Returns a list of object ID and nonexistent associated file pairs for the integrated mains
-    in the given water main layer.
-
-    Arguments:
-        wm_layer (arpcy._mp.Layer): The water main layer.
-
-    Returns:
-        list[tuple[str, str]: The list of object ID and comment field tuples.
-
-    Raises:
-        ExecuteError: An error ocurred in the tool execution.
-    """
-    with arcpy.da.SearchCursor(  # type: ignore
-        ly.get_path(wm_layer.value),
-        ("OBJECTID", "COMMENTS"),
-        "INTEGRATIONSTATUS = 'Y'",
-    ) as cursor:
-        nonexistent_files = [
-            (oid, attr.process(comments))
-            for oid, comments in cursor
-            if scan.exists(comments)
-        ]
-
-    return nonexistent_files
-
-
-@fallible
-def _find_incorrect_datasources(
-    wm_layer: arcpy._mp.Layer,  # type: ignore
-) -> list[tuple[str, str]]:
-    """
-    Returns a list of object ID and incorrect data source pairs for the integrated mains
-    in the given water main layer.
-
-    Arguments:
-        wm_layer (arpcy._mp.Layer): The water main layer.
-
-    Returns:
-        list[tuple[str, str]]: A list of Object ID and data source field tuples corresponding
-                               to water mains from the layer.
-
-    Raises:
-        ExecuteError: An error ocurred in the tool execution.
-    """
-    with arcpy.da.SearchCursor(  # type: ignore
-        ly.get_path(wm_layer.value),
-        ("OBJECTID", "DATASOURCE"),
-        "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)",
-    ) as cursor:
-        inc_datasources = [
-            (oid, attr.process(datasource)) for oid, datasource in cursor
-        ]
-
-    return inc_datasources
