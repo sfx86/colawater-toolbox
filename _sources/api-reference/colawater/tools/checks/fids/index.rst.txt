@@ -3,6 +3,11 @@
 
 .. py:module:: colawater.tools.checks.fids
 
+.. autoapi-nested-parse::
+
+   Quality control checks relating to facility identifiers.
+
+
 
 Module Contents
 ---------------

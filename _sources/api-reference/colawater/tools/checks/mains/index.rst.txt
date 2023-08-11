@@ -3,6 +3,11 @@
 
 .. py:module:: colawater.tools.checks.mains
 
+.. autoapi-nested-parse::
+
+   Quality control checks relating to water mains.
+
+
 
 Module Contents
 ---------------
