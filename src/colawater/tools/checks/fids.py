@@ -63,8 +63,6 @@ def find_duplicate_fids(
     layer_path = ly.get_path(layer.value)
     # turn very unhelpfully structured result of FindIdentical into
     # oids that were identified as duplicates
-    # note: arcgis uses "IN_FID" to stand for "input to find identical",
-    # which is an unfortunate naming convention collision
     oids: tuple[int] = tuple(
         oid[0]
         for oid in arcpy.da.SearchCursor(  # type: ignore
