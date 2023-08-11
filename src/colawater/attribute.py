@@ -9,7 +9,7 @@ Examples:
         foo = None
         foo = attr.process(foo) # Returns "<Null>".
 """
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 CSV_PROCESSING_MSG: str = "Commas, leading and trailing whitespace, and quotation marks have been removed so this output can be consumed properly as a CSV."
 """
