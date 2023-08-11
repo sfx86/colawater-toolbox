@@ -69,14 +69,14 @@ Attributes
    :type content: str
 
 
-.. py:function:: add_items(contents: Iterable[Iterable[Optional[str]]], csv: bool = False) -> None
+.. py:function:: add_items(contents: collections.abc.Sequence[collections.abc.Sequence[Optional[Any]]], csv: bool = False) -> None
 
    Adds items from an interable of iterable to the summary's content.
 
    Optionally apply ``attribute.process()`` to each item.
 
    :param content: The contents to be added.
-   :type content: Iterable[Union[str, Iterable[str]]]
+   :type content: Iterable[Iterable[Any]]
    :param csv: Whether to apply CSV pre-processing.
    :type csv: bool
 

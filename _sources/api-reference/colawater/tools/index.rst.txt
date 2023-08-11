@@ -4,6 +4,15 @@
 .. py:module:: colawater.tools
 
 
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   checks/index.rst
+
+
 Submodules
 ----------
 .. toctree::

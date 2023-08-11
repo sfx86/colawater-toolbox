@@ -1,0 +1,51 @@
+:py:mod:`colawater.tools.checks.fids`
+=====================================
+
+.. py:module:: colawater.tools.checks.fids
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.tools.checks.fids.find_incorrect_fids
+   colawater.tools.checks.fids.find_duplicate_fids
+
+
+
+.. py:function:: find_incorrect_fids(layer: arcpy._mp.Layer, regex: re.Pattern[Any]) -> list[tuple[str, str]]
+
+   Returns all incorrectly formatted facility identifiers from the given layer
+   matching the given regular expression.
+
+   :param layer: The layer to check.
+   :type layer: arcpy._mp.Layer
+   :param regex: The regular expression to match against the facility identifiers in the layer.
+   :type regex: re.Pattern[Any]
+
+   :returns: The list of object IDs and incorrectly formatted facility identifiers.
+   :rtype: list[tuple[str, str]]
+
+   :raises ExecuteError: An error ocurred in the tool execution.
+
+
+.. py:function:: find_duplicate_fids(layer: arcpy.Parameter) -> list[tuple[str, Ellipsis]]
+
+   Returns all duplicate facility identifiers from the given layer.
+
+   :param layer: The layer parameter to check.
+   :type layer: arcpy.Parameter
+
+   :returns: The list of object IDs of duplicates, grouped by duplicate value, which is at the zeroth index.
+   :rtype: list[tuple[str, ...]]
+
+   :raises ExecuteError: An error ocurred in the tool execution.
+
+   .. note:: Side effect: Writes result layer into scratch geodatabase.
+
+

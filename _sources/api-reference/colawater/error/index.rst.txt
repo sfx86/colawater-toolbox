@@ -95,12 +95,12 @@ Attributes
 .. py:function:: fallible(f: Callable[Ellipsis, T]) -> Callable[Ellipsis, Union[T, NoReturn]]
 
    Wraps the decorated function in a try-catch block that handles
-   ``SystemError`` and ``Exception``, dumping the tool summary
+   ``SystemError``, ``RuntimeError``, and ``Exception``, dumping the tool summary
    and printing a relevant error message if either exception is raised.
 
    .. note::
 
-      The default error message output in ArcGIS almost always says 'RuntimeError'
+      The default error message output in ArcGIS often says 'RuntimeError'
       when a SystemError occurs.
 
    :returns: The return value of the wrapped function.
