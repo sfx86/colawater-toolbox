@@ -74,7 +74,8 @@ Available quality control checks:
 
 * Check if the associated file exists for all integrated water mains 
 * Check if the data source is set and not unknown for all integrated water mains 
-* Find incorrectly formatted facility identifiers for all layers
+* Find duplicate facility identifiers
+* Find incorrectly formatted facility identifiers 
 </details>
 
 # Changes
