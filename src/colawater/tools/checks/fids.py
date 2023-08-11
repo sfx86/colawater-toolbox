@@ -1,3 +1,7 @@
+"""
+Quality control checks relating to facility identifiers.
+"""
+
 import re
 from collections.abc import Generator
 from datetime import datetime
