@@ -13,7 +13,7 @@ Examples:
 """
 
 from enum import Enum, unique
-from typing import Iterable, Optional
+from typing import Any, Iterable, Optional
 
 import arcpy
 
@@ -118,14 +118,14 @@ def add_item(content: str) -> None:
     _summary.append(content, _ContentType.ITEM)
 
 
-def add_items(contents: Iterable[Iterable[Optional[str]]], csv: bool = False) -> None:
+def add_items(contents: Iterable[Iterable[Optional[Any]]], csv: bool = False) -> None:
     """
     Adds items from an interable of iterable to the summary's content.
 
     Optionally apply ``attribute.process()`` to each item.
 
     Arguments:
-        content (Iterable[Union[str, Iterable[str]]]): The contents to be added.
+        content (Iterable[Iterable[Any]]): The contents to be added.
         csv (bool): Whether to apply CSV pre-processing.
     """
     if not contents:
