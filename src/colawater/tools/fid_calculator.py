@@ -195,7 +195,7 @@ def _calc_fids(
             ) as cursor:
                 for _ in cursor:
                     # leave FACILITYIDINDEX alone; logic is otherwise identicial
-                    cursor.updateRow((f"{prefix}{incr}{suffix}"))
+                    cursor.updateRow((f"{prefix}{incr}{suffix}",))
                     incr += interval
 
     return f"{prefix}{incr}{suffix}"
