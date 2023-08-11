@@ -11,7 +11,7 @@ from colawater.error import fallible
 @fallible
 def find_nonexistent_assoc_files(
     wm_layer: arcpy._mp.Layer,  # type: ignore
-) -> list[tuple[str, str]]:
+) -> list[tuple[str, ...]]:
     """
     Returns a list of object ID and nonexistent associated file pairs for the integrated mains
     in the given water main layer.
@@ -40,7 +40,7 @@ def find_nonexistent_assoc_files(
 @fallible
 def find_incorrect_datasources(
     wm_layer: arcpy._mp.Layer,  # type: ignore
-) -> list[tuple[str, str]]:
+) -> list[tuple[str, ...]]:
     """
     Returns a list of object ID and incorrect data source pairs for the integrated mains
     in the given water main layer.
