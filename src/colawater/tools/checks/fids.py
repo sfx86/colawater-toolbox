@@ -1,6 +1,6 @@
 import re
+from collections.abc import Generator
 from datetime import datetime
-from itertools import groupby
 from typing import Any
 
 import arcpy
@@ -62,19 +62,21 @@ def find_duplicate_fids(
     scratch_layer_path = f"{scratch_gdb}\\{layer.name}_dup_fids_{timestamp}"
     layer_path = ly.get_path(layer.value)
     # turn very unhelpfully structured result of FindIdentical into
-    # list of oids that were identified as duplicates
-    oids: list[int] = [
+    # oids that were identified as duplicates
+    # note: arcgis uses "IN_FID" to stand for "input to find identical",
+    # which is an unfortunate naming convention collision
+    oids: Generator[int, None, None] = (
         oid
-        for oid, _ in arcpy.da.SearchCursor(  # type: ignore
+        for oid in arcpy.da.SearchCursor(  # type: ignore
             arcpy.management.FindIdentical(  # type: ignore
                 layer_path,
                 scratch_layer_path,
-                "FACILITYID",
+                ("FACILITYID"),
                 output_record_option="ONLY_DUPLICATES",
             ).getOutput(0),
-            ("IN_FID", "FEAT_SEQ"),
+            ("IN_FID"),
         )
-    ]
+    )
     # build comma separated string of oids for SQL query
     if not (oid_str := ", ".join(map(str, oids))):
         return [()]
@@ -87,14 +89,6 @@ def find_duplicate_fids(
         )
     )
     # sorted fid group pairs
-    fid_group_pairs = sorted(
-        [tuple([oid_to_fid[oid], oid]) for oid in oids],
-        key=lambda l: l[0],  # type: ignore [arg-type, return-value]
-    )
-    # list of list of identical groups with fid key as zeroth index
-    duplicates = [
-        tuple([str(group), *(str(i[1]) for i in data)])
-        for group, data in groupby(fid_group_pairs, lambda l: l[0])
-    ]
+    duplicates = [tuple((oid_to_fid[oid], str(oid))) for oid in oids]
 
     return duplicates
