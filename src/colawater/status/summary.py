@@ -13,6 +13,7 @@ Examples:
 """
 
 from enum import Enum, unique
+from functools import partial
 from typing import Any, Iterable, Optional
 
 import arcpy
@@ -131,8 +132,9 @@ def add_items(contents: Iterable[Iterable[Optional[Any]]], csv: bool = False) ->
     if not contents:
         return
 
+    process = partial(attr.process, csv=csv)
     for i in contents:
-        add_item(", ".join(attr.process(j, csv=csv) for j in i))
+        add_item(", ".join(map(process, i)))
 
 
 def add_note(subject: str, content: str) -> None:
