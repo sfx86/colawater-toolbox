@@ -1,3 +1,5 @@
+from functools import partial
+
 import arcpy
 
 import colawater.attribute as attr
@@ -23,14 +25,15 @@ def find_nonexistent_assoc_files(
     Raises:
         ExecuteError: An error ocurred in the tool execution.
     """
+    process = partial(attr.process, csv=True)
     return [
-        (str(oid), attr.process(comments))
-        for oid, comments in arcpy.da.SearchCursor(  # type: ignore
+        tuple(map(process, i))
+        for i in arcpy.da.SearchCursor(  # type: ignore
             ly.get_path(wm_layer.value),
             ("OBJECTID", "COMMENTS"),
             "INTEGRATIONSTATUS = 'Y'",
         )
-        if not scan.exists(comments)
+        if not scan.exists(i[1])
     ]
 
 
@@ -52,9 +55,10 @@ def find_incorrect_datasources(
     Raises:
         ExecuteError: An error ocurred in the tool execution.
     """
+    process = partial(attr.process, csv=True)
     return [
-        (str(oid), attr.process(datasource))
-        for oid, datasource in arcpy.da.SearchCursor(  # type: ignore
+        tuple(map(process, i))
+        for i in arcpy.da.SearchCursor(  # type: ignore
             ly.get_path(wm_layer.value),
             ("OBJECTID", "DATASOURCE"),
             "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)",
