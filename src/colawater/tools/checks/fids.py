@@ -89,7 +89,7 @@ def find_duplicate_fids(
     # sorted fid group pairs
     fid_group_pairs = sorted(
         [tuple([oid_to_fid[oid], oid]) for oid in oids],
-        key=lambda l: l[0],
+        key=lambda l: l[0],  # type: ignore [arg-type, return-value]
     )
     # list of list of identical groups with fid key as zeroth index
     duplicates = [
