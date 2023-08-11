@@ -128,6 +128,9 @@ def add_items(contents: Iterable[Iterable[Optional[str]]], csv: bool = False) ->
         content (Iterable[Union[str, Iterable[str]]]): The contents to be added.
         csv (bool): Whether to apply CSV pre-processing.
     """
+    if not contents:
+        return
+
     for i in contents:
         add_item(", ".join(attr.process(j, csv=csv) for j in i))
 
