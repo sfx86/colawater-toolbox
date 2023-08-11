@@ -12,9 +12,10 @@ Examples:
 
 """
 
+from collections.abc import Sequence
 from enum import Enum, unique
 from functools import partial
-from typing import Any, Iterable, Optional
+from typing import Any, Optional
 
 import arcpy
 
@@ -119,7 +120,7 @@ def add_item(content: str) -> None:
     _summary.append(content, _ContentType.ITEM)
 
 
-def add_items(contents: Iterable[Iterable[Optional[Any]]], csv: bool = False) -> None:
+def add_items(contents: Sequence[Sequence[Optional[Any]]], csv: bool = False) -> None:
     """
     Adds items from an interable of iterable to the summary's content.
 
@@ -129,7 +130,7 @@ def add_items(contents: Iterable[Iterable[Optional[Any]]], csv: bool = False) ->
         content (Iterable[Iterable[Any]]): The contents to be added.
         csv (bool): Whether to apply CSV pre-processing.
     """
-    if not contents:
+    if len(contents) == 0:
         return
 
     process = partial(attr.process, csv=csv)
