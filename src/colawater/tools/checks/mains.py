@@ -1,3 +1,7 @@
+"""
+Quality control checks relating to water mains.
+"""
+
 from functools import partial
 
 import arcpy
