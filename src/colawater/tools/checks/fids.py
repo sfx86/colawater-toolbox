@@ -30,7 +30,7 @@ def find_incorrect_fids(
         ExecuteError: An error ocurred in the tool execution.
     """
     return [
-        (oid, fid_proc)
+        (str(oid), fid_proc)
         for oid, fid in arcpy.da.SearchCursor(  # type: ignore
             ly.get_path(layer), ("OBJECTID", "FACILITYID")
         )
