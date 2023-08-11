@@ -24,7 +24,7 @@ def find_nonexistent_assoc_files(
         ExecuteError: An error ocurred in the tool execution.
     """
     return [
-        (oid, attr.process(comments))
+        (str(oid), attr.process(comments))
         for oid, comments in arcpy.da.SearchCursor(  # type: ignore
             ly.get_path(wm_layer.value),
             ("OBJECTID", "COMMENTS"),
@@ -53,7 +53,7 @@ def find_incorrect_datasources(
         ExecuteError: An error ocurred in the tool execution.
     """
     return [
-        (oid, attr.process(datasource))
+        (str(oid), attr.process(datasource))
         for oid, datasource in arcpy.da.SearchCursor(  # type: ignore
             ly.get_path(wm_layer.value),
             ("OBJECTID", "DATASOURCE"),
