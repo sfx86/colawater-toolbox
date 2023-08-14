@@ -14,7 +14,7 @@ from colawater.error import fallible
 
 @fallible
 def find_nonexistent_assoc_files(
-    wm_layer: arcpy._mp.Layer,  # type: ignore
+    wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> list[tuple[str, ...]]:
     """
     Returns a list of object ID and nonexistent associated file pairs for the integrated mains
@@ -32,7 +32,7 @@ def find_nonexistent_assoc_files(
     process = partial(attr.process, csv=True)
     return [
         tuple(map(process, i))
-        for i in arcpy.da.SearchCursor(  # type: ignore
+        for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             ly.get_path(wm_layer.value),
             ("OBJECTID", "COMMENTS"),
             "INTEGRATIONSTATUS = 'Y'",
@@ -43,7 +43,7 @@ def find_nonexistent_assoc_files(
 
 @fallible
 def find_incorrect_datasources(
-    wm_layer: arcpy._mp.Layer,  # type: ignore
+    wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> list[tuple[str, ...]]:
     """
     Returns a list of object ID and incorrect data source pairs for the integrated mains
@@ -62,7 +62,7 @@ def find_incorrect_datasources(
     process = partial(attr.process, csv=True)
     return [
         tuple(map(process, i))
-        for i in arcpy.da.SearchCursor(  # type: ignore
+        for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             ly.get_path(wm_layer.value),
             ("OBJECTID", "DATASOURCE"),
             "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)",

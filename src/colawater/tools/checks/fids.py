@@ -16,7 +16,7 @@ from colawater.error import fallible
 
 @fallible
 def find_incorrect_fids(
-    layer: arcpy._mp.Layer,  # type: ignore
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
     regex: re.Pattern[Any],
 ) -> list[tuple[str, str]]:
     """
@@ -35,7 +35,7 @@ def find_incorrect_fids(
     """
     return [
         (str(oid), fid_proc)
-        for oid, fid in arcpy.da.SearchCursor(  # type: ignore
+        for oid, fid in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             ly.get_path(layer), ("OBJECTID", "FACILITYID")
         )
         if not regex.fullmatch(fid_proc := attr.process(fid))
@@ -61,16 +61,16 @@ def find_duplicate_fids(
     Note:
         Side effect: Writes result layer into scratch geodatabase.
     """
-    scratch_gdb = arcpy.env.scratchGDB  # type: ignore
+    scratch_gdb = arcpy.env.scratchGDB  # pyright: ignore [reportGeneralTypeIssues]
     timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
     scratch_layer_path = f"{scratch_gdb}\\{layer.name}_dup_fids_{timestamp}"
     layer_path = ly.get_path(layer.value)
     # turn very unhelpfully structured result of FindIdentical into
     # oids that were identified as duplicates
-    oids: tuple[int] = tuple(
-        oid[0]
-        for oid in arcpy.da.SearchCursor(  # type: ignore
-            arcpy.management.FindIdentical(  # type: ignore
+    oids: tuple[int, ...] = tuple(
+        int(oid[0])
+        for oid in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
+            arcpy.management.FindIdentical(  # pyright: ignore [reportGeneralTypeIssues]
                 layer_path,
                 scratch_layer_path,
                 ("FACILITYID"),
@@ -84,7 +84,7 @@ def find_duplicate_fids(
         return [()]
     # oid to fid mapping to generate more helpful group keys
     oid_to_fid: dict[int, str] = dict(
-        arcpy.da.SearchCursor(  # type: ignore
+        arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             layer_path,
             ("OBJECTID", "FACILITYID"),
             where_clause=f"OBJECTID IN ({oid_str})",

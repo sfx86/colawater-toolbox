@@ -107,9 +107,9 @@ def parameters() -> list[arcpy.Parameter]:
 
 @fallible
 def _append_to_art(
-    wm_lyr: arcpy._mp.Layer,  # type: ignore
+    wm_lyr: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
     wm_where_clause: str,
-    art_table: arcpy._mp.Layer,  # type: ignore
+    art_table: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> list[tuple[Optional[str], ...]]:
     """
     Appends recent integrated and well-sourced mains from a given editor to the
@@ -123,12 +123,14 @@ def _append_to_art(
     """
     mains_appended = []
 
-    with arcpy.da.Editor(ly.get_workspace(wm_lyr)):  # type: ignore
-        with arcpy.da.SearchCursor(  # type: ignore
+    with arcpy.da.Editor(  # pyright: ignore [reportGeneralTypeIssues]
+        ly.get_workspace(wm_lyr)
+    ):
+        with arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             ly.get_path(wm_lyr),
             ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
             wm_where_clause,
-        ) as wm_search_cursor, arcpy.da.InsertCursor(  # type: ignore
+        ) as wm_search_cursor, arcpy.da.InsertCursor(  # pyright: ignore [reportGeneralTypeIssues]
             ly.get_path(art_table),
             (
                 "FILELOCATIONCITY",
