@@ -50,4 +50,5 @@ def get_workspace(
         str: The absolute path to the layer's workspace.
     """
     path = arcpy.Describe(layer).path  # pyright: ignore [reportGeneralTypeIssues]
-    return "\\".join(path.split("\\")[:-1])
+    slash_idx = path.rfind("\\")
+    return path[:slash_idx]
