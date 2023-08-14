@@ -24,9 +24,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
     Appends recent integrated and well-sourced mains from a given editor to the
     Asset Reference Table.
-
-    Raises:
-        ExecuteError: An error occurred in the tool execution.
     """
     pg.set_progressor("default", "Appending mains to ART...")
 
