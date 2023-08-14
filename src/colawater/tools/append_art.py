@@ -33,13 +33,12 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     on_after_date = parameters[1].valueAsText
     wm_layer = parameters[2]
     art_table = parameters[3]
-    where_water = f"""INTEGRATIONSTATUS = 'Y'
-AND LASTEDITOR = '{last_editor}'
-AND LASTUPDATE >= '{on_after_date}'
-AND LIFECYCLESTATUS = 'Active'
-AND OWNEDBY = 1
-AND (DATASOURCE = 'SURVGPS' OR DATASOURCE = 'ASB')
-"""
+    where_water = f"""INTEGRATIONSTATUS = 'Y' 
+And LASTEDITOR = '{last_editor}' 
+And LASTUPDATE >= timestamp '{on_after_date}' 
+And LIFECYCLESTATUS = 'Active' 
+And OWNEDBY = 1 
+And (DATASOURCE = 'SURVGPS' Or DATASOURCE = 'ASB')"""
 
     log.info(
         f"Appending mains from [{wm_layer.valueAsText}] to [{art_table.valueAsText}]..."
@@ -128,46 +127,40 @@ def append_to_art(
     Note:
         Modifies art_table by appending new rows.
     """
-    mains_appended = []
-
     with arcpy.da.Editor(  # pyright: ignore [reportGeneralTypeIssues]
         ly.get_workspace(wm_lyr)
-    ):
-        with arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-            ly.get_path(wm_lyr),
-            ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
-            wm_where_clause,
-        ) as wm_search_cursor, arcpy.da.InsertCursor(  # pyright: ignore [reportGeneralTypeIssues]
-            ly.get_path(art_table),
-            (
-                "FILELOCATIONCITY",
-                "DRAWINGTYPE",
-                "DRAWINGDATE",
-                "ASSETFACILITYID",
-                "ASSETTYPE",
-                "SCANNAME",
-                "FILELOCATIONCW2020",
-            ),
-        ) as art_insert_cursor:
-            for wm_row in wm_search_cursor:
-                fid, install_date, datasource, comments = wm_row
-                asset_type = "WAM"
-                cw2020_file = None
-                city_file = None
-                if comments is not None:
-                    cw2020_file = str(scan.CW2020_DIR / comments)
-                    city_file = str(scan.CITY_DIR / comments)
-
-                art_row = [
-                    city_file,
+    ), arcpy.da.InsertCursor(  # pyright: ignore [reportGeneralTypeIssues]
+        ly.get_path(art_table),
+        (
+            "FILELOCATIONCITY",
+            "DRAWINGTYPE",
+            "DRAWINGDATE",
+            "ASSETFACILITYID",
+            "ASSETTYPE",
+            "SCANNAME",
+            "FILELOCATIONCW2020",
+        ),
+    ) as cursor:
+        for fid, install_date, datasource, comments in (
+            selected_mains := [
+                tuple(i)
+                for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
+                    ly.get_path(wm_lyr),
+                    ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
+                    wm_where_clause,
+                )
+            ]
+        ):
+            cursor.insertRow(
+                (
+                    str(scan.CITY_DIR / comments) if comments is not None else None,
                     datasource,
                     install_date,
                     fid,
-                    asset_type,
+                    "WAM",
                     comments,
-                    cw2020_file,
-                ]
-                art_insert_cursor.insertRow(art_row)
-                mains_appended.append(wm_row)
+                    str(scan.CW2020_DIR / comments) if comments is not None else None,
+                )
+            )
 
-    return mains_appended
+    return selected_mains
