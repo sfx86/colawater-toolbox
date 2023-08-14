@@ -22,8 +22,10 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     """
     Entry point for Append to ART.
 
-    Appends recent integrated and well-sourced mains from a given editor to the
-    Asset Reference Table.
+    Appends recent integrated and well-sourced mains from a given editor to the Asset Reference Table.
+
+    Note:
+        Modifies ART by appending new rows.
     """
     pg.set_progressor("default", "Appending mains to ART...")
 
@@ -43,7 +45,7 @@ AND (DATASOURCE = 'SURVGPS' OR DATASOURCE = 'ASB')
         f"Appending mains from [{wm_layer.valueAsText}] to [{art_table.valueAsText}]..."
     )
 
-    mains_appended = _append_to_art(wm_layer.value, where_water, art_table.value)
+    mains_appended = append_to_art(wm_layer.value, where_water, art_table.value)
 
     sy.add_result(
         wm_layer.valueAsText,
@@ -103,20 +105,28 @@ def parameters() -> list[arcpy.Parameter]:
 
 
 @fallible
-def _append_to_art(
+def append_to_art(
     wm_lyr: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
     wm_where_clause: str,
-    art_table: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+    art_table: arcpy._mp.Table,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> list[tuple[Optional[str], ...]]:
     """
     Appends recent integrated and well-sourced mains from a given editor to the
     Asset Reference Table.
 
+    Arguments:
+        wm_lyr (arcpy._mp.Layer): A water main layer from which mains will be read.
+        wm_where_clause (str): A SQL where clause used to select a subset of wm_lyr.
+        art_table (arcpy._mp.Table): The asset reference table.
+
+    Returns:
+        list[tuple[Optional[str], ...]]: A list of records of appended mains.
+
     Raises:
         ExecuteError: An error ocurred in the tool execution.
 
-    Returns:
-        list[tuple[Optional[str], ...]]: The appended mains.
+    Note:
+        Modifies art_table by appending new rows.
     """
     mains_appended = []
 

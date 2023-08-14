@@ -44,7 +44,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
         log.info(f"Calculating facility identifiers for [{layer.valueAsText}]...")
 
-        new_fid = _calc_fids(layer, start, interval, initials)
+        new_fid = calculate_fids(layer, start, interval, initials)
 
         sy.add_item(f"{layer.displayName}: {new_fid}")
         log.info(f"[{layer.valueAsText}] finished.")
@@ -132,7 +132,7 @@ def update_parameters(parameters: list[arcpy.Parameter]) -> None:
 
 
 @fallible
-def _calc_fids(
+def calculate_fids(
     layer: arcpy.Parameter,
     start: arcpy.Parameter,
     interval: int,

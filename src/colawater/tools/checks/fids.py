@@ -1,5 +1,16 @@
 """
 Quality control checks relating to facility identifiers.
+
+Examples:
+    .. code-block:: python
+    
+        res = find_incorrect_fids(layer, re.compile(r"^\\d+example$"))
+        do_something(res)
+
+    .. code-block:: python
+    
+        res = find_duplicate_fids(layer) 
+        do_something(res)
 """
 
 import re
@@ -24,7 +35,7 @@ def find_incorrect_fids(
 
     Arguments:
         layer (arcpy._mp.Layer): The layer to check.
-        regex (re.Pattern[Any]): The regular expression to match against the facility identifiers in the layer.
+        regex (re.Pattern[Any]): The regular expression to match against.
 
     Returns:
         list[tuple[str, str]]: The list of object IDs and incorrectly formatted facility identifiers.
@@ -89,7 +100,7 @@ def find_duplicate_fids(
             where_clause=f"OBJECTID IN ({oid_str})",
         )
     )
-    # sorted fid group pairs
+    # fid group pairs
     duplicates = [tuple((oid_to_fid[oid], str(oid))) for oid in oids]
 
     return duplicates
