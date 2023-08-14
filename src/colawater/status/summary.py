@@ -68,7 +68,8 @@ class _Summary:
         Appends a string to the summary.
 
         Arguments:
-            content (str): The content to be added.
+            content (str): A string containing the content.
+            type (_ContentType): A content type.
         """
         self._list.append(f"{type.value}{content}")
 
@@ -87,11 +88,13 @@ The shared summary state.
 
 def _subject_str(subject: str, content: str) -> str:
     """
-    Returns a string correctly formatted with a subject prefix.
+    Returns a string formatted with a subject prefix.
+
+    Format: "[{subject}] {content}"
 
     Arguments:
-        subject (str): The subject to be used.
-        content (str): The content to be used.
+        subject (str): A string containing the subject.
+        content (str): A string containing the content.
 
     Returns:
         str: The correctly prefixed string.
@@ -104,8 +107,8 @@ def add_header(subject: str, content: str) -> None:
     Adds a header to the summary's content.
 
     Arguments:
-        subject (str): The subject of the header.
-        content (str): The header content to be added.
+        subject (str): A string containing the subject.
+        content (str): A string containing the content.
     """
     _summary.append(_subject_str(subject, content), _ContentType.HEADER)
 
@@ -115,19 +118,19 @@ def add_item(content: str) -> None:
     Adds an item to the summary's content.
 
     Arguments:
-        content (str): The item content to be added.
+        content (str): A string containing the content.
     """
     _summary.append(content, _ContentType.ITEM)
 
 
 def add_items(contents: Sequence[Sequence[Optional[Any]]], csv: bool = False) -> None:
     """
-    Adds items from an interable of iterable to the summary's content.
+    Adds items from an sequence of sequences to the summary's content.
 
     Optionally apply ``attribute.process()`` to each item.
 
     Arguments:
-        content (Iterable[Iterable[Any]]): The contents to be added.
+        content (Sequence[Sequence[Any]]): Rows to add as items (can be jagged).
         csv (bool): Whether to apply CSV pre-processing.
     """
     if len(contents) == 0:
@@ -143,8 +146,8 @@ def add_note(subject: str, content: str) -> None:
     Adds a note header to the summary's content.
 
     Arguments:
-        subject (str): The subject of the header.
-        content (str): The note content to be added.
+        subject (str): A string containing the subject.
+        content (str): A string containing the content.
     """
     _summary.append(_subject_str(subject, content), _ContentType.NOTE)
 
@@ -154,15 +157,15 @@ def add_result(subject: str, content: str) -> None:
     Adds a result header to the summary's content.
 
     Arguments:
-        subject (str): The subject of the header.
-        content (str): The result content to be added.
+        subject (str): A string containing the subject.
+        content (str): A string containing the content.
     """
     _summary.append(_subject_str(subject, content), _ContentType.RESULT)
 
 
 def clear() -> None:
     """
-    Clears the summary's content.
+    Clears the summary.
     """
     _summary.clear()
 
@@ -180,6 +183,8 @@ def post(dumped: bool = False) -> None:
         dumped (bool): Whether to add a message indicating the summary was
                        dumped due to an error.
     """
+    # note:
+    #   the added header will be *after* the other content
     if dumped:
         add_header(OUTPUT_DUMPED_MSG, "")
     arcpy.AddMessage(_summary.text)

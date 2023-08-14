@@ -1,5 +1,16 @@
 """
 Quality control checks relating to water mains.
+
+Examples:
+    .. code-block:: python
+    
+        res = find_nonexistent_assoc_files(wm_layer)
+        do_something(res)
+
+    .. code-block:: python
+    
+        res = find_incorrect_datasources(layer) 
+        do_something(res)
 """
 
 from functools import partial
@@ -17,8 +28,7 @@ def find_nonexistent_assoc_files(
     wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> list[tuple[str, ...]]:
     """
-    Returns a list of object ID and nonexistent associated file pairs for the integrated mains
-    in the given water main layer.
+    Returns a list of object ID and nonexistent associated file pairs for the integrated mains in the water main layer.
 
     Arguments:
         wm_layer (arpcy._mp.Layer): The water main layer.
@@ -46,15 +56,13 @@ def find_incorrect_datasources(
     wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> list[tuple[str, ...]]:
     """
-    Returns a list of object ID and incorrect data source pairs for the integrated mains
-    in the given water main layer.
+    Returns a list of object ID and incorrect data source pairs for the integrated mains in the given water main layer.
 
     Arguments:
         wm_layer (arpcy._mp.Layer): The water main layer.
 
     Returns:
-        list[tuple[str, str]]: A list of Object ID and data source field tuples corresponding
-                               to water mains from the layer.
+        list[tuple[str, str]]: A list of Object ID and data source field tuples corresponding to water mains from the layer.
 
     Raises:
         ExecuteError: An error ocurred in the tool execution.

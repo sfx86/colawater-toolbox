@@ -27,8 +27,7 @@ _progressor_type = _ProgressorType.DEFAULT
 
 def set_progressor(*args: Any, **kwargs: Any) -> None:
     """
-    Transparently wraps ``arcpy.SetProgressor()``, but also tracks the type of the
-    progressor to ensure safe usage.
+    Transparently wraps ``arcpy.SetProgressor()``, but also tracks the progressor type to ensure safe usage.
 
     Arguments:
         *args (Any): The positional arguments to ``arcpy.SetProgressor()``
@@ -51,7 +50,7 @@ def label(content: str) -> None:
     Updates the progressor label.
 
     Arguments:
-        content (str): The message content to be added.
+        content (str): A string containing the text to display as the progressor label.
     """
     arcpy.SetProgressorLabel(content)
 
@@ -67,5 +66,5 @@ def increment(position: int = 1) -> None:
         TypeError: The active progressor is not of type STEP.
     """
     if _progressor_type == _ProgressorType.DEFAULT:
-        raise TypeError("Cannot call `increment` on a progressor of type DEFAULT.")
+        raise TypeError("Can only call `increment` on a progressor of type STEP.")
     arcpy.SetProgressorPosition(position)

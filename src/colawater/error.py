@@ -29,34 +29,31 @@ SYSTEM_ERROR_MSG: str = """How to resolve common errors:
     You probably selected a layer from cypress by mistake.
 """
 """
-Error message text to display on ``SystemError``
+Error message text to display on ``SystemError`` and ``RuntimeError``.
 """
 
 UNEXPECTED_ERROR_MSG: str = """An unexpected error occurred :(
 Go find whomever wrote this tool and ask them about it."""
 """
-Error message text to display on ``Exception`` (not including ``SystemError``).
+Error message text to display on non-handled exceptions.
 """
 
 
-T = TypeVar("T")
-"""
-Type variable for generic function return types.
-"""
+_T = TypeVar("_T")
 
 
-def fallible(f: Callable[..., T]) -> Callable[..., Union[T, NoReturn]]:
+def fallible(f: Callable[..., _T]) -> Callable[..., Union[_T, NoReturn]]:
     """
-    Wraps the decorated function in a try-catch block that handles
-    ``SystemError``, ``RuntimeError``, and ``Exception``, dumping the tool summary
-    and printing a relevant error message if either exception is raised.
+    Wraps the decorated function in a try-catch block that handles ``SystemError``/``RuntimeError`` and ``Exception``
+
+    Dumps the tool summary and prints a relevant error message depending on the exception.
 
     Note:
         The default error message output in ArcGIS often says 'RuntimeError'
         when a SystemError occurs.
 
     Returns:
-        Union[T, NoReturn]: The return value of the wrapped function.
+        Union[_T, NoReturn]: The return value of the wrapped function.
         Or, if an exception is caught, an ``ExecuteError`` is raised, and the function does not return.
 
     Raises:
@@ -64,14 +61,14 @@ def fallible(f: Callable[..., T]) -> Callable[..., Union[T, NoReturn]]:
     """
 
     @wraps(f)
-    def wrapper(*args: Any, **kwargs: Any) -> Union[T, NoReturn]:
+    def wrapper(*args: Any, **kwargs: Any) -> Union[_T, NoReturn]:
         def post_log_exit(err: BaseException, msg: str) -> NoReturn:
             sy.post(dumped=True)
             log.error(f"Error: {repr(err)}\n{msg}")
             raise arcpy.ExecuteError
 
         try:
-            res: T = f(*args, **kwargs)
+            res: _T = f(*args, **kwargs)
         except (SystemError, RuntimeError) as err:
             post_log_exit(err, SYSTEM_ERROR_MSG)
         except Exception as err:

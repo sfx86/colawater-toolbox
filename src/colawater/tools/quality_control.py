@@ -19,9 +19,6 @@ _LAYER_START = 4
 def execute(parameters: list[arcpy.Parameter]) -> None:
     """
     Entry point for Water Quality Control.
-
-    Raises:
-        ExecuteError: An error ocurred in the tool execution.
     """
     pg.set_progressor("default", "Starting quality control checks...")
 
@@ -88,7 +85,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
                 f"[{l.valueAsText}] Checking for duplicate facility identifiers..."
             )
 
-            duplicate_fids = fids.find_duplicate_fids(l)
+            duplicate_fids = fids.find_duplicate_fids(l.value)
 
             pg.increment()
             sy.add_result(

@@ -26,7 +26,7 @@ def info(content: str) -> None:
     Adds a message and updates the progressor label.
 
     Arguments:
-        content (str): The message content to be added.
+        content (str): A string containing the message content.
     """
     arcpy.AddMessage(content)
     progressor.label(content)
@@ -37,7 +37,7 @@ def warning(content: str) -> None:
     Adds a warning message and updates the progressor label.
 
     Arguments:
-        content (str): The message content to be added.
+        content (str): A string containing the message content.
     """
     arcpy.AddWarning(content)
     progressor.label(content)
@@ -48,7 +48,7 @@ def error(content: str) -> None:
     Adds an error message.
 
     Arguments:
-        content (str): The message content to be added.
+        content (str): A string containing the message content.
     """
-    arcpy.AddError(content)
+    arcpy.AddWarning(content)
     progressor.label(content)
