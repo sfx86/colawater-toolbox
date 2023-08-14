@@ -20,8 +20,7 @@ def find_incorrect_fids(
     regex: re.Pattern[Any],
 ) -> list[tuple[str, str]]:
     """
-    Returns all incorrectly formatted facility identifiers from the given layer
-    matching the given regular expression.
+    Returns all incorrectly formatted facility identifiers matching a regular expression.
 
     Arguments:
         layer (arcpy._mp.Layer): The layer to check.
@@ -44,26 +43,26 @@ def find_incorrect_fids(
 
 @fallible
 def find_duplicate_fids(
-    layer: arcpy.Parameter,
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> list[tuple[str, ...]]:
     """
     Returns all duplicate facility identifiers from the given layer.
 
     Arguments:
-        layer (arcpy.Parameter): The layer parameter to check.
+        layer (arcpy._mp.Layer): The layer to check.
 
     Returns:
-        list[tuple[str, ...]]: The list of object IDs of duplicates, grouped by duplicate value, which is at the zeroth index.
+        list[tuple[str, ...]]: The list of object IDs of duplicates, grouped by duplicate values at the zeroth index.
 
     Raises:
         ExecuteError: An error ocurred in the tool execution.
 
     Note:
-        Side effect: Writes result layer into scratch geodatabase.
+        Writes result layer from ``Find Identical`` into scratch geodatabase.
     """
     scratch_gdb = arcpy.env.scratchGDB  # pyright: ignore [reportGeneralTypeIssues]
     timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
-    scratch_layer_path = f"{scratch_gdb}\\{layer.name}_dup_fids_{timestamp}"
+    scratch_layer_path = f"{scratch_gdb}\\{str(layer)}_dup_fids_{timestamp}"
     layer_path = ly.get_path(layer.value)
     # turn very unhelpfully structured result of FindIdentical into
     # oids that were identified as duplicates
