@@ -6,9 +6,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Entry point for {}.
 
     Description.
-
-    Raises:
-        ExecuteError: An error ocurred in the tool execution.
     """
     ...
 

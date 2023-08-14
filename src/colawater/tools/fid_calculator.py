@@ -22,9 +22,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
     Calculates the new facility identifiers for features with given
     placeholder initials starting from a given start value.
-
-    Raises:
-        ExecuteError: An error ocurred in the tool execution.
     """
     pg.set_progressor("step", "Calculating facility identifiers...", 0, 6)
 
