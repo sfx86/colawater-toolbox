@@ -21,7 +21,9 @@ Examples:
 import arcpy
 
 
-def get_path(layer: arcpy._mp.Layer) -> str:  # type: ignore
+def get_path(
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+) -> str:
     """
     Returns the absolute path to a layer.
 
@@ -32,10 +34,12 @@ def get_path(layer: arcpy._mp.Layer) -> str:  # type: ignore
         str: The absolute path to the layer.
     """
     desc = arcpy.Describe(layer)
-    return f"{desc.path}\\{desc.name}"  # type: ignore
+    return f"{desc.path}\\{desc.name}"  # pyright: ignore [reportGeneralTypeIssues]
 
 
-def get_workspace(layer: arcpy._mp.Layer) -> str:  # type: ignore
+def get_workspace(
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+) -> str:
     """
     Returns the absolute path to a layer's workspace.
 
@@ -45,5 +49,5 @@ def get_workspace(layer: arcpy._mp.Layer) -> str:  # type: ignore
     Returns:
         str: The absolute path to the layer's workspace.
     """
-    path = arcpy.Describe(layer).path  # type: ignore
+    path = arcpy.Describe(layer).path  # pyright: ignore [reportGeneralTypeIssues]
     return "\\".join(path.split("\\")[:-1])

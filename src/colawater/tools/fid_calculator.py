@@ -95,7 +95,7 @@ def parameters() -> list[arcpy.Parameter]:
     )
 
     input_layers = [
-        f(abbrev, name)
+        f(abbrev, name)  # type: ignore [no-untyped-call]
         for abbrev, name in templates
         for f in (
             lambda abbrev, name: arcpy.Parameter(
@@ -180,17 +180,17 @@ def _calc_fids(
     workspace = ly.get_workspace(layer.value)
     prefix, suffix = affix_map[layer.name]
 
-    with arcpy.da.Editor(workspace):  # type: ignore
+    with arcpy.da.Editor(workspace):  # pyright: ignore [reportGeneralTypeIssues]
         # only these layers have FACILITYIDINDEX
         if layer.name in {"ca_lyr", "cv_lyr", "ft_lyr", "hy_lyr", "wm_lyr"}:
-            with arcpy.da.UpdateCursor(  # type: ignore
+            with arcpy.da.UpdateCursor(  # pyright: ignore [reportGeneralTypeIssues]
                 lyr_path, fields, where_initials
             ) as cursor:
                 for _ in cursor:
                     cursor.updateRow((f"{prefix}{incr}{suffix}", incr))
                     incr += interval
         else:
-            with arcpy.da.UpdateCursor(  # type: ignore
+            with arcpy.da.UpdateCursor(  # pyright: ignore [reportGeneralTypeIssues]
                 lyr_path, fields[0], where_initials
             ) as cursor:
                 for _ in cursor:
