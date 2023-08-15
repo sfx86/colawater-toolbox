@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="colawater.layer" href="../layer/index.html" /><link rel="prev" title="colawater.attribute" href="../attribute/index.html" />
 
-    <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
+    <link rel="shortcut icon" href="../../../_static/logo.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
         <title>colawater.error - colawater-toolbox 3.2.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
@@ -146,6 +146,9 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../_static/logo.png" alt="Logo"/>
+  </div>
   
   <span class="sidebar-brand-text">colawater-toolbox 3.2.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
@@ -237,8 +240,8 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#colawater.error.fallible" title="colawater.error.fallible"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallible</span></code></a>(→ Callable[Ellipsis, Union[T, NoReturn]])</p></td>
-<td><p>Wraps the decorated function in a try-catch block that handles</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#colawater.error.fallible" title="colawater.error.fallible"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallible</span></code></a>(→ Callable[Ellipsis, Union[_T, NoReturn]])</p></td>
+<td><p>Wraps the decorated function in a try-catch block that handles <code class="docutils literal notranslate"><span class="pre">SystemError</span></code>/<code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code> and <code class="docutils literal notranslate"><span class="pre">Exception</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -250,13 +253,10 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#colawater.error.SYSTEM_ERROR_MSG" title="colawater.error.SYSTEM_ERROR_MSG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SYSTEM_ERROR_MSG</span></code></a></p></td>
-<td><p>Error message text to display on <code class="docutils literal notranslate"><span class="pre">SystemError</span></code></p></td>
+<td><p>Error message text to display on <code class="docutils literal notranslate"><span class="pre">SystemError</span></code> and <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#colawater.error.UNEXPECTED_ERROR_MSG" title="colawater.error.UNEXPECTED_ERROR_MSG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UNEXPECTED_ERROR_MSG</span></code></a></p></td>
-<td><p>Error message text to display on <code class="docutils literal notranslate"><span class="pre">Exception</span></code> (not including <code class="docutils literal notranslate"><span class="pre">SystemError</span></code>).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#colawater.error.T" title="colawater.error.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
-<td><p>Type variable for generic function return types.</p></td>
+<td><p>Error message text to display on non-handled exceptions.</p></td>
 </tr>
 </tbody>
 </table>
@@ -267,18 +267,18 @@
 <dd><blockquote>
 <div><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;How to resolve common errors:</span>
 <span class="sd">&#39;RuntimeError: An expected Field was not found or could not be retrieved properly.&#39;</span>
-<span class="sd">    You probably selected the wrong layer in the dropdown.</span>
 <span class="sd">&#39;RuntimeError: Attribute column not found&#39;</span>
 <span class="sd">    You probably selected the wrong layer in the dropdown.</span>
 <span class="sd">&#39;RuntimeError: Cannot acquire a lock.&#39;</span>
 <span class="sd">    Close the attribute tables of the layers with which you are trying to use this tool.</span>
+<span class="sd">    Another open ArcGIS process could also have a lock on the data, so check for that too.</span>
 <span class="sd">&#39;RuntimeError: Objects in this class cannot be updated outside an edit session&#39;</span>
-<span class="sd">    You probably selected a layer from cypress by mistake.</span>
+<span class="sd">    You probably selected a write-protected layer from cypress by mistake.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 </details></div></blockquote>
-<p>Error message text to display on <code class="docutils literal notranslate"><span class="pre">SystemError</span></code></p>
+<p>Error message text to display on <code class="docutils literal notranslate"><span class="pre">SystemError</span></code> and <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p>
 </dd></dl>
 
 <dl class="py data">
@@ -290,21 +290,14 @@
 </pre></div>
 </div>
 </details></div></blockquote>
-<p>Error message text to display on <code class="docutils literal notranslate"><span class="pre">Exception</span></code> (not including <code class="docutils literal notranslate"><span class="pre">SystemError</span></code>).</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="colawater.error.T">
-<span class="sig-prename descclassname"><span class="pre">colawater.error.</span></span><span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#colawater.error.T" title="Permalink to this definition">#</a></dt>
-<dd><p>Type variable for generic function return types.</p>
+<p>Error message text to display on non-handled exceptions.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="colawater.error.fallible">
-<span class="sig-prename descclassname"><span class="pre">colawater.error.</span></span><span class="sig-name descname"><span class="pre">fallible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">Ellipsis</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">Ellipsis</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NoReturn</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#colawater.error.fallible" title="Permalink to this definition">#</a></dt>
-<dd><p>Wraps the decorated function in a try-catch block that handles
-<code class="docutils literal notranslate"><span class="pre">SystemError</span></code>, <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>, and <code class="docutils literal notranslate"><span class="pre">Exception</span></code>, dumping the tool summary
-and printing a relevant error message if either exception is raised.</p>
+<span class="sig-prename descclassname"><span class="pre">colawater.error.</span></span><span class="sig-name descname"><span class="pre">fallible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">Ellipsis</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">Ellipsis</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NoReturn</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#colawater.error.fallible" title="Permalink to this definition">#</a></dt>
+<dd><p>Wraps the decorated function in a try-catch block that handles <code class="docutils literal notranslate"><span class="pre">SystemError</span></code>/<code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code> and <code class="docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Dumps the tool summary and prints a relevant error message depending on the exception.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The default error message output in ArcGIS often says ‘RuntimeError’
@@ -316,7 +309,7 @@ when a SystemError occurs.</p>
 Or, if an exception is caught, an <code class="docutils literal notranslate"><span class="pre">ExecuteError</span></code> is raised, and the function does not return.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Union[T, NoReturn]</p>
+<dd class="field-even"><p>Union[_T, NoReturn]</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ExecuteError</strong> – An exception was caught, so this was raised in its place.</p>
@@ -389,7 +382,6 @@ Or, if an exception is caught, an <code class="docutils literal notranslate"><sp
 <li><a class="reference internal" href="#attributes">Attributes</a><ul>
 <li><a class="reference internal" href="#colawater.error.SYSTEM_ERROR_MSG"><code class="docutils literal notranslate"><span class="pre">SYSTEM_ERROR_MSG</span></code></a></li>
 <li><a class="reference internal" href="#colawater.error.UNEXPECTED_ERROR_MSG"><code class="docutils literal notranslate"><span class="pre">UNEXPECTED_ERROR_MSG</span></code></a></li>
-<li><a class="reference internal" href="#colawater.error.T"><code class="docutils literal notranslate"><span class="pre">T</span></code></a></li>
 <li><a class="reference internal" href="#colawater.error.fallible"><code class="docutils literal notranslate"><span class="pre">fallible()</span></code></a></li>
 </ul>
 </li>

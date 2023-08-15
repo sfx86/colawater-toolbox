@@ -39,7 +39,6 @@ Attributes
 
    colawater.error.SYSTEM_ERROR_MSG
    colawater.error.UNEXPECTED_ERROR_MSG
-   colawater.error.T
 
 
 .. py:data:: SYSTEM_ERROR_MSG
@@ -54,20 +53,20 @@ Attributes
 
         """How to resolve common errors:
         'RuntimeError: An expected Field was not found or could not be retrieved properly.'
-            You probably selected the wrong layer in the dropdown.
         'RuntimeError: Attribute column not found'
             You probably selected the wrong layer in the dropdown.
         'RuntimeError: Cannot acquire a lock.'
             Close the attribute tables of the layers with which you are trying to use this tool.
+            Another open ArcGIS process could also have a lock on the data, so check for that too.
         'RuntimeError: Objects in this class cannot be updated outside an edit session'
-            You probably selected a layer from cypress by mistake.
+            You probably selected a write-protected layer from cypress by mistake.
         """
 
     .. raw:: html
 
         </details>
 
-   Error message text to display on ``SystemError``
+   Error message text to display on ``SystemError`` and ``RuntimeError``.
 
 .. py:data:: UNEXPECTED_ERROR_MSG
    :type: str
@@ -86,17 +85,13 @@ Attributes
 
         </details>
 
-   Error message text to display on ``Exception`` (not including ``SystemError``).
+   Error message text to display on non-handled exceptions.
 
-.. py:data:: T
+.. py:function:: fallible(f: Callable[Ellipsis, _T]) -> Callable[Ellipsis, Union[_T, NoReturn]]
 
-   Type variable for generic function return types.
+   Wraps the decorated function in a try-catch block that handles ``SystemError``/``RuntimeError`` and ``Exception``
 
-.. py:function:: fallible(f: Callable[Ellipsis, T]) -> Callable[Ellipsis, Union[T, NoReturn]]
-
-   Wraps the decorated function in a try-catch block that handles
-   ``SystemError``, ``RuntimeError``, and ``Exception``, dumping the tool summary
-   and printing a relevant error message if either exception is raised.
+   Dumps the tool summary and prints a relevant error message depending on the exception.
 
    .. note::
 
@@ -105,7 +100,7 @@ Attributes
 
    :returns: The return value of the wrapped function.
              Or, if an exception is caught, an ``ExecuteError`` is raised, and the function does not return.
-   :rtype: Union[T, NoReturn]
+   :rtype: Union[_T, NoReturn]
 
    :raises ExecuteError: An exception was caught, so this was raised in its place.
 

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="colawater.tools.quality_control" href="../quality_control/index.html" /><link rel="prev" title="colawater.tools.append_art" href="../append_art/index.html" />
 
-    <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
+    <link rel="shortcut icon" href="../../../../_static/logo.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
         <title>colawater.tools.fid_calculator - colawater-toolbox 3.2.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
@@ -146,6 +146,9 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../_static/logo.png" alt="Logo"/>
+  </div>
   
   <span class="sidebar-brand-text">colawater-toolbox 3.2.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
@@ -239,6 +242,9 @@ tool and other helper functions.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#colawater.tools.fid_calculator.update_parameters" title="colawater.tools.fid_calculator.update_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_parameters</span></code></a>(→ None)</p></td>
 <td><p>Enables layer start values if their associated layer is set and ensures start values are greater than zero.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#colawater.tools.fid_calculator.calculate_fids" title="colawater.tools.fid_calculator.calculate_fids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_fids</span></code></a>(→ str)</p></td>
+<td><p>Calculates the facility identifiers for the provided layer.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -249,8 +255,8 @@ tool and other helper functions.</p>
 <p>Calculates the new facility identifiers for features with given
 placeholder initials starting from a given start value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ExecuteError</strong> – An error ocurred in the tool execution.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parameters</strong> (<em>list</em><em>[</em><em>arcpy.Parameter</em><em>]</em>) – The list of parameters.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -279,6 +285,41 @@ placeholder initials starting from a given start value.</p>
 <dd class="field-odd"><p><strong>parameters</strong> (<em>list</em><em>[</em><em>arcpy.Parameter</em><em>]</em>) – The list of parameters.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="colawater.tools.fid_calculator.calculate_fids">
+<span class="sig-prename descclassname"><span class="pre">colawater.tools.fid_calculator.</span></span><span class="sig-name descname"><span class="pre">calculate_fids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">arcpy.Parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">arcpy.Parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#colawater.tools.fid_calculator.calculate_fids" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculates the facility identifiers for the provided layer.</p>
+<p>Also updates the substituted initials with the new facility identifiers
+in the provided layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>arcpy.Parameter</em>) – The layer parameter.</p></li>
+<li><p><strong>start</strong> (<em>arpcy.Parameter</em>) – The start value parameter.</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – The interval to increment the facility identifier.</p></li>
+<li><p><strong>initials</strong> (<em>str</em>) – The initials to replace with the calculated facility identifiers.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>The final facility identifier plus one interval to be used</dt><dd><p>as an input for the next tool execution.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ExecuteError</strong> – An error ocurred in the tool execution.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Modifies input layer.</p>
+</div>
 </dd></dl>
 
 </section>
@@ -346,6 +387,7 @@ placeholder initials starting from a given start value.</p>
 <li><a class="reference internal" href="#colawater.tools.fid_calculator.execute"><code class="docutils literal notranslate"><span class="pre">execute()</span></code></a></li>
 <li><a class="reference internal" href="#colawater.tools.fid_calculator.parameters"><code class="docutils literal notranslate"><span class="pre">parameters()</span></code></a></li>
 <li><a class="reference internal" href="#colawater.tools.fid_calculator.update_parameters"><code class="docutils literal notranslate"><span class="pre">update_parameters()</span></code></a></li>
+<li><a class="reference internal" href="#colawater.tools.fid_calculator.calculate_fids"><code class="docutils literal notranslate"><span class="pre">calculate_fids()</span></code></a></li>
 </ul>
 </li>
 </ul>

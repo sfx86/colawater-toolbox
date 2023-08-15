@@ -43,7 +43,7 @@ Functions
 
    Adds a message and updates the progressor label.
 
-   :param content: The message content to be added.
+   :param content: A string containing the message content.
    :type content: str
 
 
@@ -51,7 +51,7 @@ Functions
 
    Adds a warning message and updates the progressor label.
 
-   :param content: The message content to be added.
+   :param content: A string containing the message content.
    :type content: str
 
 
@@ -59,7 +59,7 @@ Functions
 
    Adds an error message.
 
-   :param content: The message content to be added.
+   :param content: A string containing the message content.
    :type content: str
 
 

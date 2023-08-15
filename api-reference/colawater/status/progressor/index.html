@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="colawater.status.summary" href="../summary/index.html" /><link rel="prev" title="colawater.status.logging" href="../logging/index.html" />
 
-    <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
+    <link rel="shortcut icon" href="../../../../_static/logo.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
         <title>colawater.status.progressor - colawater-toolbox 3.2.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
@@ -146,6 +146,9 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../_static/logo.png" alt="Logo"/>
+  </div>
   
   <span class="sidebar-brand-text">colawater-toolbox 3.2.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
@@ -238,7 +241,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#colawater.status.progressor.set_progressor" title="colawater.status.progressor.set_progressor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_progressor</span></code></a>(→ None)</p></td>
-<td><p>Transparently wraps <code class="docutils literal notranslate"><span class="pre">arcpy.SetProgressor()</span></code>, but also tracks the type of the</p></td>
+<td><p>Transparently wraps <code class="docutils literal notranslate"><span class="pre">arcpy.SetProgressor()</span></code>, but also tracks the progressor type to ensure safe usage.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#colawater.status.progressor.label" title="colawater.status.progressor.label"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label</span></code></a>(→ None)</p></td>
 <td><p>Updates the progressor label.</p></td>
@@ -252,8 +255,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="colawater.status.progressor.set_progressor">
 <span class="sig-prename descclassname"><span class="pre">colawater.status.progressor.</span></span><span class="sig-name descname"><span class="pre">set_progressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#colawater.status.progressor.set_progressor" title="Permalink to this definition">#</a></dt>
-<dd><p>Transparently wraps <code class="docutils literal notranslate"><span class="pre">arcpy.SetProgressor()</span></code>, but also tracks the type of the
-progressor to ensure safe usage.</p>
+<dd><p>Transparently wraps <code class="docutils literal notranslate"><span class="pre">arcpy.SetProgressor()</span></code>, but also tracks the progressor type to ensure safe usage.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -270,7 +272,7 @@ progressor to ensure safe usage.</p>
 <dd><p>Updates the progressor label.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>content</strong> (<em>str</em>) – The message content to be added.</p>
+<dd class="field-odd"><p><strong>content</strong> (<em>str</em>) – A string containing the text to display as the progressor label.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -55,9 +55,9 @@ Attributes
 
    Adds a header to the summary's content.
 
-   :param subject: The subject of the header.
+   :param subject: A string containing the subject.
    :type subject: str
-   :param content: The header content to be added.
+   :param content: A string containing the content.
    :type content: str
 
 
@@ -65,18 +65,18 @@ Attributes
 
    Adds an item to the summary's content.
 
-   :param content: The item content to be added.
+   :param content: A string containing the content.
    :type content: str
 
 
 .. py:function:: add_items(contents: collections.abc.Sequence[collections.abc.Sequence[Optional[Any]]], csv: bool = False) -> None
 
-   Adds items from an interable of iterable to the summary's content.
+   Adds items from an sequence of sequences to the summary's content.
 
    Optionally apply ``attribute.process()`` to each item.
 
-   :param content: The contents to be added.
-   :type content: Iterable[Iterable[Any]]
+   :param content: Rows to add as items (can be jagged).
+   :type content: Sequence[Sequence[Any]]
    :param csv: Whether to apply CSV pre-processing.
    :type csv: bool
 
@@ -85,9 +85,9 @@ Attributes
 
    Adds a note header to the summary's content.
 
-   :param subject: The subject of the header.
+   :param subject: A string containing the subject.
    :type subject: str
-   :param content: The note content to be added.
+   :param content: A string containing the content.
    :type content: str
 
 
@@ -95,15 +95,15 @@ Attributes
 
    Adds a result header to the summary's content.
 
-   :param subject: The subject of the header.
+   :param subject: A string containing the subject.
    :type subject: str
-   :param content: The result content to be added.
+   :param content: A string containing the content.
    :type content: str
 
 
 .. py:function:: clear() -> None
 
-   Clears the summary's content.
+   Clears the summary.
 
 
 .. py:function:: post(dumped: bool = False) -> None

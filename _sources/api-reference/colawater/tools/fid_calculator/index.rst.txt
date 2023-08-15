@@ -22,6 +22,7 @@ Functions
    colawater.tools.fid_calculator.execute
    colawater.tools.fid_calculator.parameters
    colawater.tools.fid_calculator.update_parameters
+   colawater.tools.fid_calculator.calculate_fids
 
 
 
@@ -32,7 +33,8 @@ Functions
    Calculates the new facility identifiers for features with given
    placeholder initials starting from a given start value.
 
-   :raises ExecuteError: An error ocurred in the tool execution.
+   :param parameters: The list of parameters.
+   :type parameters: list[arcpy.Parameter]
 
 
 .. py:function:: parameters() -> list[arcpy.Parameter]
@@ -51,5 +53,32 @@ Functions
 
    :param parameters: The list of parameters.
    :type parameters: list[arcpy.Parameter]
+
+
+.. py:function:: calculate_fids(layer: arcpy.Parameter, start: arcpy.Parameter, interval: int, initials: str) -> str
+
+   Calculates the facility identifiers for the provided layer.
+
+   Also updates the substituted initials with the new facility identifiers
+   in the provided layer.
+
+   :param layer: The layer parameter.
+   :type layer: arcpy.Parameter
+   :param start: The start value parameter.
+   :type start: arpcy.Parameter
+   :param interval: The interval to increment the facility identifier.
+   :type interval: int
+   :param initials: The initials to replace with the calculated facility identifiers.
+   :type initials: str
+
+   :returns:
+
+             The final facility identifier plus one interval to be used
+                  as an input for the next tool execution.
+   :rtype: str
+
+   :raises ExecuteError: An error ocurred in the tool execution.
+
+   .. note:: Modifies input layer.
 
 

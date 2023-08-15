@@ -36,8 +36,7 @@ Functions
 
 .. py:function:: set_progressor(*args: Any, **kwargs: Any) -> None
 
-   Transparently wraps ``arcpy.SetProgressor()``, but also tracks the type of the
-   progressor to ensure safe usage.
+   Transparently wraps ``arcpy.SetProgressor()``, but also tracks the progressor type to ensure safe usage.
 
    :param \*args: The positional arguments to ``arcpy.SetProgressor()``
    :type \*args: Any
@@ -49,7 +48,7 @@ Functions
 
    Updates the progressor label.
 
-   :param content: The message content to be added.
+   :param content: A string containing the text to display as the progressor label.
    :type content: str
 
 

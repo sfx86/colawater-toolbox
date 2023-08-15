@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../../../genindex.html" /><link rel="search" title="Search" href="../../../../../search.html" /><link rel="next" title="colawater.tools.checks.mains" href="../mains/index.html" /><link rel="prev" title="colawater.tools.checks" href="../index.html" />
 
-    <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
+    <link rel="shortcut icon" href="../../../../../_static/logo.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
         <title>colawater.tools.checks.fids - colawater-toolbox 3.2.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
@@ -146,6 +146,9 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../../_static/logo.png" alt="Logo"/>
+  </div>
   
   <span class="sidebar-brand-text">colawater-toolbox 3.2.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
@@ -222,6 +225,15 @@
           <section id="module-colawater.tools.checks.fids">
 <span id="colawater-tools-checks-fids"></span><h1><a class="reference internal" href="#module-colawater.tools.checks.fids" title="colawater.tools.checks.fids"><code class="xref py py-mod docutils literal notranslate"><span class="pre">colawater.tools.checks.fids</span></code></a><a class="headerlink" href="#module-colawater.tools.checks.fids" title="Permalink to this heading">#</a></h1>
 <p>Quality control checks relating to facility identifiers.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">find_incorrect_fids</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\d+example$&quot;</span><span class="p">))</span>
+<span class="n">do_something</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">find_duplicate_fids</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+<span class="n">do_something</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</pre></div>
+</div>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">#</a></h2>
 <section id="functions">
@@ -230,7 +242,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#colawater.tools.checks.fids.find_incorrect_fids" title="colawater.tools.checks.fids.find_incorrect_fids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_incorrect_fids</span></code></a>(→ list[tuple[str, str]])</p></td>
-<td><p>Returns all incorrectly formatted facility identifiers from the given layer</p></td>
+<td><p>Returns all incorrectly formatted facility identifiers matching a regular expression.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#colawater.tools.checks.fids.find_duplicate_fids" title="colawater.tools.checks.fids.find_duplicate_fids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_duplicate_fids</span></code></a>(→ list[tuple[str, Ellipsis]])</p></td>
 <td><p>Returns all duplicate facility identifiers from the given layer.</p></td>
@@ -241,13 +253,12 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="colawater.tools.checks.fids.find_incorrect_fids">
 <span class="sig-prename descclassname"><span class="pre">colawater.tools.checks.fids.</span></span><span class="sig-name descname"><span class="pre">find_incorrect_fids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">arcpy._mp.Layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">re.Pattern</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#colawater.tools.checks.fids.find_incorrect_fids" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns all incorrectly formatted facility identifiers from the given layer
-matching the given regular expression.</p>
+<dd><p>Returns all incorrectly formatted facility identifiers matching a regular expression.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>arcpy._mp.Layer</em>) – The layer to check.</p></li>
-<li><p><strong>regex</strong> (<em>re.Pattern</em><em>[</em><em>Any</em><em>]</em>) – The regular expression to match against the facility identifiers in the layer.</p></li>
+<li><p><strong>regex</strong> (<em>re.Pattern</em><em>[</em><em>Any</em><em>]</em>) – The regular expression to match against.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -264,14 +275,14 @@ matching the given regular expression.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="colawater.tools.checks.fids.find_duplicate_fids">
-<span class="sig-prename descclassname"><span class="pre">colawater.tools.checks.fids.</span></span><span class="sig-name descname"><span class="pre">find_duplicate_fids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">arcpy.Parameter</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ellipsis</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#colawater.tools.checks.fids.find_duplicate_fids" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">colawater.tools.checks.fids.</span></span><span class="sig-name descname"><span class="pre">find_duplicate_fids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">arcpy._mp.Layer</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ellipsis</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#colawater.tools.checks.fids.find_duplicate_fids" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns all duplicate facility identifiers from the given layer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>layer</strong> (<em>arcpy.Parameter</em>) – The layer parameter to check.</p>
+<dd class="field-odd"><p><strong>layer</strong> (<em>arcpy._mp.Layer</em>) – The layer to check.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The list of object IDs of duplicates, grouped by duplicate value, which is at the zeroth index.</p>
+<dd class="field-even"><p>The list of object IDs of duplicates, grouped by duplicate values at the zeroth index.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list[tuple[str, …]]</p>
@@ -282,7 +293,7 @@ matching the given regular expression.</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Side effect: Writes result layer into scratch geodatabase.</p>
+<p>Writes result layer from <code class="docutils literal notranslate"><span class="pre">Find</span> <span class="pre">Identical</span></code> into scratch geodatabase.</p>
 </div>
 </dd></dl>
 

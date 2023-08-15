@@ -28,7 +28,8 @@ Functions
 
    Entry point for Water Quality Control.
 
-   :raises ExecuteError: An error ocurred in the tool execution.
+   :param parameters: The list of parameters.
+   :type parameters: list[arcpy.Parameter]
 
 
 .. py:function:: parameters() -> list[arcpy.Parameter]

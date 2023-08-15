@@ -7,6 +7,18 @@
 
    Quality control checks relating to facility identifiers.
 
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       res = find_incorrect_fids(layer, re.compile(r"^\d+example$"))
+       do_something(res)
+
+   .. code-block:: python
+
+       res = find_duplicate_fids(layer)
+       do_something(res)
+
 
 
 Module Contents
@@ -25,12 +37,11 @@ Functions
 
 .. py:function:: find_incorrect_fids(layer: arcpy._mp.Layer, regex: re.Pattern[Any]) -> list[tuple[str, str]]
 
-   Returns all incorrectly formatted facility identifiers from the given layer
-   matching the given regular expression.
+   Returns all incorrectly formatted facility identifiers matching a regular expression.
 
    :param layer: The layer to check.
    :type layer: arcpy._mp.Layer
-   :param regex: The regular expression to match against the facility identifiers in the layer.
+   :param regex: The regular expression to match against.
    :type regex: re.Pattern[Any]
 
    :returns: The list of object IDs and incorrectly formatted facility identifiers.
@@ -39,18 +50,18 @@ Functions
    :raises ExecuteError: An error ocurred in the tool execution.
 
 
-.. py:function:: find_duplicate_fids(layer: arcpy.Parameter) -> list[tuple[str, Ellipsis]]
+.. py:function:: find_duplicate_fids(layer: arcpy._mp.Layer) -> list[tuple[str, Ellipsis]]
 
    Returns all duplicate facility identifiers from the given layer.
 
-   :param layer: The layer parameter to check.
-   :type layer: arcpy.Parameter
+   :param layer: The layer to check.
+   :type layer: arcpy._mp.Layer
 
-   :returns: The list of object IDs of duplicates, grouped by duplicate value, which is at the zeroth index.
+   :returns: The list of object IDs of duplicates, grouped by duplicate values at the zeroth index.
    :rtype: list[tuple[str, ...]]
 
    :raises ExecuteError: An error ocurred in the tool execution.
 
-   .. note:: Side effect: Writes result layer into scratch geodatabase.
+   .. note:: Writes result layer from ``Find Identical`` into scratch geodatabase.
 
 

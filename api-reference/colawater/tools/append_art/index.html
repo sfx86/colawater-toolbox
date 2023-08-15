@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="colawater.tools.fid_calculator" href="../fid_calculator/index.html" /><link rel="prev" title="colawater.tools.checks.mains" href="../checks/mains/index.html" />
 
-    <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
+    <link rel="shortcut icon" href="../../../../_static/logo.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
         <title>colawater.tools.append_art - colawater-toolbox 3.2.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
@@ -146,6 +146,9 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../_static/logo.png" alt="Logo"/>
+  </div>
   
   <span class="sidebar-brand-text">colawater-toolbox 3.2.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
@@ -236,6 +239,9 @@ tool and other helper functions.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#colawater.tools.append_art.parameters" title="colawater.tools.append_art.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a>(→ list[arcpy.Parameter])</p></td>
 <td><p>Returns the parameters for Append to ART.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#colawater.tools.append_art.append_to_art" title="colawater.tools.append_art.append_to_art"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append_to_art</span></code></a>(→ list[tuple[Optional[str], Ellipsis]])</p></td>
+<td><p>Appends recent integrated and well-sourced mains from a given editor to the</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -243,11 +249,10 @@ tool and other helper functions.</p>
 <dt class="sig sig-object py" id="colawater.tools.append_art.execute">
 <span class="sig-prename descclassname"><span class="pre">colawater.tools.append_art.</span></span><span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">arcpy.Parameter</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#colawater.tools.append_art.execute" title="Permalink to this definition">#</a></dt>
 <dd><p>Entry point for Append to ART.</p>
-<p>Appends recent integrated and well-sourced mains from a given editor to the
-Asset Reference Table.</p>
+<p>Appends recent integrated and well-sourced mains from a given editor to the Asset Reference Table.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ExecuteError</strong> – An error occurred in the tool execution.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parameters</strong> (<em>list</em><em>[</em><em>arcpy.Parameter</em><em>]</em>) – The list of parameters.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -265,6 +270,35 @@ Asset Reference Table.</p>
 <dd class="field-even"><p>list[arcpy.Parameter]</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="colawater.tools.append_art.append_to_art">
+<span class="sig-prename descclassname"><span class="pre">colawater.tools.append_art.</span></span><span class="sig-name descname"><span class="pre">append_to_art</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wm_lyr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">arcpy._mp.Layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wm_where_clause</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">art_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">arcpy._mp.Table</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ellipsis</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#colawater.tools.append_art.append_to_art" title="Permalink to this definition">#</a></dt>
+<dd><p>Appends recent integrated and well-sourced mains from a given editor to the
+Asset Reference Table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wm_lyr</strong> (<em>arcpy._mp.Layer</em>) – A water main layer from which mains will be read.</p></li>
+<li><p><strong>wm_where_clause</strong> (<em>str</em>) – A SQL where clause used to select a subset of wm_lyr.</p></li>
+<li><p><strong>art_table</strong> (<em>arcpy._mp.Table</em>) – The asset reference table.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of records of appended mains.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[tuple[Optional[str], …]]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ExecuteError</strong> – An error ocurred in the tool execution.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Modifies input table.</p>
+</div>
 </dd></dl>
 
 </section>
@@ -331,6 +365,7 @@ Asset Reference Table.</p>
 <li><a class="reference internal" href="#functions">Functions</a><ul>
 <li><a class="reference internal" href="#colawater.tools.append_art.execute"><code class="docutils literal notranslate"><span class="pre">execute()</span></code></a></li>
 <li><a class="reference internal" href="#colawater.tools.append_art.parameters"><code class="docutils literal notranslate"><span class="pre">parameters()</span></code></a></li>
+<li><a class="reference internal" href="#colawater.tools.append_art.append_to_art"><code class="docutils literal notranslate"><span class="pre">append_to_art()</span></code></a></li>
 </ul>
 </li>
 </ul>

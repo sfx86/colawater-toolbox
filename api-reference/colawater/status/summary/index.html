@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="colawater.tools" href="../../tools/index.html" /><link rel="prev" title="colawater.status.progressor" href="../progressor/index.html" />
 
-    <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
+    <link rel="shortcut icon" href="../../../../_static/logo.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
         <title>colawater.status.summary - colawater-toolbox 3.2.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
@@ -146,6 +146,9 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../_static/logo.png" alt="Logo"/>
+  </div>
   
   <span class="sidebar-brand-text">colawater-toolbox 3.2.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
@@ -244,7 +247,7 @@
 <td><p>Adds an item to the summary's content.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#colawater.status.summary.add_items" title="colawater.status.summary.add_items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_items</span></code></a>(→ None)</p></td>
-<td><p>Adds items from an interable of iterable to the summary's content.</p></td>
+<td><p>Adds items from an sequence of sequences to the summary's content.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#colawater.status.summary.add_note" title="colawater.status.summary.add_note"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_note</span></code></a>(→ None)</p></td>
 <td><p>Adds a note header to the summary's content.</p></td>
@@ -253,7 +256,7 @@
 <td><p>Adds a result header to the summary's content.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#colawater.status.summary.clear" title="colawater.status.summary.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>(→ None)</p></td>
-<td><p>Clears the summary's content.</p></td>
+<td><p>Clears the summary.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#colawater.status.summary.post" title="colawater.status.summary.post"><code class="xref py py-obj docutils literal notranslate"><span class="pre">post</span></code></a>(→ None)</p></td>
 <td><p>Adds a message with the summary's full text.</p></td>
@@ -286,8 +289,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>subject</strong> (<em>str</em>) – The subject of the header.</p></li>
-<li><p><strong>content</strong> (<em>str</em>) – The header content to be added.</p></li>
+<li><p><strong>subject</strong> (<em>str</em>) – A string containing the subject.</p></li>
+<li><p><strong>content</strong> (<em>str</em>) – A string containing the content.</p></li>
 </ul>
 </dd>
 </dl>
@@ -299,7 +302,7 @@
 <dd><p>Adds an item to the summary’s content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>content</strong> (<em>str</em>) – The item content to be added.</p>
+<dd class="field-odd"><p><strong>content</strong> (<em>str</em>) – A string containing the content.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -307,12 +310,12 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="colawater.status.summary.add_items">
 <span class="sig-prename descclassname"><span class="pre">colawater.status.summary.</span></span><span class="sig-name descname"><span class="pre">add_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#colawater.status.summary.add_items" title="Permalink to this definition">#</a></dt>
-<dd><p>Adds items from an interable of iterable to the summary’s content.</p>
+<dd><p>Adds items from an sequence of sequences to the summary’s content.</p>
 <p>Optionally apply <code class="docutils literal notranslate"><span class="pre">attribute.process()</span></code> to each item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>content</strong> (<em>Iterable</em><em>[</em><em>Iterable</em><em>[</em><em>Any</em><em>]</em><em>]</em>) – The contents to be added.</p></li>
+<li><p><strong>content</strong> (<em>Sequence</em><em>[</em><em>Sequence</em><em>[</em><em>Any</em><em>]</em><em>]</em>) – Rows to add as items (can be jagged).</p></li>
 <li><p><strong>csv</strong> (<em>bool</em>) – Whether to apply CSV pre-processing.</p></li>
 </ul>
 </dd>
@@ -326,8 +329,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>subject</strong> (<em>str</em>) – The subject of the header.</p></li>
-<li><p><strong>content</strong> (<em>str</em>) – The note content to be added.</p></li>
+<li><p><strong>subject</strong> (<em>str</em>) – A string containing the subject.</p></li>
+<li><p><strong>content</strong> (<em>str</em>) – A string containing the content.</p></li>
 </ul>
 </dd>
 </dl>
@@ -340,8 +343,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>subject</strong> (<em>str</em>) – The subject of the header.</p></li>
-<li><p><strong>content</strong> (<em>str</em>) – The result content to be added.</p></li>
+<li><p><strong>subject</strong> (<em>str</em>) – A string containing the subject.</p></li>
+<li><p><strong>content</strong> (<em>str</em>) – A string containing the content.</p></li>
 </ul>
 </dd>
 </dl>
@@ -350,7 +353,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="colawater.status.summary.clear">
 <span class="sig-prename descclassname"><span class="pre">colawater.status.summary.</span></span><span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#colawater.status.summary.clear" title="Permalink to this definition">#</a></dt>
-<dd><p>Clears the summary’s content.</p>
+<dd><p>Clears the summary.</p>
 </dd></dl>
 
 <dl class="py function">
