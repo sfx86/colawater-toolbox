@@ -1,5 +1,6 @@
+from enum import Enum, unique
 from types import ModuleType
-from typing import Any
+from typing import Any, Optional
 
 import arcpy
 
@@ -18,7 +19,11 @@ class Toolbox:
 
 
 def tool(
-    label: str, description: str, backgroundable: bool, module: ModuleType
+    label: str,
+    description: str,
+    category: str,
+    backgroundable: bool,
+    module: ModuleType,
 ) -> type:
     def module_has_function(name: str) -> bool:
         return callable(getattr(module, name, None))
@@ -27,13 +32,12 @@ def tool(
         def __init__(self) -> None:
             self.label = label
             self.description = description
+            self.category = category
             self.canRunInBackground = backgroundable
 
-        def getParameterInfo(self) -> list[arcpy.Parameter]:
+        def getParameterInfo(self) -> Optional[list[arcpy.Parameter]]:
             if module_has_function("parameters"):
                 return module.parameters()
-            else:
-                raise AttributeError(f"Module {module} has no function `parameters`")
 
         def isLicensed(self) -> bool:
             return True
@@ -49,6 +53,10 @@ def tool(
         def execute(self, parameters: list[arcpy.Parameter], messages: Any) -> None:
             if module_has_function("execute"):
                 module.execute(parameters)
+            else:
+                raise AttributeError(
+                    f"Module `{module}` has no function `execute`, but arcgis requires one exists in each tool."
+                )
 
         def postExecute(self, parameters: list[arcpy.Parameter]) -> None:
             if module_has_function("post_execute"):
@@ -57,9 +65,16 @@ def tool(
     return Tool
 
 
+@unique
+class _Category(Enum):
+    VALIDATION = "Data Validation"
+    MUTATION = "Update Layers"
+
+
 AppendToART = tool(
     "Append to ART",
     "Appends new integrated mains to the Asset Reference Table.",
+    _Category.MUTATION.value,
     False,
     append_art,
 )
@@ -67,6 +82,7 @@ AppendToART = tool(
 CalculateFacilityIdentifiers = tool(
     "Calculate Facility Identifiers",
     "Calculates FIDs and FID indices for specified water layers.",
+    _Category.MUTATION.value,
     False,
     fid_calculator,
 )
@@ -74,6 +90,7 @@ CalculateFacilityIdentifiers = tool(
 WaterQualityControl = tool(
     "Water Quality Control",
     "Executes selected quality control checks on specified water layers.",
+    _Category.VALIDATION.value,
     False,
     quality_control,
 )
