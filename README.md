@@ -76,10 +76,10 @@ Available quality control checks:
 See [CHANGELOG.md][changelog].
 
 # Roadmap
+
 * ✅ Calculate Facility Identifiers Tool
 * ✅ Append to Art Tool
-* 🏗 Quality Control Tool
-    * 🏗 Ensure values conform to domains
+* ✅ Quality Control Tool
     * ✅ Deduplicate facility identifiers
     * ✅ Ensure integrated mains have a data source that is not missing or unknown 
     * ✅ Ensure integrated mains have an associated file that exists
