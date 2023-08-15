@@ -3,17 +3,20 @@ import arcpy
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
     """
-    Entry point for {}.
+    {description}
 
-    Description.
+    Arguments:
+        parameters (list[arcpy.Parameter]): The list of parameters.
     """
     ...
 
 
 def post_execute(parameters: list[arcpy.Parameter]) -> None:
     """
-    Note:
-        Unimplemented for this tool.
+    {description}
+
+    Arguments:
+        parameters (list[arcpy.Parameter]): The list of parameters.
     """
     ...
 
@@ -25,7 +28,7 @@ def parameters() -> list[arcpy.Parameter]:
     Returns:
         list[arcpy.Parameter]: The list of parameters.
     """
-    templates = ("abbrev", "name")
+    templates = (("abbrev", "name"), ("abbrev", "name"))
 
     parameters = [
         arcpy.Parameter(
@@ -43,7 +46,7 @@ def parameters() -> list[arcpy.Parameter]:
 
 def update_parameters(parameters: list[arcpy.Parameter]) -> None:
     """
-    Update parameters to ensure their correctness.
+    {description}
 
     Arguments:
         parameters (list[arcpy.Parameter]): The list of parameters.
@@ -53,7 +56,9 @@ def update_parameters(parameters: list[arcpy.Parameter]) -> None:
 
 def update_messages(parameters: list[arcpy.Parameter]) -> None:
     """
-    Note:
-        Unimplemented for this tool.
+    {description}
+
+    Arguments:
+        parameters (list[arcpy.Parameter]): The list of parameters.
     """
     ...
