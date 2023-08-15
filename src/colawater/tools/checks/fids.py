@@ -73,10 +73,9 @@ def find_duplicate_fids(
     """
     scratch_gdb = arcpy.env.scratchGDB  # pyright: ignore [reportGeneralTypeIssues]
     timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
-    scratch_layer_path = f"{scratch_gdb}\\{str(layer)}_dup_fids_{timestamp}"
-    layer_path = ly.get_path(layer.value)
-    # turn very unhelpfully structured result of FindIdentical into
-    # oids that were identified as duplicates
+    scratch_layer_path = f"{scratch_gdb}\\duplicate_fids_{timestamp}"
+    layer_path = ly.get_path(layer)
+
     oids: tuple[int, ...] = tuple(
         int(oid[0])
         for oid in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
@@ -89,18 +88,18 @@ def find_duplicate_fids(
             ("IN_FID"),
         )
     )
-    # build comma separated string of oids for SQL query
-    if not (oid_str := ", ".join(map(str, oids))):
+
+    if not oids:
         return [()]
-    # oid to fid mapping to generate more helpful group keys
+
     oid_to_fid: dict[int, str] = dict(
         arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             layer_path,
             ("OBJECTID", "FACILITYID"),
-            where_clause=f"OBJECTID IN ({oid_str})",
+            where_clause=f"OBJECTID IN ({', '.join(map(str, oids))})",
         )
     )
-    # fid group pairs
+
     duplicates = [tuple((oid_to_fid[oid], str(oid))) for oid in oids]
 
     return duplicates
