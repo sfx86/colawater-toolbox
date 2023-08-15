@@ -156,6 +156,9 @@ def calculate_fids(
 
     Raises:
         ExecuteError: An error ocurred in the tool execution.
+
+    Note:
+        Modifies input layer.
     """
 
     # map of layer abbreviation to its affixes
