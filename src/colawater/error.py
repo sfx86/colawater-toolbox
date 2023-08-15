@@ -20,13 +20,13 @@ import colawater.status.summary as sy
 
 SYSTEM_ERROR_MSG: str = """How to resolve common errors:
 'RuntimeError: An expected Field was not found or could not be retrieved properly.'
-    You probably selected the wrong layer in the dropdown.
 'RuntimeError: Attribute column not found'
     You probably selected the wrong layer in the dropdown.
 'RuntimeError: Cannot acquire a lock.'
     Close the attribute tables of the layers with which you are trying to use this tool.
+    Another open ArcGIS process could also have a lock on the data, so check for that too.
 'RuntimeError: Objects in this class cannot be updated outside an edit session'
-    You probably selected a layer from cypress by mistake.
+    You probably selected a write-protected layer from cypress by mistake.
 """
 """
 Error message text to display on ``SystemError`` and ``RuntimeError``.
