@@ -19,6 +19,9 @@ _LAYER_START = 4
 def execute(parameters: list[arcpy.Parameter]) -> None:
     """
     Entry point for Water Quality Control.
+
+    Arguments:
+        parameters (list[arcpy.Parameter]): The list of parameters.
     """
     pg.set_progressor("default", "Starting quality control checks...")
 
