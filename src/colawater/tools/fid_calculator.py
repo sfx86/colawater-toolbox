@@ -22,6 +22,9 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
     Calculates the new facility identifiers for features with given
     placeholder initials starting from a given start value.
+
+    Arguments:
+        parameters (list[arcpy.Parameter]): The list of parameters.
     """
     pg.set_progressor("step", "Calculating facility identifiers...", 0, 6)
 

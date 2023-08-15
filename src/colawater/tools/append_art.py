@@ -23,6 +23,9 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Entry point for Append to ART.
 
     Appends recent integrated and well-sourced mains from a given editor to the Asset Reference Table.
+
+    Arguments:
+        parameters (list[arcpy.Parameter]): The list of parameters.
     """
     pg.set_progressor("default", "Appending mains to ART...")
 
