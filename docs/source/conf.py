@@ -38,6 +38,8 @@ rst_epilog = ".. include:: /include/links.rst"
 # theme
 html_theme = "furo"
 html_static_path = ["_static"]
+html_logo = "_static/logo.png"
+html_favicon = "_static/logo.ico"
 
 project_tagline = "ArcGIS geoprocessing tools for Columbia Water"
 html_title = f"{project} {release} <br><small>{project_tagline}</small>"
