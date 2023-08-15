@@ -1,4 +1,7 @@
-﻿<h1 align="center">colawater-toolbox</h1>
+﻿<p align="center">
+<a href="https://sfx86.github.io/colawater-toolbox/"><img alt="colawater-toolbox logo: a black-outlined white circle with a clip-art black toolbox on a purple raindrop" src="./docs/source/_static/logo.png"></a>
+</p>
+<h1 align="center">colawater-toolbox</h1>
 <h2 align="center">ArcGIS geoprocessing tools for Columbia Water</h2>
 <p align="center">
 <a href="https://sfx86.github.io/colawater-toolbox/"><img alt="Docs: colawater-toolbox" src="https://img.shields.io/badge/docs-colawater--toolbox-purple"></a>
