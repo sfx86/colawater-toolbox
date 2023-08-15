@@ -23,9 +23,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Entry point for Append to ART.
 
     Appends recent integrated and well-sourced mains from a given editor to the Asset Reference Table.
-
-    Note:
-        Modifies ART by appending new rows.
     """
     pg.set_progressor("default", "Appending mains to ART...")
 
@@ -125,7 +122,7 @@ def append_to_art(
         ExecuteError: An error ocurred in the tool execution.
 
     Note:
-        Modifies art_table by appending new rows.
+        Modifies input table.
     """
     with arcpy.da.Editor(  # pyright: ignore [reportGeneralTypeIssues]
         ly.get_workspace(wm_lyr)
