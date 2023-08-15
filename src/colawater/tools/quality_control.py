@@ -69,8 +69,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
                 f"{len(inc_fids):n} incorrectly formatted facility identifiers.",
             )
 
-        pg.set_progressor("default")
-
     if is_fid_duplicate_check:
         pg.set_progressor(
             "step", "Checking for duplicate facility identifiers...", 0, 7
@@ -100,13 +98,13 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
                 f"{num_duplicate:n} duplicate facility identifiers.",
             )
 
-        pg.set_progressor("default")
-
     if (is_wm_file_check or is_wm_ds_check) and not wm_layer.value:
         log.warning(
             f"Layer omitted: {wm_layer.displayName}, skipping water main checks."
         )
         return
+
+    pg.set_progressor("default")
 
     if is_wm_file_check:
         log.info(
