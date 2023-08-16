@@ -13,11 +13,10 @@ Examples:
         do_something(res)
 """
 
-from functools import partial
+from typing import Optional
 
 import arcpy
 
-import colawater.attribute as attr
 import colawater.layer as ly
 import colawater.scan as scan
 from colawater.error import fallible
@@ -26,7 +25,7 @@ from colawater.error import fallible
 @fallible
 def find_nonexistent_assoc_files(
     wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
-) -> list[tuple[str, ...]]:
+) -> list[tuple[Optional[str], ...]]:
     """
     Returns a list of object ID and nonexistent associated file pairs for the integrated mains in the water main layer.
 
@@ -39,9 +38,8 @@ def find_nonexistent_assoc_files(
     Raises:
         ExecuteError: An error ocurred in the tool execution.
     """
-    process = partial(attr.process, csv=True)
     return [
-        tuple(map(process, i))
+        tuple(i)
         for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             ly.get_path(wm_layer.value),
             ("OBJECTID", "COMMENTS"),
@@ -54,7 +52,7 @@ def find_nonexistent_assoc_files(
 @fallible
 def find_incorrect_datasources(
     wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
-) -> list[tuple[str, ...]]:
+) -> list[tuple[Optional[str], ...]]:
     """
     Returns a list of object ID and incorrect data source pairs for the integrated mains in the given water main layer.
 
@@ -67,9 +65,8 @@ def find_incorrect_datasources(
     Raises:
         ExecuteError: An error ocurred in the tool execution.
     """
-    process = partial(attr.process, csv=True)
     return [
-        tuple(map(process, i))
+        tuple(i)
         for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             ly.get_path(wm_layer.value),
             ("OBJECTID", "DATASOURCE"),
