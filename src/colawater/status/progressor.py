@@ -65,6 +65,6 @@ def increment(position: int = 1) -> None:
     Raises:
         TypeError: The active progressor is not of type STEP.
     """
-    if _progressor_type == _ProgressorType.DEFAULT:
+    if _progressor_type != _ProgressorType.STEP:
         raise TypeError("Can only call `increment` on a progressor of type STEP.")
     arcpy.SetProgressorPosition(position)
