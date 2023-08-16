@@ -4,6 +4,8 @@ tool and other helper functions.
 """
 
 import re
+from collections.abc import Sequence
+from typing import Optional
 
 import arcpy
 
@@ -38,8 +40,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             log.warning(f"Layer omitted: {l.displayName}")
 
     if is_fid_format_check:
-        pg.set_progressor("step", "Checking facility identifier formatting...", 0, 7)
-        # regexes correspond 1:1 with layer parameters
         regexes = (
             r"^\d+CA$",
             r"^\d+CV$",
@@ -51,58 +51,34 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             r"^000015-WATER-000\d+$",
         )
 
-        for l, r in zip(layers, regexes):
-            if not l.value:
-                pg.increment()
-                continue
-
+        for l, r in ((l, r) for l, r in zip(layers, regexes) if l.value):
             log.info(f"[{l.valueAsText}] Checking facility identifier formatting...")
 
             inc_fids = fids.find_incorrect_fids(l, re.compile(r))
 
-            pg.increment()
-            sy.add_result(
+            _boilerplate(
                 l.valueAsText,
                 "Incorrectly formatted facility identifiers (object ID, facility identifier):",
-            )
-            if inc_fids:
-                sy.add_note(l.valueAsText, attr.CSV_PROCESSING_MSG)
-                sy.add_items(inc_fids, csv=True)
-            sy.add_result(
-                l.valueAsText,
-                f"{len(inc_fids):n} incorrectly formatted facility identifiers.",
+                inc_fids,
+                "incorrectly formatted facility identifiers.",
+                csv=True,
             )
 
     if is_fid_duplicate_check:
-        pg.set_progressor(
-            "step", "Checking for duplicate facility identifiers...", 0, 7
-        )
-
-        for l in layers:
-            if not l.value:
-                pg.increment()
-                continue
-
+        for l in (l for l in layers if l.value):
             log.info(
                 f"[{l.valueAsText}] Checking for duplicate facility identifiers..."
             )
 
             duplicate_fids = fids.find_duplicate_fids(l.value)
 
-            pg.increment()
-            sy.add_result(
+            _boilerplate(
                 l.valueAsText,
                 "Duplicate facility identifiers grouped on each line (fid, object IDs):",
-            )
-            if duplicate_fids:
-                sy.add_items(duplicate_fids)
-            sy.add_result(
-                l.valueAsText,
-                f"{len(duplicate_fids):n} duplicate facility identifiers.",
-            )
-            sy.add_result(
-                l.valueAsText,
-                f"{len(set(i[0] for i in duplicate_fids))} unique duplicate facility identifiers.",
+                duplicate_fids,
+                "duplicate facility identifiers.",
+                unique=True,
+                result_unique_str="unique duplicate facility identifiers.",
             )
 
     if (is_wm_file_check or is_wm_ds_check) and not wm_layer.value:
@@ -111,8 +87,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         )
         return
 
-    pg.set_progressor("default")
-
     if is_wm_file_check:
         log.info(
             f"[{wm_layer.valueAsText}] Verifying assiociated files for integrated mains..."
@@ -120,19 +94,15 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
         nonexistent_files = mains.find_nonexistent_assoc_files(wm_layer)
 
-        sy.add_result(
-            wm_layer.valueAsText, "Nonexistent associated files (object ID, comments):"
-        )
-        if nonexistent_files:
-            sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
-            sy.add_items(nonexistent_files, csv=True)
-        sy.add_result(
+        _boilerplate(
             wm_layer.valueAsText,
-            f"{len(nonexistent_files):n} nonexistent files for integrated mains.",
-        )
-        sy.add_result(
-            wm_layer.valueAsText,
-            f"{len(set(i[1] for  i in nonexistent_files)):n} unique nonexistent files for integrated mains.",
+            "Nonexistent associated files (object ID, comments):",
+            nonexistent_files,
+            "nonexistent files for integrated mains.",
+            csv=True,
+            unique=True,
+            unique_idx=1,
+            result_unique_str="unique nonexistent files for integrated mains.",
         )
 
     if is_wm_ds_check:
@@ -142,19 +112,13 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
         inc_datasources = mains.find_incorrect_datasources(wm_layer)
 
-        sy.add_result(
+        _boilerplate(
             wm_layer.valueAsText,
             "Missing or unknown data sources (object ID, datasource):",
+            inc_datasources,
+            "missing or unknown data sources for integrated mains.",
+            csv=True,
         )
-        if inc_datasources:
-            sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
-            sy.add_items(inc_datasources, csv=True)
-        sy.add_result(
-            wm_layer.valueAsText,
-            f"{len(inc_datasources):n} missing or unknown data sources for integrated mains.",
-        )
-
-    # TODO: domain conformation
 
     sy.post()
 
@@ -168,14 +132,6 @@ def parameters() -> list[arcpy.Parameter]:
     Returns:
         list[arcpy.Parameter]: The list of parameters.
     """
-    check_templates = (
-        # make sure to increment LAYER_START if adding a check here
-        ("fid_check", "Check facility identifier format"),
-        ("fid_duplicate_check", "Check for duplicate facility identifiers"),
-        ("wm_file_check", "Check water main files"),
-        ("wm_datasource_check", "Check water main data sources"),
-    )
-
     checks = [
         arcpy.Parameter(
             displayName=name,
@@ -184,19 +140,14 @@ def parameters() -> list[arcpy.Parameter]:
             parameterType="Optional",
             direction="Input",
         )
-        for abbrev, name in check_templates
+        for abbrev, name in (
+            # make sure to increment LAYER_START if adding a check here
+            ("fid_check", "Check facility identifier format"),
+            ("fid_duplicate_check", "Check for duplicate facility identifiers"),
+            ("wm_file_check", "Check water main files"),
+            ("wm_datasource_check", "Check water main data sources"),
+        )
     ]
-
-    lyr_templates = (
-        ("ca_lyr", "Casing"),
-        ("cv_lyr", "Control Valve"),
-        ("ft_lyr", "Fitting"),
-        ("hy_lyr", "Hydrant"),
-        ("sl_lyr", "Service Line"),
-        ("st_lyr", "Structure"),
-        ("sv_lyr", "System Valve"),
-        ("wm_lyr", "Water Main"),
-    )
 
     lyrs = [
         arcpy.Parameter(
@@ -206,7 +157,49 @@ def parameters() -> list[arcpy.Parameter]:
             parameterType="Optional",
             direction="Input",
         )
-        for abbrev, name in lyr_templates
+        for abbrev, name in (
+            ("ca_lyr", "Casing"),
+            ("cv_lyr", "Control Valve"),
+            ("ft_lyr", "Fitting"),
+            ("hy_lyr", "Hydrant"),
+            ("sl_lyr", "Service Line"),
+            ("st_lyr", "Structure"),
+            ("sv_lyr", "System Valve"),
+            ("wm_lyr", "Water Main"),
+        )
     ]
 
     return [*checks, *lyrs]
+
+
+def _boilerplate(
+    layer_name: str,
+    result_header_str: str,
+    items: Sequence[Sequence[Optional[str]]],
+    result_total_str: str,
+    csv: bool = False,
+    unique: bool = False,
+    unique_idx: int = 0,
+    result_unique_str: str = "",
+) -> None:
+    pg.increment()
+    sy.add_result(
+        layer_name,
+        result_header_str,
+    )
+
+    if items:
+        if csv:
+            sy.add_note(layer_name, attr.CSV_PROCESSING_MSG)
+        sy.add_items(items, csv=csv)
+
+    sy.add_result(
+        layer_name,
+        f"{len(items):n} {result_total_str}",
+    )
+
+    if unique:
+        sy.add_result(
+            layer_name,
+            f"{len(set(i[unique_idx] for  i in items)):n} {result_unique_str}",
+        )

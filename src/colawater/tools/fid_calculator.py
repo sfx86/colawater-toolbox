@@ -83,20 +83,18 @@ def parameters() -> list[arcpy.Parameter]:
     )
     interval.value = 2
 
-    templates = (
-        ("ca_lyr", "Casing"),
-        ("cv_lyr", "Control Valve"),
-        ("ft_lyr", "Fitting"),
-        ("hy_lyr", "Hydrant"),
-        ("sl_lyr", "Service Line"),
-        ("st_lyr", "Structure"),
-        ("sv_lyr", "System Valve"),
-        ("wm_lyr", "Water Main"),
-    )
-
     input_layers = [
         f(abbrev, name)  # type: ignore [no-untyped-call]
-        for abbrev, name in templates
+        for abbrev, name in (
+            ("ca_lyr", "Casing"),
+            ("cv_lyr", "Control Valve"),
+            ("ft_lyr", "Fitting"),
+            ("hy_lyr", "Hydrant"),
+            ("sl_lyr", "Service Line"),
+            ("st_lyr", "Structure"),
+            ("sv_lyr", "System Valve"),
+            ("wm_lyr", "Water Main"),
+        )
         for f in (
             lambda abbrev, name: arcpy.Parameter(
                 displayName=name,
@@ -163,8 +161,6 @@ def calculate_fids(
     Note:
         Modifies input layer.
     """
-
-    # map of layer abbreviation to its affixes
     affix_map = {
         "ca_lyr": ("", "CA"),
         "cv_lyr": ("", "CV"),
