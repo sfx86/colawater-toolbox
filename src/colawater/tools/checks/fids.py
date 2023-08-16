@@ -14,13 +14,11 @@ Examples:
 """
 
 import re
-from collections.abc import Generator
 from datetime import datetime
-from typing import Any
+from typing import Any, Optional, Union
 
 import arcpy
 
-import colawater.attribute as attr
 import colawater.layer as ly
 from colawater.error import fallible
 
@@ -29,7 +27,7 @@ from colawater.error import fallible
 def find_incorrect_fids(
     layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
     regex: re.Pattern[Any],
-) -> list[tuple[str, str]]:
+) -> list[tuple[str, Optional[str]]]:
     """
     Returns all incorrectly formatted facility identifiers matching a regular expression.
 
@@ -44,18 +42,18 @@ def find_incorrect_fids(
         ExecuteError: An error ocurred in the tool execution.
     """
     return [
-        (str(oid), fid_proc)
+        (str(oid), fid)
         for oid, fid in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             ly.get_path(layer), ("OBJECTID", "FACILITYID")
         )
-        if not regex.fullmatch(fid_proc := attr.process(fid))
+        if not (regex.fullmatch(fid) if fid is not None else False)
     ]
 
 
 @fallible
 def find_duplicate_fids(
     layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
-) -> list[tuple[str, ...]]:
+) -> list[Union[tuple[str, str], tuple]]:
     """
     Returns all duplicate facility identifiers from the given layer.
 
@@ -100,6 +98,6 @@ def find_duplicate_fids(
         )
     )
 
-    duplicates = [tuple((oid_to_fid[oid], str(oid))) for oid in oids]
+    duplicates = [(oid_to_fid[oid], str(oid)) for oid in oids]
 
     return duplicates
