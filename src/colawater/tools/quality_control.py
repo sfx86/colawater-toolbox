@@ -66,7 +66,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             )
             if inc_fids:
                 sy.add_note(l.valueAsText, attr.CSV_PROCESSING_MSG)
-            sy.add_items(inc_fids, csv=True)
+                sy.add_items(inc_fids, csv=True)
             sy.add_result(
                 l.valueAsText,
                 f"{len(inc_fids):n} incorrectly formatted facility identifiers.",
