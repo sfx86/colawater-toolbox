@@ -88,7 +88,7 @@ def find_duplicate_fids(
     )
 
     if not oids:
-        return [()]
+        return []
 
     oid_to_fid: dict[int, str] = dict(
         arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
