@@ -33,8 +33,9 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     is_wm_file_check = is_checks[2].value
     is_wm_ds_check = is_checks[3].value
 
-    for l in (l for l in layers if not l.value):
-        log.warning(f"Layer omitted: {l.displayName}")
+    if is_fid_format_check or is_fid_duplicate_check:
+        for l in (l for l in layers if not l.value):
+            log.warning(f"Layer omitted: {l.displayName}")
 
     if is_fid_format_check:
         pg.set_progressor("step", "Checking facility identifier formatting...", 0, 7)
