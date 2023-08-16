@@ -61,7 +61,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
                 "Incorrectly formatted facility identifiers (object ID, facility identifier):",
                 inc_fids,
                 "incorrectly formatted facility identifiers.",
-                csv=True,
             )
 
     if is_fid_duplicate_check:
@@ -117,7 +116,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             "Missing or unknown data sources (object ID, datasource):",
             inc_datasources,
             "missing or unknown data sources for integrated mains.",
-            csv=True,
         )
 
     sy.post()
@@ -182,23 +180,15 @@ def _boilerplate(
     unique_idx: int = 0,
     result_unique_str: str = "",
 ) -> None:
-    pg.increment()
-    sy.add_result(
-        layer_name,
-        result_header_str,
-    )
-
     if items:
+        sy.add_result(layer_name, result_header_str)
         if csv:
             sy.add_note(layer_name, attr.CSV_PROCESSING_MSG)
         sy.add_items(items, csv=csv)
 
-    sy.add_result(
-        layer_name,
-        f"{len(items):n} {result_total_str}",
-    )
+    sy.add_result(layer_name, f"{len(items):n} {result_total_str}")
 
-    if unique:
+    if unique and (items and items[0]):
         sy.add_result(
             layer_name,
             f"{len(set(i[unique_idx] for  i in items)):n} {result_unique_str}",
