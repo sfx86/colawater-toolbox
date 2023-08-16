@@ -10,5 +10,4 @@ Installation
 
 Download and unzip the ``colawater-toolbox.zip`` `asset from the latest release <releases_>`_ 
 and `add the toolbox <toolboxtutorial_>`_  to ArcGIS. 
-Make sure the directory structure *is not changed*, so that all of the 
-associated files and folders are in the same directory as the ``.pyt`` file.
+Make sure to not alter the file structure; the toolbox will not work otherwise.
