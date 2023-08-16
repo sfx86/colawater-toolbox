@@ -141,16 +141,16 @@ def append_to_art(
             "FILELOCATIONCW2020",
         ),
     ) as cursor:
-        for fid, install_date, datasource, comments in (
-            selected_mains := [
-                tuple(i)
-                for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-                    ly.get_path(wm_lyr),
-                    ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
-                    wm_where_clause,
-                )
-            ]
-        ):
+        selected_mains = [
+            tuple(i)
+            for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
+                ly.get_path(wm_lyr),
+                ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
+                wm_where_clause,
+            )
+        ]
+
+        for fid, install_date, datasource, comments in selected_mains:
             cursor.insertRow(
                 (
                     str(scan.CITY_DIR / comments) if comments is not None else None,
