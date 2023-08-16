@@ -35,7 +35,7 @@ Functions
 
 
 
-.. py:function:: find_incorrect_fids(layer: arcpy._mp.Layer, regex: re.Pattern[Any]) -> list[tuple[str, str]]
+.. py:function:: find_incorrect_fids(layer: arcpy._mp.Layer, regex: re.Pattern[Any]) -> list[tuple[str, Optional[str]]]
 
    Returns all incorrectly formatted facility identifiers matching a regular expression.
 

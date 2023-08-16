@@ -35,7 +35,7 @@ Functions
 
 
 
-.. py:function:: find_nonexistent_assoc_files(wm_layer: arcpy._mp.Layer) -> list[tuple[str, Ellipsis]]
+.. py:function:: find_nonexistent_assoc_files(wm_layer: arcpy._mp.Layer) -> list[tuple[Optional[str], Ellipsis]]
 
    Returns a list of object ID and nonexistent associated file pairs for the integrated mains in the water main layer.
 
@@ -48,7 +48,7 @@ Functions
    :raises ExecuteError: An error ocurred in the tool execution.
 
 
-.. py:function:: find_incorrect_datasources(wm_layer: arcpy._mp.Layer) -> list[tuple[str, Ellipsis]]
+.. py:function:: find_incorrect_datasources(wm_layer: arcpy._mp.Layer) -> list[tuple[Optional[str], Ellipsis]]
 
    Returns a list of object ID and incorrect data source pairs for the integrated mains in the given water main layer.
 
