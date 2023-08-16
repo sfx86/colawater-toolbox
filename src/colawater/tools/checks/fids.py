@@ -53,7 +53,7 @@ def find_incorrect_fids(
 @fallible
 def find_duplicate_fids(
     layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
-) -> list[Union[tuple[str, str], tuple]]:
+) -> list[tuple[str, ...]]:
     """
     Returns all duplicate facility identifiers from the given layer.
 
@@ -98,6 +98,6 @@ def find_duplicate_fids(
         )
     )
 
-    duplicates = [(oid_to_fid[oid], str(oid)) for oid in oids]
+    duplicates = [tuple(map(str, (oid_to_fid[oid], oid))) for oid in oids]
 
     return duplicates
