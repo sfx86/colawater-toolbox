@@ -93,12 +93,15 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
                 l.valueAsText,
                 "Duplicate facility identifiers grouped on each line (fid, object IDs):",
             )
-            sy.add_items(duplicate_fids)
-            # len(i) - 1 because the fid itself is the first value in the list
-            num_duplicate = sum(len(i) - 1 if len(i) > 0 else 0 for i in duplicate_fids)
+            if duplicate_fids:
+                sy.add_items(duplicate_fids)
             sy.add_result(
                 l.valueAsText,
-                f"{num_duplicate:n} duplicate facility identifiers.",
+                f"{len(duplicate_fids):n} duplicate facility identifiers.",
+            )
+            sy.add_result(
+                l.valueAsText,
+                f"{len(set(i[0] for i in duplicate_fids))} unique duplicate facility identifiers.",
             )
 
     if (is_wm_file_check or is_wm_ds_check) and not wm_layer.value:
@@ -121,15 +124,14 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         )
         if nonexistent_files:
             sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
-        sy.add_items(nonexistent_files, csv=True)
+            sy.add_items(nonexistent_files, csv=True)
         sy.add_result(
             wm_layer.valueAsText,
             f"{len(nonexistent_files):n} nonexistent files for integrated mains.",
         )
-        num_unique = len({list[1] for list in nonexistent_files})
         sy.add_result(
             wm_layer.valueAsText,
-            f"{num_unique:n} unique nonexistent files files for integrated mains.",
+            f"{len(set(i[1] for  i in nonexistent_files)):n} unique nonexistent files for integrated mains.",
         )
 
     if is_wm_ds_check:
@@ -145,7 +147,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         )
         if inc_datasources:
             sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
-        sy.add_items(inc_datasources, csv=True)
+            sy.add_items(inc_datasources, csv=True)
         sy.add_result(
             wm_layer.valueAsText,
             f"{len(inc_datasources):n} missing or unknown data sources for integrated mains.",
