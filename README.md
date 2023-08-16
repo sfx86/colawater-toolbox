@@ -88,9 +88,8 @@ See [CHANGELOG.md][changelog].
 # Versioning
 
 Versions will take the form `major.minor.patch`.
-New tools, behavior changes, new parameters, etc. will result in a major version bump and a release.
-Modification of tool contents in a backwards-compatible way will result in a minor version bump.
-Some minor versions will get releases if necessary.
+New tools and behavior changes will result in a major version bump and a release.
+New parameters will result in a minor version bump and a release.
 Changes to documentation, wording, small backward-compatible bugfixes, etc. will result in patch number bump.
 
 [add-a-toolbox]: https://pro.arcgis.com/en/pro-app/latest/help/projects/connect-to-a-toolbox.htm
