@@ -15,7 +15,7 @@ Examples:
 
 import re
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 import arcpy
 
