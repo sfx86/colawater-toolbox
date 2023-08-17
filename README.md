@@ -95,5 +95,5 @@ Changes to documentation, wording, small backward-compatible bugfixes, etc. will
 [add-a-toolbox]: https://pro.arcgis.com/en/pro-app/latest/help/projects/connect-to-a-toolbox.htm
 [arcpy-reference]: https://pro.arcgis.com/en/pro-app/latest/arcpy/main/arcgis-pro-arcpy-reference.htm
 [changelog]: https://github.com/sfx86/colawater-toolbox/blob/main/CHANGELOG.md
-[releases]: https://github.com/sfx86/colawater-toolbox/releases
+[releases]: https://github.com/sfx86/colawater-toolbox/releases/latest
 [docs]: https://sfx86.github.io/colawater-toolbox
