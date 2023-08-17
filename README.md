@@ -5,7 +5,7 @@
 <h2 align="center">ArcGIS geoprocessing tools for Columbia Water</h2>
 <p align="center">
 <a href="https://sfx86.github.io/colawater-toolbox/"><img alt="Docs: colawater-toolbox" src="https://img.shields.io/badge/docs-colawater--toolbox-purple"></a>
-<a href="https://github.com/sfx86/colawater-toolbox/releases/"><img alt="Latest release" src="https://img.shields.io/github/v/release/sfx86/colawater-toolbox"></a>
+<a href="https://github.com/sfx86/colawater-toolbox/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/sfx86/colawater-toolbox"></a>
 <a href="https://opensource.org/licenses/MPL-2.0"><img alt="License: MPL 2.0" src="https://img.shields.io/badge/license-MPL_2.0-brightgreen"></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000"></a>
 </p>
