@@ -35,7 +35,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     art_table = parameters[3]
     where_water = f"""INTEGRATIONSTATUS = 'Y' 
 And LASTEDITOR = '{last_editor}' 
-And LASTUPDATE >= timestamp '{on_after_date}' 
+And LASTUPDATE >= '{on_after_date}' 
 And LIFECYCLESTATUS = 'Active' 
 And OWNEDBY = 1 
 And (DATASOURCE = 'SURVGPS' Or DATASOURCE = 'ASB')"""
