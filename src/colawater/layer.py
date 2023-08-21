@@ -21,6 +21,23 @@ Examples:
 import arcpy
 
 
+def get_name(
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+) -> str:
+    """
+    Returns the layer's base name.
+
+    Arguments:
+        layer (arcpy._mp.Layer): A layer object.
+
+    Returns:
+        str: The layer's name.
+    """
+    name: str = arcpy.Describe(layer).name  # pyright: ignore [reportGeneralTypeIssues]
+    slash_idx = name.rfind("\\")
+    return name[slash_idx + 1 :]
+
+
 def get_path(
     layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> str:
