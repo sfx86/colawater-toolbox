@@ -1,95 +1,75 @@
 <?xml version="1.0"?>
 <metadata xml:lang="en">
-	<Esri>
-		<CreaDate>20230719</CreaDate>
-		<CreaTime>10300400</CreaTime>
-		<ArcGISFormat>1.0</ArcGISFormat>
-		<SyncOnce>TRUE</SyncOnce>
-		<ModDate>20230719</ModDate>
-		<ModTime>11403700</ModTime>
-		<scaleRange>
-			<minScale>150000000</minScale>
-			<maxScale>5000</maxScale>
-		</scaleRange>
-		<ArcGISProfile>ItemDescription</ArcGISProfile>
-	</Esri>
-	<tool name="CalculateFacilityIdentifiers" displayname="Calculate Facility Identifiers" toolboxalias="colawater" xmlns="">
-		<arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
-		<parameters>
-			<param name="initials" displayname="Initials" type="Required" direction="Input" datatype="String" expression="initials">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The placeholder initials to be replaced.&lt;/SPAN&gt;&lt;/P&gt;&lt;P&gt;&lt;SPAN /&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="interval" displayname="Global Interval" type="Required" direction="Input" datatype="Long" expression="interval">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The interval to increment between facility identifiers.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="ca_lyr" displayname="Casing" type="Optional" direction="Input" datatype="Feature Layer" expression="{ca_lyr}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The casing layer for calculating facility identifiers.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="ca_lyr_start" displayname="Casing Start Value" type="Optional" direction="Input" datatype="Long" expression="{ca_lyr_start}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The number portion of the starting facility identifier for the casing layer.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="cv_lyr" displayname="Control Valve" type="Optional" direction="Input" datatype="Feature Layer" expression="{cv_lyr}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The control valve layer for calculating facility identifiers.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="cv_lyr_start" displayname="Control Valve Start Value" type="Optional" direction="Input" datatype="Long" expression="{cv_lyr_start}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The number portion of the starting facility identifier for the control valve layer.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="ft_lyr" displayname="Fitting" type="Optional" direction="Input" datatype="Feature Layer" expression="{ft_lyr}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The fitting layer for calculating facility identifiers.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="ft_lyr_start" displayname="Fitting Start Value" type="Optional" direction="Input" datatype="Long" expression="{ft_lyr_start}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The number portion of the starting facility identifier for the fitting layer.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="hy_lyr" displayname="Hydrant" type="Optional" direction="Input" datatype="Feature Layer" expression="{hy_lyr}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The hydrant layer for calculating facility identifiers.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="hy_lyr_start" displayname="Hydrant Start Value" type="Optional" direction="Input" datatype="Long" expression="{hy_lyr_start}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The number portion of the starting facility identifier for the hydrant layer.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="sl_lyr" displayname="Service Line" type="Optional" direction="Input" datatype="Feature Layer" expression="{sl_lyr}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The service line layer for calculating facility identifiers.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="sl_lyr_start" displayname="Service Line Start Value" type="Optional" direction="Input" datatype="Long" expression="{sl_lyr_start}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The number portion of the starting facility identifier for the service line layer.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="st_lyr" displayname="Structure" type="Optional" direction="Input" datatype="Feature Layer" expression="{st_lyr}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The structure layer for calculating facility identifiers.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="st_lyr_start" displayname="Structure Start Value" type="Optional" direction="Input" datatype="Long" expression="{st_lyr_start}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The number portion of the starting facility identifier for the structure layer.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="sv_lyr" displayname="System Valve" type="Optional" direction="Input" datatype="Feature Layer" expression="{sv_lyr}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The system valve layer for calculating facility identifiers.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="sv_lyr_start" displayname="System Valve Start Value" type="Optional" direction="Input" datatype="Long" expression="{sv_lyr_start}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The number portion of the starting facility identifier for the system valve layer.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="wm_lyr" displayname="Water Main" type="Optional" direction="Input" datatype="Feature Layer" expression="{wm_lyr}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The water main layer for calculating facility identifiers.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-			<param name="wm_lyr_start" displayname="Water Main Start Value" type="Optional" direction="Input" datatype="Long" expression="{wm_lyr_start}">
-				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;P STYLE="margin:0 0 0 0;"&gt;&lt;SPAN&gt;The number portion of the starting facility identifier for the water main layer.&lt;/SPAN&gt;&lt;/P&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN /&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
-			</param>
-		</parameters>
-		<summary>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;Calculate facility identifiers for a given layer.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</summary>
-	</tool>
-	<dataIdInfo>
-		<idCitation>
-			<resTitle>Calculate Facility Identifiers</resTitle>
-		</idCitation>
-		<searchKeys>
-			<keyword>water</keyword>
-		</searchKeys>
-	</dataIdInfo>
-	<distInfo>
-		<distributor>
-			<distorFormat>
-				<formatName>ArcToolbox Tool</formatName>
-			</distorFormat>
-		</distributor>
-	</distInfo>
-	<mdHrLv>
-		<ScopeCd value="005"></ScopeCd>
-	</mdHrLv>
-	<mdDateSt Sync="TRUE">20230719</mdDateSt>
+    <Esri>
+        <CreaDate>20230719</CreaDate>
+        <CreaTime>10300400</CreaTime>
+        <ArcGISFormat>1.0</ArcGISFormat>
+        <SyncOnce>TRUE</SyncOnce>
+        <ModDate>20230821</ModDate>
+        <ModTime>16292500</ModTime>
+        <scaleRange>
+            <minScale>150000000</minScale>
+            <maxScale>5000</maxScale>
+        </scaleRange>
+        <ArcGISProfile>ItemDescription</ArcGISProfile>
+    </Esri>
+    <tool name="CalculateFacilityIdentifiers" displayname="Calculate Facility Identifiers" toolboxalias="colawater"
+        xmlns="">
+        <arcToolboxHelpPath>c:\program files\arcgis\pro\Resources\Help\gp</arcToolboxHelpPath>
+        <parameters>
+            <param name="initials" displayname="Initials" type="Required" direction="Input" datatype="String" expression="initials">
+                <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The placeholder initials to be replaced.&lt;/SPAN&gt;&lt;/P&gt;&lt;P&gt;&lt;SPAN /&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+            </param>
+            <param name="interval" displayname="Global Interval" type="Required" direction="Input" datatype="Long" expression="interval">
+                <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The interval to increment between facility identifiers.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+            </param>
+            <param name="layers" displayname="Water Layers" type="Required" direction="Input" datatype="Multiple Value" expression="layers;layers...">
+                <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The water layers to update with new facility identifiers.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+            </param>
+            <param name="ca_start" displayname="Start Value: Casing" type="Optional" direction="Input" datatype="Long" expression="{ca_start}">
+                <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The casing layer start value.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+            </param>
+            <param name="cv_start" displayname="Start Value: Control Valve" type="Optional" direction="Input" datatype="Long" expression="{cv_start}">
+                <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The control valve layer start value.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+            </param>
+            <param name="ft_start" displayname="Start Value: Fitting" type="Optional" direction="Input" datatype="Long" expression="{ft_start}">
+                <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The fitting layer start value.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+            </param>
+            <param name="hy_start" displayname="Start Value: Hydrant" type="Optional" direction="Input" datatype="Long" expression="{hy_start}">
+                <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The hydrant layer start value.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+            </param>
+            <param name="sl_start" displayname="Start Value: Service Line" type="Optional" direction="Input" datatype="Long" expression="{sl_start}">
+                <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The service line layer start value.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+            </param>
+            <param name="st_start" displayname="Start Value: Structure" type="Optional" direction="Input" datatype="Long" expression="{st_start}">
+                <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The water structure layer start value.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+            </param>
+            <param name="sv_start" displayname="Start Value: System Valve" type="Optional" direction="Input" datatype="Long" expression="{sv_start}">
+                <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;P&gt;&lt;SPAN&gt;The system valve layer start value.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;</dialogReference>
+            </param>
+            <param name="wm_start" displayname="Start Value: Water Main" type="Optional" direction="Input" datatype="Long" expression="{wm_start}">
+                <dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The water main layer start value.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+            </param>
+        </parameters>
+        <summary>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;Calculate facility identifiers for a given layer.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</summary>
+    </tool>
+    <dataIdInfo>
+        <idCitation>
+            <resTitle>Calculate Facility Identifiers</resTitle>
+        </idCitation>
+        <searchKeys>
+            <keyword>water</keyword>
+        </searchKeys>
+    </dataIdInfo>
+    <distInfo>
+        <distributor>
+            <distorFormat>
+                <formatName>ArcToolbox Tool</formatName>
+            </distorFormat>
+        </distributor>
+    </distInfo>
+    <mdHrLv>
+        <ScopeCd value="005"/>
+    </mdHrLv>
+    <mdDateSt Sync="TRUE">20230821</mdDateSt>
 </metadata>
