@@ -3,6 +3,7 @@ Contains the functions used by the Calculate Facility Identifiers
 tool and other helper functions.
 """
 
+import re
 from getpass import getuser
 
 import arcpy
@@ -12,8 +13,6 @@ import colawater.status.logging as log
 import colawater.status.progressor as pg
 import colawater.status.summary as sy
 from colawater.error import fallible
-
-_LAYER_START = 2
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
@@ -26,32 +25,84 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Arguments:
         parameters (list[arcpy.Parameter]): The list of parameters.
     """
-    pg.set_progressor("step", "Calculating facility identifiers...", 0, 6)
+    pg.set_progressor("default", "Calculating facility identifiers...")
 
     initials = parameters[0].value
     interval = parameters[1].value
-
-    # first two parameters are not needed for the tight loop
-    items = zip(
-        (p for p in parameters[_LAYER_START:] if p.name.endswith("_lyr")),
-        (p for p in parameters[_LAYER_START:] if p.name.endswith("_start")),
+    layers = parameters[2].values
+    starts = parameters[3:]
+    layer_names = (
+        "waCasing",
+        "waControlValve",
+        "waFitting",
+        "waHydrant",
+        "waServiceLine",
+        "waStructure",
+        "waSystemValve",
+        "waWaterMain",
+    )
+    index_map: dict[str, int] = dict((name, i) for i, name in enumerate(layer_names))
+    affix_map: dict[str, str] = dict(
+        zip(
+            layer_names,
+            (
+                "{}CA",
+                "{}CV",
+                "{}FT",
+                "{}HYD",
+                "{}SERV",
+                "{}STR",
+                "{}SV",
+                "000015-WATER-000{}",
+            ),
+        )
     )
 
     sy.add_result("TOOL", "New start values:")
 
-    for layer, start in items:
-        if not (layer.value and start.value):
-            log.warning(f"Layer or start value omitted: skipping [{layer.displayName}]")
-            pg.increment()
+    for layer in layers:
+        layer_name = ly.get_name(layer)
+        search_name = re.compile(
+            r"(waCasing|waControlValve|waFitting|waHydrant|waServiceLine|waStructure|waSystemValve|waWaterMain)"
+        ).search(layer_name)
+        match_name = search_name.group(0) if search_name is not None else ""
+
+        try:
+            start_idx = index_map[match_name]
+        except KeyError:
+            log.warning(f"Unexpected layer name: [{layer_name}]")
             continue
 
-        log.info(f"Calculating facility identifiers for [{layer.valueAsText}]...")
+        if (start := starts[start_idx].value) is None:
+            log.warning(f"Start value omitted: skipping [{layer_name}]")
+            continue
 
-        new_fid = calculate_fids(layer, start, interval, initials)
+        log.info(f"Calculating facility identifiers for [{layer_name}]...")
 
-        sy.add_item(f"{layer.displayName}: {new_fid}")
-        log.info(f"[{layer.valueAsText}] finished.")
-        pg.increment()
+        affix_template = affix_map[match_name]
+        new_fid = calculate_fids(
+            layer,
+            match_name,
+            {
+                "waCasing",
+                "waControlValve",
+                "waFitting",
+                "waHydrant",
+                "waWaterMain",
+            },
+            start,
+            interval,
+            initials,
+            affix_template,
+        )
+
+        if new_fid != -1:
+            formatted_fid = affix_template.format(new_fid)
+            sy.add_item(f"{layer_name}: '{formatted_fid}' -> {new_fid}")
+        else:
+            sy.add_item(f"{layer_name}: None used")
+
+        log.info(f"[{layer_name}] finished.")
 
     sy.post()
 
@@ -60,7 +111,7 @@ def parameters() -> list[arcpy.Parameter]:
     """
     Returns the parameters for Calculate Facility Identifiers.
 
-    Parameters are of type GPString, GPLong, and 7 pairs of GPFeatureLayer and GPLong.
+    Parameters are of type GPString, GPLong, GPFeatureLayer multivalue, and 7 GPLong.
 
     Returns:
         list[arcpy.Parameter]: The list of parameters.
@@ -83,62 +134,48 @@ def parameters() -> list[arcpy.Parameter]:
     )
     interval.value = 2
 
-    input_layers = [
-        f(abbrev, name)  # type: ignore [no-untyped-call]
+    layers = arcpy.Parameter(
+        displayName="Water Layers",
+        name="layers",
+        datatype="GPFeatureLayer",
+        parameterType="Required",
+        direction="Input",
+        multiValue=True,
+    )
+
+    starts = (
+        arcpy.Parameter(
+            displayName=f"Start Value: {name}",
+            name=f"{abbrev}_start",
+            datatype="GPLong",
+            parameterType="Optional",
+            direction="Input",
+        )
         for abbrev, name in (
-            ("ca_lyr", "Casing"),
-            ("cv_lyr", "Control Valve"),
-            ("ft_lyr", "Fitting"),
-            ("hy_lyr", "Hydrant"),
-            ("sl_lyr", "Service Line"),
-            ("st_lyr", "Structure"),
-            ("sv_lyr", "System Valve"),
-            ("wm_lyr", "Water Main"),
+            ("ca", "Casing"),
+            ("cv", "Control Valve"),
+            ("ft", "Fitting"),
+            ("hy", "Hydrant"),
+            ("sl", "Service Line"),
+            ("st", "Structure"),
+            ("sv", "System Valve"),
+            ("wm", "Water Main"),
         )
-        for f in (
-            lambda abbrev, name: arcpy.Parameter(
-                displayName=name,
-                name=abbrev,
-                datatype="GPFeatureLayer",
-                parameterType="Optional",
-                direction="Input",
-            ),
-            lambda abbrev, name: arcpy.Parameter(
-                displayName=f"{name} Start Value",
-                name=f"{abbrev}_start",
-                datatype="GPLong",
-                parameterType="Optional",
-                direction="Input",
-            ),
-        )
-    ]
+    )
 
-    return [initials, interval, *input_layers]
-
-
-def update_parameters(parameters: list[arcpy.Parameter]) -> None:
-    """
-    Enables layer start values if their associated layer is set and ensures start values are greater than zero.
-
-    Arguments:
-        parameters (list[arcpy.Parameter]): The list of parameters.
-    """
-    for l, s in zip(
-        (p for p in parameters[_LAYER_START:] if p.name.endswith("_lyr")),
-        (p for p in parameters[_LAYER_START:] if p.name.endswith("_start")),
-    ):
-        s.enabled = True if l.value else False
-        # short circuiting prevents NoneType and Int comparision
-        s.value = 1 if s.value is not None and s.value < 1 else s.value
+    return [initials, interval, layers, *starts]
 
 
 @fallible
 def calculate_fids(
-    layer: arcpy.Parameter,
-    start: arcpy.Parameter,
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+    match_name: str,
+    fid_idx_layers: set[str],
+    start: int,
     interval: int,
     initials: str,
-) -> str:
+    affix_template: str,
+) -> int:
     """
     Calculates the facility identifiers for the provided layer.
 
@@ -146,14 +183,18 @@ def calculate_fids(
     in the provided layer.
 
     Arguments:
-        layer (arcpy.Parameter): The layer parameter.
-        start (arpcy.Parameter): The start value parameter.
+        layer (arcpy._mp.Layer): The layer value.
+        match_name (str): The layer name to match against ``fid_idx_layers``.
+        fid_idx_layers (set[str]): The set of layer names which the facility ID index will be calculated.
+        start (int): The start value.
         interval (int): The interval to increment the facility identifier.
         initials (str): The initials to replace with the calculated facility identifiers.
+        affix_template (str): A format string with one anonymous brace pair.
 
     Returns:
-        str: The final facility identifier plus one interval to be used
-             as an input for the next tool execution.
+        int: The final facility identifier value, plus one interval to be used
+             as an input for the next tool execution, or -1 if no values
+             matching ``initials`` were found.
 
     Raises:
         ExecuteError: An error ocurred in the tool execution.
@@ -161,40 +202,30 @@ def calculate_fids(
     Note:
         Modifies input layer.
     """
-    affix_map = {
-        "ca_lyr": ("", "CA"),
-        "cv_lyr": ("", "CV"),
-        "ft_lyr": ("", "FT"),
-        "hy_lyr": ("", "HYD"),
-        "sl_lyr": ("", "SERV"),
-        "st_lyr": ("", "STR"),
-        "sv_lyr": ("", "SV"),
-        "wm_lyr": ("000015-WATER-000", ""),
-    }
-    fields = ("FACILITYID", "FACILITYIDINDEX")
-    where_initials = f"FACILITYID = '{initials}'"
+    incr = start
+    path = ly.get_path(layer)
 
-    incr = start.value
-    lyr_path = ly.get_path(layer.value)
-    workspace = ly.get_workspace(layer.value)
-    prefix, suffix = affix_map[layer.name]
-
-    with arcpy.da.Editor(workspace):  # pyright: ignore [reportGeneralTypeIssues]
+    with arcpy.da.Editor(  # pyright: ignore [reportGeneralTypeIssues]
+        ly.get_workspace(layer)
+    ):
         # only these layers have FACILITYIDINDEX
-        if layer.name in {"ca_lyr", "cv_lyr", "ft_lyr", "hy_lyr", "wm_lyr"}:
+        if match_name in fid_idx_layers:
             with arcpy.da.UpdateCursor(  # pyright: ignore [reportGeneralTypeIssues]
-                lyr_path, fields, where_initials
+                path, ("FACILITYID", "FACILITYIDINDEX"), f"FACILITYID = '{initials}'"
             ) as cursor:
                 for _ in cursor:
-                    cursor.updateRow((f"{prefix}{incr}{suffix}", incr))
+                    cursor.updateRow((affix_template.format(incr), incr))
                     incr += interval
         else:
             with arcpy.da.UpdateCursor(  # pyright: ignore [reportGeneralTypeIssues]
-                lyr_path, fields[0], where_initials
+                path, ("FACILITYID"), f"FACILITYID = '{initials}'"
             ) as cursor:
                 for _ in cursor:
                     # leave FACILITYIDINDEX alone; logic is otherwise identicial
-                    cursor.updateRow((f"{prefix}{incr}{suffix}",))
+                    cursor.updateRow((affix_template.format(incr),))
                     incr += interval
 
-    return f"{prefix}{incr}{suffix}"
+    if incr == start:
+        return -1
+
+    return incr
