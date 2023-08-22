@@ -21,7 +21,6 @@ Functions
 
    colawater.tools.fid_calculator.execute
    colawater.tools.fid_calculator.parameters
-   colawater.tools.fid_calculator.update_parameters
    colawater.tools.fid_calculator.calculate_fids
 
 
@@ -41,41 +40,40 @@ Functions
 
    Returns the parameters for Calculate Facility Identifiers.
 
-   Parameters are of type GPString, GPLong, and 7 pairs of GPFeatureLayer and GPLong.
+   Parameters are of type GPString, GPLong, GPFeatureLayer multivalue, and 7 GPLong.
 
    :returns: The list of parameters.
    :rtype: list[arcpy.Parameter]
 
 
-.. py:function:: update_parameters(parameters: list[arcpy.Parameter]) -> None
-
-   Enables layer start values if their associated layer is set and ensures start values are greater than zero.
-
-   :param parameters: The list of parameters.
-   :type parameters: list[arcpy.Parameter]
-
-
-.. py:function:: calculate_fids(layer: arcpy.Parameter, start: arcpy.Parameter, interval: int, initials: str) -> str
+.. py:function:: calculate_fids(layer: arcpy._mp.Layer, match_name: str, fid_idx_layers: set[str], start: int, interval: int, initials: str, affix_template: str) -> int
 
    Calculates the facility identifiers for the provided layer.
 
    Also updates the substituted initials with the new facility identifiers
    in the provided layer.
 
-   :param layer: The layer parameter.
-   :type layer: arcpy.Parameter
-   :param start: The start value parameter.
-   :type start: arpcy.Parameter
+   :param layer: The layer value.
+   :type layer: arcpy._mp.Layer
+   :param match_name: The layer name to match against ``fid_idx_layers``.
+   :type match_name: str
+   :param fid_idx_layers: The set of layer names which the facility ID index will be calculated.
+   :type fid_idx_layers: set[str]
+   :param start: The start value.
+   :type start: int
    :param interval: The interval to increment the facility identifier.
    :type interval: int
    :param initials: The initials to replace with the calculated facility identifiers.
    :type initials: str
+   :param affix_template: A format string with one anonymous brace pair.
+   :type affix_template: str
 
    :returns:
 
-             The final facility identifier plus one interval to be used
-                  as an input for the next tool execution.
-   :rtype: str
+             The final facility identifier value, plus one interval to be used
+                  as an input for the next tool execution, or -1 if no values
+                  matching ``initials`` were found.
+   :rtype: int
 
    :raises ExecuteError: An error ocurred in the tool execution.
 
