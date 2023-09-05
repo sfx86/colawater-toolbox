@@ -15,7 +15,7 @@ import colawater.status.logging as log
 import colawater.status.progressor as pg
 import colawater.status.summary as sy
 from colawater import attribute as attr
-from colawater.error import fallible
+from colawater.error import fallible, halt
 
 
 def execute(parameters: list[arcpy.Parameter]) -> None:
@@ -149,6 +149,10 @@ def append_to_art(
                 wm_where_clause,
             )
         ]
+
+        for row in selected_mains:
+            if not all(row):
+                halt(f"Null attributes on main '{row[0]}'.")
 
         for fid, install_date, datasource, comments in selected_mains:
             cursor.insertRow(
