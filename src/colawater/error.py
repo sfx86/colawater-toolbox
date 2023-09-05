@@ -77,3 +77,13 @@ def fallible(f: Callable[..., _T]) -> Callable[..., Union[_T, NoReturn]]:
             return res
 
     return wrapper
+
+
+def halt(msg: str) -> NoReturn:
+    """
+    Unconditionally raises an ExecuteError.
+
+    Arguments:
+        msg (str): The message to supply to the exception.
+    """
+    raise arcpy.ExecuteError(msg)
