@@ -82,7 +82,9 @@ def parameters() -> list[arcpy.Parameter]:
         parameterType="Required",
         direction="Input",
     )
-    on_after_date.value = datetime.now() - timedelta(weeks=1)
+    now = datetime.now()
+    # previous sunday
+    on_after_date.value = now - timedelta(days=now.weekday() + 1)
 
     water_main_layer = arcpy.Parameter(
         displayName="Water Main Layer",
