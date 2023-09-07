@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="colawater.layer" href="../layer/index.html" /><link rel="prev" title="colawater.attribute" href="../attribute/index.html" />
 
     <link rel="shortcut icon" href="../../../_static/logo.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>colawater.error - colawater-toolbox 3.3.0 ArcGIS geoprocessing tools for Columbia Water</title>
+        <title>colawater.error - colawater-toolbox 3.4.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">colawater-toolbox 3.3.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
+      <a href="../../../index.html"><div class="brand">colawater-toolbox 3.4.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -150,7 +150,7 @@
     <img class="sidebar-logo" src="../../../_static/logo.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">colawater-toolbox 3.3.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
+  <span class="sidebar-brand-text">colawater-toolbox 3.4.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -243,6 +243,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#colawater.error.fallible" title="colawater.error.fallible"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallible</span></code></a>(→ Callable[Ellipsis, Union[_T, NoReturn]])</p></td>
 <td><p>Wraps the decorated function in a try-catch block that handles <code class="docutils literal notranslate"><span class="pre">SystemError</span></code>/<code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code> and <code class="docutils literal notranslate"><span class="pre">Exception</span></code></p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#colawater.error.halt" title="colawater.error.halt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halt</span></code></a>(→ NoReturn)</p></td>
+<td><p>Unconditionally raises an ExecuteError.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -317,6 +320,17 @@ Or, if an exception is caught, an <code class="docutils literal notranslate"><sp
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="colawater.error.halt">
+<span class="sig-prename descclassname"><span class="pre">colawater.error.</span></span><span class="sig-name descname"><span class="pre">halt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="headerlink" href="#colawater.error.halt" title="Permalink to this definition">#</a></dt>
+<dd><p>Unconditionally raises an ExecuteError.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>msg</strong> (<em>str</em>) – The message to supply to the exception.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 </section>
@@ -383,6 +397,7 @@ Or, if an exception is caught, an <code class="docutils literal notranslate"><sp
 <li><a class="reference internal" href="#colawater.error.SYSTEM_ERROR_MSG"><code class="docutils literal notranslate"><span class="pre">SYSTEM_ERROR_MSG</span></code></a></li>
 <li><a class="reference internal" href="#colawater.error.UNEXPECTED_ERROR_MSG"><code class="docutils literal notranslate"><span class="pre">UNEXPECTED_ERROR_MSG</span></code></a></li>
 <li><a class="reference internal" href="#colawater.error.fallible"><code class="docutils literal notranslate"><span class="pre">fallible()</span></code></a></li>
+<li><a class="reference internal" href="#colawater.error.halt"><code class="docutils literal notranslate"><span class="pre">halt()</span></code></a></li>
 </ul>
 </li>
 </ul>

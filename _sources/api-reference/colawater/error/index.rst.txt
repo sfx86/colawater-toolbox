@@ -29,6 +29,7 @@ Functions
 .. autoapisummary::
 
    colawater.error.fallible
+   colawater.error.halt
 
 
 
@@ -103,5 +104,13 @@ Attributes
    :rtype: Union[_T, NoReturn]
 
    :raises ExecuteError: An exception was caught, so this was raised in its place.
+
+
+.. py:function:: halt(msg: str) -> NoReturn
+
+   Unconditionally raises an ExecuteError.
+
+   :param msg: The message to supply to the exception.
+   :type msg: str
 
 
