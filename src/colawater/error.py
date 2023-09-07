@@ -86,4 +86,5 @@ def halt(msg: str) -> NoReturn:
     Arguments:
         msg (str): The message to supply to the exception.
     """
+    log.error(msg)
     raise arcpy.ExecuteError(msg)
