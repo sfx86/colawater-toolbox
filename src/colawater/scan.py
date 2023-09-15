@@ -6,8 +6,7 @@ Examples:
     
         from colawater import scan
 
-        for file in (f for f in scan.CITY_DIR.iterdir() if scan.exists(f)):
-            do_something(file)
+        important_list = [do_something(f) for f in scan.CITY_DIR.iterdir() if scan.exists(f)]
 """
 from functools import cache
 from pathlib import Path
