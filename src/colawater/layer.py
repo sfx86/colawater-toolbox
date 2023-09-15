@@ -7,10 +7,10 @@ Examples:
         import colawater.layer as ly
 
         layer = layer_from_somewhere()
-        path = ly.get_path(layer) # Returns "path/to/layer".
-        workspace = ly.get_workspace(layer) # Returns "path/to/workspace.
-                                            # This is the same as the value in ``path``,
-                                            # but without the layer name.
+        path = ly.path(layer) # Returns "path/to/layer".
+        workspace = ly.workspace(layer) # Returns "path/to/workspace.
+                                        # This is the same as the value in ``path``,
+                                        # but without the layer name.
                                               
     Note: 
         Layer names include the groups of which they are a part.
@@ -21,7 +21,7 @@ Examples:
 import arcpy
 
 
-def get_name(
+def name(
     layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> str:
     """
@@ -38,7 +38,7 @@ def get_name(
     return name[slash_idx + 1 :]
 
 
-def get_path(
+def path(
     layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> str:
     """
@@ -54,7 +54,7 @@ def get_path(
     return f"{desc.path}\\{desc.name}"  # pyright: ignore [reportGeneralTypeIssues]
 
 
-def get_workspace(
+def workspace(
     layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> str:
     """

@@ -130,9 +130,9 @@ def append_to_art(
         Modifies input table.
     """
     with arcpy.da.Editor(  # pyright: ignore [reportGeneralTypeIssues]
-        ly.get_workspace(wm_lyr)
+        ly.workspace(wm_lyr)
     ), arcpy.da.InsertCursor(  # pyright: ignore [reportGeneralTypeIssues]
-        ly.get_path(art_table),
+        ly.path(art_table),
         (
             "FILELOCATIONCITY",
             "DRAWINGTYPE",
@@ -146,7 +146,7 @@ def append_to_art(
         selected_mains = [
             tuple(i)
             for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-                ly.get_path(wm_lyr),
+                ly.path(wm_lyr),
                 ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
                 wm_where_clause,
             )
