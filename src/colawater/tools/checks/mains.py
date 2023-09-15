@@ -41,7 +41,7 @@ def find_nonexistent_assoc_files(
     return [
         tuple(i)
         for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-            ly.get_path(wm_layer.value),
+            ly.path(wm_layer.value),
             ("OBJECTID", "COMMENTS"),
             "INTEGRATIONSTATUS = 'Y'",
         )
@@ -68,7 +68,7 @@ def find_incorrect_datasources(
     return [
         tuple(i)
         for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-            ly.get_path(wm_layer.value),
+            ly.path(wm_layer.value),
             ("OBJECTID", "DATASOURCE"),
             "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)",
         )

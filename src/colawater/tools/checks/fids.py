@@ -44,7 +44,7 @@ def find_incorrect_fids(
     return [
         (str(oid), fid)
         for oid, fid in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-            ly.get_path(layer), ("OBJECTID", "FACILITYID")
+            ly.path(layer), ("OBJECTID", "FACILITYID")
         )
         if not (regex.fullmatch(fid) if fid is not None else False)
     ]
@@ -72,7 +72,7 @@ def find_duplicate_fids(
     scratch_gdb = arcpy.env.scratchGDB  # pyright: ignore [reportGeneralTypeIssues]
     timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
     scratch_layer_path = f"{scratch_gdb}\\duplicate_fids_{timestamp}"
-    layer_path = ly.get_path(layer)
+    layer_path = ly.path(layer)
 
     oids: tuple[int, ...] = tuple(
         int(oid[0])

@@ -61,7 +61,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     sy.add_result("TOOL", "New start values:")
 
     for layer in layers:
-        layer_name = ly.get_name(layer)
+        layer_name = ly.name(layer)
         search_name = re.compile(
             r"(waCasing|waControlValve|waFitting|waHydrant|waServiceLine|waStructure|waSystemValve|waWaterMain)"
         ).search(layer_name)
@@ -203,10 +203,10 @@ def calculate_fids(
         Modifies input layer.
     """
     incr = start
-    path = ly.get_path(layer)
+    path = ly.path(layer)
 
     with arcpy.da.Editor(  # pyright: ignore [reportGeneralTypeIssues]
-        ly.get_workspace(layer)
+        ly.workspace(layer)
     ):
         # only these layers have FACILITYIDINDEX
         if match_name in fid_idx_layers:
