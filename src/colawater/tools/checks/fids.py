@@ -46,7 +46,7 @@ def find_incorrect_fids(
         for oid, fid in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             ly.path(layer), ("OBJECTID", "FACILITYID")
         )
-        if not (regex.fullmatch(fid) if fid is not None else False)
+        if not regex.fullmatch(fid)
     ]
 
 

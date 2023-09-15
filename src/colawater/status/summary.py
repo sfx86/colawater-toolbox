@@ -14,7 +14,6 @@ Examples:
 
 from collections.abc import Sequence
 from enum import Enum, unique
-from functools import partial
 from typing import Any, Optional
 
 import arcpy
@@ -136,9 +135,8 @@ def add_items(contents: Sequence[Sequence[Optional[Any]]], csv: bool = False) ->
     if len(contents) == 0:
         return
 
-    process = partial(attr.process, csv=csv)
-    for i in contents:
-        add_item(", ".join(map(process, i)))
+    for row in contents:
+        add_item(", ".join(map(lambda item: attr.process(item, csv=csv), row)))
 
 
 def add_note(subject: str, content: str) -> None:
