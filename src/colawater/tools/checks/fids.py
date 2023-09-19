@@ -24,7 +24,7 @@ from colawater.error import fallible
 
 
 @fallible
-def find_incorrect_fids(
+def find_faulty(
     layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
     regex: re.Pattern[Any],
 ) -> list[tuple[str, Optional[str]]]:
@@ -51,7 +51,7 @@ def find_incorrect_fids(
 
 
 @fallible
-def find_duplicate_fids(
+def find_duplicate(
     layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> list[tuple[str, ...]]:
     """
