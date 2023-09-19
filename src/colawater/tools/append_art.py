@@ -149,7 +149,7 @@ def append_to_art(
 
         for row in selected_mains:
             if not all(row):
-                halt(f"Null attributes on main '{row[0]}'.")
+                halt(ValueError(), f"Null attributes on main '{row[0]}'.")
 
         for fid, install_date, datasource, comments in selected_mains:
             cursor.insertRow(
@@ -158,7 +158,7 @@ def append_to_art(
                     datasource,
                     install_date,
                     fid,
-                    "WAM",
+                    "WAM",  # Coded domain value for "Water Main"
                     comments,
                     str(scan.CW2020_DIR / comments) if comments is not None else None,
                 )

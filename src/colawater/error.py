@@ -15,10 +15,9 @@ from typing import Any, Callable, NoReturn, TypeVar, Union
 
 import arcpy
 
-import colawater.status.logging as log
 import colawater.status.summary as sy
 
-SYSTEM_ERROR_MSG: str = """How to resolve common errors:
+EXPECTED_ERROR_MSG: str = """How to resolve common errors:
 'RuntimeError: An expected Field was not found or could not be retrieved properly.'
 'RuntimeError: Attribute column not found'
     You probably selected the wrong layer in the dropdown.
@@ -62,29 +61,26 @@ def fallible(f: Callable[..., _T]) -> Callable[..., Union[_T, NoReturn]]:
 
     @wraps(f)
     def wrapper(*args: Any, **kwargs: Any) -> Union[_T, NoReturn]:
-        def post_log_exit(err: BaseException, msg: str) -> NoReturn:
-            sy.post(dumped=True)
-            log.error(f"Error: {repr(err)}\n{msg}")
-            raise arcpy.ExecuteError
-
         try:
             res: _T = f(*args, **kwargs)
         except (SystemError, RuntimeError) as err:
-            post_log_exit(err, SYSTEM_ERROR_MSG)
+            halt(err, EXPECTED_ERROR_MSG)
         except Exception as err:
-            post_log_exit(err, UNEXPECTED_ERROR_MSG)
+            halt(err, UNEXPECTED_ERROR_MSG)
         else:
             return res
 
     return wrapper
 
 
-def halt(msg: str) -> NoReturn:
+def halt(err: Exception, msg: str) -> NoReturn:
     """
-    Unconditionally raises an ExecuteError.
+    Posts the current summary, raises an ExecuteError, and adds an error message.
 
     Arguments:
+        err (Exception): The exception causing the halt.
         msg (str): The message to supply to the exception.
     """
-    log.error(msg)
-    raise arcpy.ExecuteError(msg)
+    sy.post(dumped=True)
+    arcpy.AddError(f"Error: {repr(err)}\n{msg}")
+    raise arcpy.ExecuteError
