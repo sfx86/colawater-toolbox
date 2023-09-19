@@ -15,7 +15,7 @@ from typing import Any, Callable, NoReturn, TypeVar, Union
 
 import arcpy
 
-import colawater.status.summary as sy
+import colawater.summary as sy
 
 EXPECTED_ERROR_MSG: str = """How to resolve common errors:
 'RuntimeError: An expected Field was not found or could not be retrieved properly.'
