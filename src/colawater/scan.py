@@ -44,13 +44,11 @@ def exists(filename: str) -> bool:
     # if the amount of filenames processed ever gets particularly high,
     # consider changing to @lru_cache(n) to deal with memory issues
 
-    # takes advantage of short-circuiting to avoid filesystem ops where possible
     return bool(filename) and (
         (
-            # valid scans only ever have these extensions
-            # and appear in this order of frequency
             any(
                 (
+                    # valid scans only ever have these extensions and appear in this order of frequency
                     filename.endswith(".tif"),
                     filename.endswith(".pdf"),
                     filename.endswith(".dwg"),
