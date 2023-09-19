@@ -10,7 +10,6 @@ from typing import Optional
 import arcpy
 
 import colawater.attribute as attr
-import colawater.status.logging as log
 import colawater.status.progressor as pg
 import colawater.status.summary as sy
 from colawater.tools.checks import fids, mains
@@ -37,7 +36,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
     if is_fid_format_check or is_fid_duplicate_check:
         for l in (l for l in layers if not l.value):
-            log.warning(f"Layer omitted: {l.displayName}")
+            arcpy.AddWarning(f"Layer omitted: {l.displayName}")
 
     if is_fid_format_check:
         regexes = (
@@ -52,8 +51,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         )
 
         for l, r in ((l, r) for l, r in zip(layers, regexes) if l.value):
-            log.info(f"[{l.valueAsText}] Checking facility identifier formatting...")
-
             inc_fids = fids.find_incorrect_fids(l, re.compile(r))
 
             _boilerplate(
@@ -65,10 +62,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
     if is_fid_duplicate_check:
         for l in (l for l in layers if l.value):
-            log.info(
-                f"[{l.valueAsText}] Checking for duplicate facility identifiers..."
-            )
-
             duplicate_fids = fids.find_duplicate_fids(l.value)
 
             _boilerplate(
@@ -81,16 +74,12 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             )
 
     if (is_wm_file_check or is_wm_ds_check) and not wm_layer.value:
-        log.warning(
+        arcpy.AddWarning(
             f"Layer omitted: {wm_layer.displayName}, skipping water main checks."
         )
         return
 
     if is_wm_file_check:
-        log.info(
-            f"[{wm_layer.valueAsText}] Verifying assiociated files for integrated mains..."
-        )
-
         nonexistent_files = mains.find_nonexistent_assoc_files(wm_layer)
 
         _boilerplate(
@@ -105,10 +94,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         )
 
     if is_wm_ds_check:
-        log.info(
-            f"[{wm_layer.valueAsText}] Checking data sources for integrated mains..."
-        )
-
         inc_datasources = mains.find_incorrect_datasources(wm_layer)
 
         _boilerplate(

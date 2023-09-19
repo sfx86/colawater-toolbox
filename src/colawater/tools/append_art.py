@@ -11,7 +11,6 @@ import arcpy
 
 import colawater.layer as ly
 import colawater.scan as scan
-import colawater.status.logging as log
 import colawater.status.progressor as pg
 import colawater.status.summary as sy
 from colawater import attribute as attr
@@ -39,10 +38,6 @@ And LASTUPDATE >= '{on_after_date}'
 And LIFECYCLESTATUS = 'Active' 
 And OWNEDBY = 1 
 And (DATASOURCE = 'SURVGPS' Or DATASOURCE = 'ASB')"""
-
-    log.info(
-        f"Appending mains from [{wm_layer.valueAsText}] to [{art_table.valueAsText}]..."
-    )
 
     mains_appended = append_to_art(wm_layer.value, where_water, art_table.value)
 
