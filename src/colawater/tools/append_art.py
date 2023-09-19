@@ -11,12 +11,13 @@ import arcpy
 
 import colawater.layer as ly
 import colawater.scan as scan
-import colawater.status.progressor as pg
-import colawater.status.summary as sy
+import colawater.summary as sy
 from colawater import attribute as attr
 from colawater.error import fallible, halt
+from colawater.progressor import progressor
 
 
+@progressor("Appending mains to ART...")
 def execute(parameters: list[arcpy.Parameter]) -> None:
     """
     Entry point for Append to ART.
@@ -26,8 +27,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Arguments:
         parameters (list[arcpy.Parameter]): The list of parameters.
     """
-    pg.set_progressor("default", "Appending mains to ART...")
-
     last_editor = parameters[0].valueAsText
     on_after_date = parameters[1].valueAsText
     wm_layer = parameters[2]

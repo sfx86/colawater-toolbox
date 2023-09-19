@@ -10,13 +10,14 @@ from typing import Optional
 import arcpy
 
 import colawater.attribute as attr
-import colawater.status.progressor as pg
-import colawater.status.summary as sy
+import colawater.summary as sy
+from colawater.progressor import progressor
 from colawater.tools.checks import fids, mains
 
 _LAYER_START = 4
 
 
+@progressor("Starting quality control checks...")
 def execute(parameters: list[arcpy.Parameter]) -> None:
     """
     Entry point for Water Quality Control.
@@ -24,7 +25,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Arguments:
         parameters (list[arcpy.Parameter]): The list of parameters.
     """
-    pg.set_progressor("default", "Starting quality control checks...")
 
     is_checks = parameters[:_LAYER_START]
     layers = parameters[_LAYER_START:]

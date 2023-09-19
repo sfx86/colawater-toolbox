@@ -9,12 +9,13 @@ from typing import Optional
 import arcpy
 
 import colawater.layer as ly
-import colawater.status.progressor as pg
-import colawater.status.summary as sy
+import colawater.summary as sy
 from colawater.error import fallible
 from colawater.layer import LayerKind
+from colawater.progressor import progressor
 
 
+@progressor("Calculating facility identifiers...")
 def execute(parameters: list[arcpy.Parameter]) -> None:
     """
     Entry point for Calculate Facility Identifiers.
@@ -25,7 +26,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Arguments:
         parameters (list[arcpy.Parameter]): The list of parameters.
     """
-    pg.set_progressor("default", "Calculating facility identifiers...")
 
     initials = parameters[0].value
     interval = parameters[1].value
