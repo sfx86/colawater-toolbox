@@ -46,7 +46,7 @@ def find_faulty(
         for oid, fid in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             ly.path(layer), ("OBJECTID", "FACILITYID")
         )
-        if not regex.fullmatch(fid)
+        if not regex.fullmatch(str(fid))
     ]
 
 
