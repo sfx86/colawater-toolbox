@@ -80,7 +80,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         return
 
     if is_wm_file_check:
-        nonexistent_files = mains.find_nonexistent_assoc_files(wm_layer)
+        nonexistent_files = mains.find_faulty_scans(wm_layer)
 
         _boilerplate(
             wm_layer.valueAsText,
@@ -94,7 +94,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         )
 
     if is_wm_ds_check:
-        inc_datasources = mains.find_incorrect_datasources(wm_layer)
+        inc_datasources = mains.find_unknown_datasources(wm_layer)
 
         _boilerplate(
             wm_layer.valueAsText,
