@@ -23,11 +23,11 @@ from colawater.error import fallible
 
 
 @fallible
-def find_nonexistent_assoc_files(
+def find_faulty_scans(
     wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> list[tuple[Optional[str], ...]]:
     """
-    Returns a list of object ID and nonexistent associated file pairs for the integrated mains in the water main layer.
+    Returns a list of object ID and nonexistent scan pairs for the integrated mains in the water main layer.
 
     Arguments:
         wm_layer (arpcy._mp.Layer): The water main layer.
@@ -50,11 +50,11 @@ def find_nonexistent_assoc_files(
 
 
 @fallible
-def find_incorrect_datasources(
+def find_unknown_datasources(
     wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> list[tuple[Optional[str], ...]]:
     """
-    Returns a list of object ID and incorrect data source pairs for the integrated mains in the given water main layer.
+    Returns a list of object ID and unknown/null datasource pairs for the integrated mains in the water main layer.
 
     Arguments:
         wm_layer (arpcy._mp.Layer): The water main layer.
