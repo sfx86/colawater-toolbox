@@ -51,7 +51,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
         )
 
         for l, r in ((l, r) for l, r in zip(layers, regexes) if l.value):
-            inc_fids = fids.find_incorrect_fids(l, re.compile(r))
+            inc_fids = fids.find_faulty(l, re.compile(r))
 
             _boilerplate(
                 l.valueAsText,
@@ -62,7 +62,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
     if is_fid_duplicate_check:
         for l in (l for l in layers if l.value):
-            duplicate_fids = fids.find_duplicate_fids(l.value)
+            duplicate_fids = fids.find_duplicate(l.value)
 
             _boilerplate(
                 l.valueAsText,
