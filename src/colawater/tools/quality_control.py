@@ -17,7 +17,7 @@ from colawater.tools.checks import fids, mains
 _LAYER_START = 4
 
 
-@progressor("Starting quality control checks...")
+@progressor("Running quality control checks...")
 def execute(parameters: list[arcpy.Parameter]) -> None:
     """
     Entry point for Water Quality Control.
