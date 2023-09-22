@@ -1,6 +1,8 @@
 # ?.?.?
 
-See [Usage](https://github.com/sfx86/colawater-toolbox#usage) and [Installation](https://github.com/sfx86/colawater-toolbox#installation) for usage and installation instructions.
+Refer to the [README.md](https://github.com/sfx86/colawater-toolbox#readme) for usage and installation instructions.
+
+Full Changelog: https://github.com/sfx86/colawater-toolbox/compare/v?.?.?...v?.?.?
 
 # Release Highlights
 
@@ -9,5 +11,3 @@ See [Usage](https://github.com/sfx86/colawater-toolbox#usage) and [Installation]
 ## Minor Changes
 
 ## Patch Changes
-
-Full Changelog: https://github.com/sfx86/colawater-toolbox/compare/v?.?.?...v?.?.?
