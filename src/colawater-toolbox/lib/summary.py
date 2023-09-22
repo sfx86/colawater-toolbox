@@ -17,8 +17,7 @@ from enum import Enum, unique
 from typing import Any, Optional
 
 import arcpy
-
-import colawater.attribute as attr
+import lib.attribute as attr
 
 OUTPUT_DUMPED_MSG = "OUTPUT DUMPED DUE TO ERROR"
 """

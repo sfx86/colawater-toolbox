@@ -8,13 +8,12 @@ from getpass import getuser
 from typing import Optional
 
 import arcpy
-
-import colawater.layer as ly
-import colawater.scan as scan
-import colawater.summary as sy
-from colawater import attribute as attr
-from colawater.error import fallible, halt
-from colawater.progressor import progressor
+import lib.layer as ly
+import lib.scan as scan
+import lib.summary as sy
+from lib import attribute as attr
+from lib.error import fallible, halt
+from lib.progressor import progressor
 
 
 @progressor("Appending mains to ART...")

@@ -16,10 +16,9 @@ Examples:
 from typing import Optional
 
 import arcpy
-
-import colawater.layer as ly
-import colawater.scan as scan
-from colawater.error import fallible
+import lib.layer as ly
+import lib.scan as scan
+from lib.error import fallible
 
 
 @fallible
