@@ -8,11 +8,11 @@ from collections.abc import Sequence
 from typing import Optional
 
 import arcpy
+import lib.attribute as attr
+import lib.summary as sy
+from lib.progressor import progressor
 
-import colawater.attribute as attr
-import colawater.summary as sy
-from colawater.progressor import progressor
-from colawater.tools.checks import fids, mains
+from . import fids, mains
 
 _LAYER_START = 4
 

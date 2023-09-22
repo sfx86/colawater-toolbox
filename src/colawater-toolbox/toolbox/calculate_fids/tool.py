@@ -7,12 +7,11 @@ from getpass import getuser
 from typing import Optional
 
 import arcpy
-
-import colawater.layer as ly
-import colawater.summary as sy
-from colawater.error import fallible
-from colawater.layer import LayerKind
-from colawater.progressor import progressor
+import lib.layer as ly
+import lib.summary as sy
+from lib.error import fallible
+from lib.layer import LayerKind
+from lib.progressor import progressor
 
 
 @progressor("Calculating facility identifiers...")

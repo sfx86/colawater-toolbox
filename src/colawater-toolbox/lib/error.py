@@ -14,8 +14,7 @@ from functools import wraps
 from typing import Any, Callable, NoReturn, TypeVar, Union
 
 import arcpy
-
-import colawater.summary as sy
+import lib.summary as sy
 
 EXPECTED_ERROR_MSG: str = """How to resolve common errors:
 'RuntimeError: An expected Field was not found or could not be retrieved properly.'

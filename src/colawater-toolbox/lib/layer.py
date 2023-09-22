@@ -20,7 +20,7 @@ Examples:
 """
 import re
 from dataclasses import dataclass
-from enum import Enum, auto, unique
+from enum import Enum, unique
 from typing import Optional
 
 import arcpy
