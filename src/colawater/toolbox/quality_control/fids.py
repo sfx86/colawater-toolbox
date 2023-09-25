@@ -18,8 +18,9 @@ from datetime import datetime
 from typing import Any, Optional
 
 import arcpy
-import lib.layer as ly
-from lib.error import fallible
+
+import colawater.lib.layer as ly
+from colawater.lib.error import fallible
 
 
 @fallible
