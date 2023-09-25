@@ -14,6 +14,7 @@ import lib.summary as sy
 from lib import attribute as attr
 from lib.error import fallible, halt
 from lib.progressor import progressor
+from lib.tool import Tool
 
 
 @progressor("Appending mains to ART...")
@@ -163,3 +164,11 @@ def append_to_art(
             )
 
     return selected_mains
+
+
+AppendToART = Tool(
+    "Append to ART",
+    "Appends new integrated mains to the Asset Reference Table.",
+    parameters=parameters,
+    execute=execute,
+)

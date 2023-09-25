@@ -12,6 +12,7 @@ import lib.summary as sy
 from lib.error import fallible
 from lib.layer import LayerKind
 from lib.progressor import progressor
+from lib.tool import Tool
 
 
 @progressor("Calculating facility identifiers...")
@@ -198,3 +199,11 @@ def calculate_fids(
         return None
 
     return final
+
+
+CalculateFacilityIdentifiers = Tool(
+    "Calculate Facility Identifiers",
+    "Calculates FIDs and FID indices for specified water layers.",
+    parameters=parameters,
+    execute=execute,
+)

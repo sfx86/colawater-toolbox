@@ -11,6 +11,7 @@ import arcpy
 import lib.attribute as attr
 import lib.summary as sy
 from lib.progressor import progressor
+from lib.tool import Tool
 
 from . import fids, mains
 
@@ -178,3 +179,11 @@ def _boilerplate(
             layer_name,
             f"{len(set(i[unique_idx] for  i in items)):n} {result_unique_str}",
         )
+
+
+WaterQualityControl = Tool(
+    "Water Quality Control",
+    "Executes selected quality control checks on specified water layers.",
+    parameters=parameters,
+    execute=execute,
+)
