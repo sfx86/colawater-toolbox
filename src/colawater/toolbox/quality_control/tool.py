@@ -8,10 +8,10 @@ from collections.abc import Sequence
 from typing import Optional
 
 import arcpy
-import lib.attribute as attr
-import lib.summary as sy
-from lib.progressor import progressor
-from lib.tool import Tool
+
+import colawater.lib.attribute as attr
+import colawater.lib.summary as sy
+from colawater.lib.progressor import progressor
 
 from . import fids, mains
 
@@ -179,11 +179,3 @@ def _boilerplate(
             layer_name,
             f"{len(set(i[unique_idx] for  i in items)):n} {result_unique_str}",
         )
-
-
-WaterQualityControl = Tool(
-    "Water Quality Control",
-    "Executes selected quality control checks on specified water layers.",
-    parameters=parameters,
-    execute=execute,
-)

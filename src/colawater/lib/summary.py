@@ -17,7 +17,8 @@ from enum import Enum, unique
 from typing import Any, Optional
 
 import arcpy
-import lib.attribute as attr
+
+from . import attribute as attr
 
 OUTPUT_DUMPED_MSG = "OUTPUT DUMPED DUE TO ERROR"
 """
