@@ -5,7 +5,6 @@ on:
     tags:
       - "v*"
         
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,6 +18,7 @@ jobs:
         type: "zip"
         filename: "colawater-toolbox.zip"
         path: "src/colawater-toolbox"
+        exclusions: "src/tests"
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
