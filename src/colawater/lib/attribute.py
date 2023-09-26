@@ -1,13 +1,11 @@
 """
-Utilities for handling attribute values.
+Functions for working with attribute values.
 
 Examples:
     .. code-block:: python
 
-        import colawater.attribute as attr
-
         foo = None
-        foo = attr.process(foo) # Returns "<Null>".
+        foo = process(foo) # Returns "<Null>".
 """
 from typing import Any, Optional
 

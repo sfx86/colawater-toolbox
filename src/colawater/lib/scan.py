@@ -1,5 +1,5 @@
 """
-Utilities for working with scan files.
+Functions and constants for working with scan files.
 
 Examples:
     .. code-block:: python

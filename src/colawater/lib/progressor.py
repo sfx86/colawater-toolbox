@@ -1,5 +1,5 @@
 """
-A wrapper for some arcpy progressor methods.
+A convenience decorator for initializing the arcpy progressor.
 
 Examples:
     .. code-block:: python

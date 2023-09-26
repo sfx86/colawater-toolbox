@@ -1,5 +1,5 @@
 """
-Utilities for managing tool summaries.
+Functions for managing tool summaries.
 
 Examples:
     .. code-block:: python

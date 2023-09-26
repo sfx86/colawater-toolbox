@@ -1,3 +1,17 @@
+"""
+Type factory for building arcpy tools.
+
+Examples:
+    .. code-block:: python
+    
+        Foo = toolshed(
+            "Foo",
+            "Performs arbitrary incantations on your database.",
+            parameters=some_module.parameters,
+            execute=some_module.execute,
+        )
+
+"""
 from typing import Any, Callable, Optional
 
 import arcpy
