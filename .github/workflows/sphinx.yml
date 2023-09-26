@@ -1,6 +1,10 @@
 name: Sphinx build
 
 on:
+  workflow_run:
+    workflows: ["Create release"]
+    types: 
+      - completed
   release:
     types: [published]
 
