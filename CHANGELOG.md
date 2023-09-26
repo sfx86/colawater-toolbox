@@ -1,7 +1,20 @@
-# 3.3.0
+# v3.5.0
 
-# Minor Changes
+Refer to the [README.md](https://github.com/sfx86/colawater-toolbox#readme) for usage and installation instructions.
 
-* Append to ART
-    * Default on/after date is now the previous Sunday
-    * Disallowed appending mains with any null values
+Full Changelog: https://github.com/sfx86/colawater-toolbox/compare/v3.4.0...v3.5.0
+
+# Release Highlights
+
+## Major Changes
+
+None this release!
+
+## Minor Changes
+
+- Module layout refactored for clarity and separation of concerns
+- Cleaned up API surface
+
+## Patch Changes
+
+- Quality Control progressor messages clarified
