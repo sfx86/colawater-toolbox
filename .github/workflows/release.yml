@@ -22,5 +22,5 @@ jobs:
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "colawater-toolbox.zip"
+        artifacts: "src/colawater-toolbox.zip"
         bodyFile: "CHANGELOG.md"
