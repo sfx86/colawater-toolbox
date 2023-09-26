@@ -1,4 +1,4 @@
-name: Sphinx build
+name: Build docs
 
 on:
   workflow_run:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Build docs
+    - name: Build HTML
       uses: ammaraskar/sphinx-action@master
       with: 
         docs-folder: "docs/"
