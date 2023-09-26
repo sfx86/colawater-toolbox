@@ -17,8 +17,7 @@ jobs:
       with:
         type: "zip"
         filename: "colawater-toolbox.zip"
-        path: "src/colawater-toolbox"
-        exclusions: "src/tests"
+        path: "src/"
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
