@@ -1,17 +1,18 @@
 """
-Utilities for working with layers.
+Functions for working with layers.
 
 Examples:
     .. code-block:: python
 
-        import colawater.layer as ly
+        path = path(layer) # Returns "path/to/layer".
+        workspace = workspace(layer) # Returns "path/to/workspace.
+                                     # This is the same as the value in ``path``,
+                                     # but without the layer name.
+                                     
+        kind = kind(layer)
+        if kind == LayerKind.Casing:
+            do_something()
 
-        layer = layer_from_somewhere()
-        path = ly.path(layer) # Returns "path/to/layer".
-        workspace = ly.workspace(layer) # Returns "path/to/workspace.
-                                        # This is the same as the value in ``path``,
-                                        # but without the layer name.
-                                              
     Note: 
         Layer names include the groups of which they are a part.
         Nested groups appear in parent-child order.

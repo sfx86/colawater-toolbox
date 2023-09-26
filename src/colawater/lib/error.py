@@ -1,14 +1,21 @@
 """
-Utilities for handling errors from arcpy.
+Functions for handling errors from arcpy.
 
 Examples:
     .. code-block:: python
 
-        from colawater.errror import fallible
+        import arcpy
 
         @fallible
-        def foo(bar: str) -> None:
-            something_that_raises_exceptions()
+        def foo(bar: str) -> str:
+            if magic_variable:
+                raise arcpy.ExecuteError # Caught and handled by decorator
+            elif more_magic:
+                raise SystemError        # Also caught
+            elif magic_again:
+                raise RuntimeError       # Catches this too!
+            
+            return bar # This is returned normally
 """
 from functools import wraps
 from typing import Any, Callable, NoReturn, TypeVar, Union

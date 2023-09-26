@@ -1,0 +1,20 @@
+0	__empty__	src	src\colawater\__init__.py
+0	__duplicate__	src	src\colawater\lib\__init__.py
+12	Python	src	src\colawater\lib\attribute.py
+39	Python	src	src\colawater\lib\error.py
+51	Python	src	src\colawater\lib\layer.py
+12	Python	src	src\colawater\lib\progressor.py
+19	Python	src	src\colawater\lib\scan.py
+54	Python	src	src\colawater\lib\summary.py
+34	Python	src	src\colawater\lib\tool.py
+0	__duplicate__	src	src\colawater\toolbox\__init__.py
+1	Python	src	src\colawater\toolbox\append_to_art\__init__.py
+97	Python	src	src\colawater\toolbox\append_to_art\tool.py
+0	__duplicate__	src	src\colawater\toolbox\calculate_fids\__init__.py
+118	Python	src	src\colawater\toolbox\calculate_fids\tool.py
+0	__duplicate__	src	src\colawater\toolbox\quality_control\__init__.py
+43	Python	src	src\colawater\toolbox\quality_control\fids.py
+26	Python	src	src\colawater\toolbox\quality_control\mains.py
+121	Python	src	src\colawater\toolbox\quality_control\tool.py
+
+
