@@ -1,0 +1,49 @@
+:py:mod:`colawater.toolbox.quality_control`
+===========================================
+
+.. py:module:: colawater.toolbox.quality_control
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   fids/index.rst
+   mains/index.rst
+   tool/index.rst
+
+
+Package Contents
+----------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.toolbox.quality_control.execute
+   colawater.toolbox.quality_control.parameters
+
+
+
+.. py:function:: execute(parameters: list[arcpy.Parameter]) -> None
+
+   Entry point for Water Quality Control.
+
+   :param parameters: The list of parameters.
+   :type parameters: list[arcpy.Parameter]
+
+
+.. py:function:: parameters() -> list[arcpy.Parameter]
+
+   Returns the parameters for Water Quality Control.
+
+   Parameters are 3 of type GPBoolean and 7 of type GPFeatureLayer.
+
+   :returns: The list of parameters.
+   :rtype: list[arcpy.Parameter]
+
+

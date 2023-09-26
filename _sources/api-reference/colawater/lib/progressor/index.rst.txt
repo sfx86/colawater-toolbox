@@ -1,0 +1,42 @@
+:py:mod:`colawater.lib.progressor`
+==================================
+
+.. py:module:: colawater.lib.progressor
+
+.. autoapi-nested-parse::
+
+   A wrapper for some arcpy progressor methods.
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       from colawater.progressor import progressor
+
+       @progressor("helpful message")
+       def f() -> None:
+           do_something()
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.lib.progressor.progressor
+
+
+
+.. py:function:: progressor(label: str) -> Callable[[Callable[Ellipsis, _T]], Callable[Ellipsis, _T]]
+
+   Wraps the decorated function and prefixes it with boilerplate progressor setup.
+
+   :param label: The progressor label.
+   :type label: str
+
+

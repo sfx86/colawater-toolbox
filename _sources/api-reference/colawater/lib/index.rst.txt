@@ -1,0 +1,21 @@
+:py:mod:`colawater.lib`
+=======================
+
+.. py:module:: colawater.lib
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   attribute/index.rst
+   error/index.rst
+   layer/index.rst
+   progressor/index.rst
+   scan/index.rst
+   summary/index.rst
+   tool/index.rst
+
+

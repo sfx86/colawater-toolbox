@@ -1,0 +1,22 @@
+:py:mod:`colawater.lib.tool`
+============================
+
+.. py:module:: colawater.lib.tool
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.lib.tool.toolshed
+
+
+
+.. py:function:: toolshed(label: str, description: str, category: Optional[str] = None, backgroundable: bool = False, parameters: Callable[[], list[arcpy.Parameter]] = lambda: [], update_parameters: Callable[[list[arcpy.Parameter]], None] = lambda _: None, update_messages: Callable[[list[arcpy.Parameter]], None] = lambda _: None, execute: Callable[[list[arcpy.Parameter]], None] = lambda _: None, post_execute: Callable[[list[arcpy.Parameter]], None] = lambda _: None) -> type
+
+

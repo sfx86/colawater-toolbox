@@ -1,0 +1,80 @@
+:py:mod:`colawater.toolbox.calculate_fids.tool`
+===============================================
+
+.. py:module:: colawater.toolbox.calculate_fids.tool
+
+.. autoapi-nested-parse::
+
+   Contains the functions used by the Calculate Facility Identifiers
+   tool and other helper functions.
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.toolbox.calculate_fids.tool.execute
+   colawater.toolbox.calculate_fids.tool.parameters
+   colawater.toolbox.calculate_fids.tool.calculate_fids
+
+
+
+.. py:function:: execute(parameters: list[arcpy.Parameter]) -> None
+
+   Entry point for Calculate Facility Identifiers.
+
+   Calculates the new facility identifiers for features with given
+   placeholder initials starting from a given start value.
+
+   :param parameters: The list of parameters.
+   :type parameters: list[arcpy.Parameter]
+
+
+.. py:function:: parameters() -> list[arcpy.Parameter]
+
+   Returns the parameters for Calculate Facility Identifiers.
+
+   Parameters are of type GPString, GPLong, GPFeatureLayer multivalue, and 7 GPLong.
+
+   :returns: The list of parameters.
+   :rtype: list[arcpy.Parameter]
+
+
+.. py:function:: calculate_fids(layer: arcpy._mp.Layer, start: int, interval: int, initials: str, affix_template: str, calculate_fid_index: bool) -> Optional[int]
+
+   Calculates the facility identifiers for the provided layer.
+
+   Also updates the substituted initials with the new facility identifiers
+   in the provided layer.
+
+   :param layer: The layer value.
+   :type layer: arcpy._mp.Layer
+   :param start: The start value.
+   :type start: int
+   :param interval: The interval to increment the facility identifier.
+   :type interval: int
+   :param initials: The initials to replace with the calculated facility identifiers.
+   :type initials: str
+   :param affix_template: A format string with one anonymous brace pair.
+   :type affix_template: str
+   :param calculate_fid_index: Whether to calculate the FID indices for ``layer``.
+   :type calculate_fid_index: bool
+
+   :returns:
+
+             The final facility identifier value, plus one interval to be used
+                  as an input for the next tool execution, or None if no values
+                  matching ``initials`` were found.
+   :rtype: Optional[int]
+
+   :raises ExecuteError: An error ocurred in the tool execution.
+
+   .. note:: Modifies input layer.
+
+

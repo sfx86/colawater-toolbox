@@ -1,0 +1,50 @@
+:py:mod:`colawater.toolbox.calculate_fids`
+==========================================
+
+.. py:module:: colawater.toolbox.calculate_fids
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   tool/index.rst
+
+
+Package Contents
+----------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.toolbox.calculate_fids.execute
+   colawater.toolbox.calculate_fids.parameters
+
+
+
+.. py:function:: execute(parameters: list[arcpy.Parameter]) -> None
+
+   Entry point for Calculate Facility Identifiers.
+
+   Calculates the new facility identifiers for features with given
+   placeholder initials starting from a given start value.
+
+   :param parameters: The list of parameters.
+   :type parameters: list[arcpy.Parameter]
+
+
+.. py:function:: parameters() -> list[arcpy.Parameter]
+
+   Returns the parameters for Calculate Facility Identifiers.
+
+   Parameters are of type GPString, GPLong, GPFeatureLayer multivalue, and 7 GPLong.
+
+   :returns: The list of parameters.
+   :rtype: list[arcpy.Parameter]
+
+

@@ -1,0 +1,66 @@
+:py:mod:`colawater.lib.scan`
+============================
+
+.. py:module:: colawater.lib.scan
+
+.. autoapi-nested-parse::
+
+   Utilities for working with scan files.
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       from colawater import scan
+
+       important_list = [do_something(f) for f in scan.CITY_DIR.iterdir() if scan.exists(f)]
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.lib.scan.exists
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.lib.scan.CITY_DIR
+   colawater.lib.scan.CW2020_DIR
+
+
+.. py:data:: CITY_DIR
+   :type: pathlib.Path
+
+   Known static location of city scan directory.
+
+.. py:data:: CW2020_DIR
+   :type: pathlib.Path
+
+   Known static location of CleanWater 2020 scan directory.
+
+.. py:function:: exists(filename: str) -> bool
+
+   Returns whether this scan file exists.
+
+   Applies some heuristics to detect if the string is a valid
+   scan file name and only checks the filesystem if those heuristics pass.
+   Uses an unbounded LRU cache to store arguments and results to avoid erroneous filesystem accesses.
+
+   :param filename: The name of a file.
+   :type filename: str
+
+   :returns: Whether a scan with ``filename`` exists.
+   :rtype: bool
+
+

@@ -10,19 +10,7 @@ Subpackages
    :titlesonly:
    :maxdepth: 3
 
-   status/index.rst
-   tools/index.rst
-
-
-Submodules
-----------
-.. toctree::
-   :titlesonly:
-   :maxdepth: 1
-
-   attribute/index.rst
-   error/index.rst
-   layer/index.rst
-   scan/index.rst
+   lib/index.rst
+   toolbox/index.rst
 
 

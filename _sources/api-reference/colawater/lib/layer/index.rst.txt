@@ -1,0 +1,140 @@
+:py:mod:`colawater.lib.layer`
+=============================
+
+.. py:module:: colawater.lib.layer
+
+.. autoapi-nested-parse::
+
+   Utilities for working with layers.
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       import colawater.layer as ly
+
+       layer = layer_from_somewhere()
+       path = ly.path(layer) # Returns "path/to/layer".
+       workspace = ly.workspace(layer) # Returns "path/to/workspace.
+                                       # This is the same as the value in ``path``,
+                                       # but without the layer name.
+
+   Note:
+       Layer names include the groups of which they are a part.
+       Nested groups appear in parent-child order.
+       E.g., layer "foo" in subgroup "bar" in group "baz" has a
+       layer name of "baz\bar\foo"
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   colawater.lib.layer.LayerKind
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.lib.layer.name
+   colawater.lib.layer.path
+   colawater.lib.layer.workspace
+   colawater.lib.layer.kind
+
+
+
+.. py:function:: name(layer: arcpy._mp.Layer) -> str
+
+   Returns the layer's base name.
+
+   :param layer: A layer object.
+   :type layer: arcpy._mp.Layer
+
+   :returns: The layer's name.
+   :rtype: str
+
+
+.. py:function:: path(layer: arcpy._mp.Layer) -> str
+
+   Returns the absolute path to a layer.
+
+   :param layer: A layer object.
+   :type layer: arcpy._mp.Layer
+
+   :returns: The absolute path to the layer.
+   :rtype: str
+
+
+.. py:function:: workspace(layer: arcpy._mp.Layer) -> str
+
+   Returns the absolute path to a layer's workspace.
+
+   :param layer: A layer object.
+   :type layer: arcpy._mp.Layer
+
+   :returns: The absolute path to the layer's workspace.
+   :rtype: str
+
+
+.. py:class:: LayerKind
+
+
+   Bases: :py:obj:`enum.Enum`
+
+   Enumerates layer variants with a payload containing their affix template and parameter index.
+
+   Use the parameter index with a contiguous slice into the relevant part of your parameter
+   list that contains the layer kinds in alphabetical order.
+
+   .. py:attribute:: Casing
+
+      
+
+   .. py:attribute:: ControlValve
+
+      
+
+   .. py:attribute:: Fitting
+
+      
+
+   .. py:attribute:: Hydrant
+
+      
+
+   .. py:attribute:: ServiceLine
+
+      
+
+   .. py:attribute:: Structure
+
+      
+
+   .. py:attribute:: SystemValve
+
+      
+
+   .. py:attribute:: WaterMain
+
+      
+
+
+.. py:function:: kind(layer: arcpy._mp.Layer) -> Optional[LayerKind]
+
+   Returns the type of a layer
+
+   :param layer: A layer object.
+   :type layer: arcpy._mp.Layer
+
+   :returns: The kind of layer.
+   :rtype: LayerKind
+
+

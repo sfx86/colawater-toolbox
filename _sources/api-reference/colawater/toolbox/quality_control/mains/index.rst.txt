@@ -1,0 +1,63 @@
+:py:mod:`colawater.toolbox.quality_control.mains`
+=================================================
+
+.. py:module:: colawater.toolbox.quality_control.mains
+
+.. autoapi-nested-parse::
+
+   Quality control checks relating to water mains.
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       res = find_nonexistent_assoc_files(wm_layer)
+       do_something(res)
+
+   .. code-block:: python
+
+       res = find_incorrect_datasources(layer)
+       do_something(res)
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.toolbox.quality_control.mains.find_faulty_scans
+   colawater.toolbox.quality_control.mains.find_unknown_datasources
+
+
+
+.. py:function:: find_faulty_scans(wm_layer: arcpy._mp.Layer) -> list[tuple[Optional[str], Ellipsis]]
+
+   Returns a list of object ID and nonexistent scan pairs for the integrated mains in the water main layer.
+
+   :param wm_layer: The water main layer.
+   :type wm_layer: arpcy._mp.Layer
+
+   :returns: The list of object ID and comment field tuples.
+   :rtype: list[tuple[str, str]
+
+   :raises ExecuteError: An error ocurred in the tool execution.
+
+
+.. py:function:: find_unknown_datasources(wm_layer: arcpy._mp.Layer) -> list[tuple[Optional[str], Ellipsis]]
+
+   Returns a list of object ID and unknown/null datasource pairs for the integrated mains in the water main layer.
+
+   :param wm_layer: The water main layer.
+   :type wm_layer: arpcy._mp.Layer
+
+   :returns: A list of Object ID and data source field tuples corresponding to water mains from the layer.
+   :rtype: list[tuple[str, str]]
+
+   :raises ExecuteError: An error ocurred in the tool execution.
+
+

@@ -1,0 +1,49 @@
+:py:mod:`colawater.toolbox.append_to_art`
+=========================================
+
+.. py:module:: colawater.toolbox.append_to_art
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   tool/index.rst
+
+
+Package Contents
+----------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   colawater.toolbox.append_to_art.execute
+   colawater.toolbox.append_to_art.parameters
+
+
+
+.. py:function:: execute(parameters: list[arcpy.Parameter]) -> None
+
+   Entry point for Append to ART.
+
+   Appends recent integrated and well-sourced mains from a given editor to the Asset Reference Table.
+
+   :param parameters: The list of parameters.
+   :type parameters: list[arcpy.Parameter]
+
+
+.. py:function:: parameters() -> list[arcpy.Parameter]
+
+   Returns the parameters for Append to ART.
+
+   Parameters are of type GPString, GPDate, GPFeatureLayer, and GPTableView.
+
+   :returns: The list of parameters.
+   :rtype: list[arcpy.Parameter]
+
+
