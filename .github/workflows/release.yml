@@ -12,14 +12,14 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v3
-    - name: Archive Release
+    - name: Archive src
       uses: thedoctor0/zip-release@0.7.1
       with:
         type: "zip"
         filename: "colawater-toolbox.zip"
         directory: "src/"
         path: "."
-    - name: Create release
+    - name: Release
       uses: ncipollo/release-action@v1
       with:
         artifacts: "src/colawater-toolbox.zip"
