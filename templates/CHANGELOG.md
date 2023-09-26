@@ -1,8 +1,8 @@
-# ?.?.?
+# {CURRENT}
 
 Refer to the [README.md](https://github.com/sfx86/colawater-toolbox#readme) for usage and installation instructions.
 
-Full Changelog: https://github.com/sfx86/colawater-toolbox/compare/v?.?.?...v?.?.?
+Full Changelog: https://github.com/sfx86/colawater-toolbox/compare/{PREVIOUS}...{CURRENT}
 
 # Release Highlights
 
