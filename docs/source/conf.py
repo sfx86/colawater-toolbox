@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.abspath("../../src"))
 project = "colawater-toolbox"
 copyright = "2023, Columbia Water"
 author = "Columbia Water"
-release = "3.5.0"
+release = "3.6.0"
 
 # general config
 extensions = [

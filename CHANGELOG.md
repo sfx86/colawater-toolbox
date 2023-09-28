@@ -1,8 +1,8 @@
-# v3.5.0
+# v3.6.0
 
 Refer to the [README.md](https://github.com/sfx86/colawater-toolbox#readme) for usage and installation instructions.
 
-Full Changelog: https://github.com/sfx86/colawater-toolbox/compare/v3.4.0...v3.5.0
+Full Changelog: https://github.com/sfx86/colawater-toolbox/compare/v3.5.0...v3.6.0
 
 # Release Highlights
 
@@ -12,9 +12,8 @@ None this release!
 
 ## Minor Changes
 
-- Module layout refactored for clarity and separation of concerns
-- Cleaned up API surface
+- Added Casing as a layer kind (this was omitted by mistake)
 
 ## Patch Changes
 
-- Quality Control progressor messages clarified
+- None this release!
