@@ -116,6 +116,7 @@ def kind(
     """
     layer_name = name(layer)
     for pattern, kind in (
+        (r"waCasing", LayerKind.Casing),
         (r"waControlValve", LayerKind.ControlValve),
         (r"waFitting", LayerKind.Fitting),
         (r"waHydrant", LayerKind.Hydrant),
