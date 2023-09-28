@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="colawater.lib.layer" href="../layer/index.html" /><link rel="prev" title="colawater.lib.attribute" href="../attribute/index.html" />
 
     <link rel="shortcut icon" href="../../../../_static/logo.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>colawater.lib.error - colawater-toolbox 3.5.0 ArcGIS geoprocessing tools for Columbia Water</title>
+        <title>colawater.lib.error - colawater-toolbox 3.6.0 ArcGIS geoprocessing tools for Columbia Water</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">colawater-toolbox 3.5.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
+      <a href="../../../../index.html"><div class="brand">colawater-toolbox 3.6.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -150,7 +150,7 @@
     <img class="sidebar-logo" src="../../../../_static/logo.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">colawater-toolbox 3.5.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
+  <span class="sidebar-brand-text">colawater-toolbox 3.6.0 <br><small>ArcGIS geoprocessing tools for Columbia Water</small></span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -230,13 +230,20 @@
         <article role="main">
           <section id="module-colawater.lib.error">
 <span id="colawater-lib-error"></span><h1><a class="reference internal" href="#module-colawater.lib.error" title="colawater.lib.error"><code class="xref py py-mod docutils literal notranslate"><span class="pre">colawater.lib.error</span></code></a><a class="headerlink" href="#module-colawater.lib.error" title="Permalink to this heading">#</a></h1>
-<p>Utilities for handling errors from arcpy.</p>
+<p>Functions for handling errors from arcpy.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">colawater.errror</span> <span class="kn">import</span> <span class="n">fallible</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">arcpy</span>
 
 <span class="nd">@fallible</span>
-<span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">something_that_raises_exceptions</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">magic_variable</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">ExecuteError</span> <span class="c1"># Caught and handled by decorator</span>
+    <span class="k">elif</span> <span class="n">more_magic</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">SystemError</span>        <span class="c1"># Also caught</span>
+    <span class="k">elif</span> <span class="n">magic_again</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span>       <span class="c1"># Catches this too!</span>
+
+    <span class="k">return</span> <span class="n">bar</span> <span class="c1"># This is returned normally</span>
 </pre></div>
 </div>
 <section id="module-contents">

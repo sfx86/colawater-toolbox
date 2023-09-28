@@ -5,7 +5,7 @@
 
 .. autoapi-nested-parse::
 
-   A wrapper for some arcpy progressor methods.
+   A convenience decorator for initializing the arcpy progressor.
 
    .. rubric:: Examples
 

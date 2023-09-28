@@ -5,7 +5,7 @@
 
 .. autoapi-nested-parse::
 
-   Utilities for working with scan files.
+   Functions and constants for working with scan files.
 
    .. rubric:: Examples
 

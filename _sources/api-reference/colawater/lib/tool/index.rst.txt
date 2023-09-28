@@ -3,6 +3,22 @@
 
 .. py:module:: colawater.lib.tool
 
+.. autoapi-nested-parse::
+
+   Type factory for building arcpy tools.
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       Foo = toolshed(
+           "Foo",
+           "Performs arbitrary incantations on your database.",
+           parameters=some_module.parameters,
+           execute=some_module.execute,
+       )
+
+
 
 Module Contents
 ---------------

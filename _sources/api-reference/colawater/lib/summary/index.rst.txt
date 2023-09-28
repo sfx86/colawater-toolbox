@@ -5,7 +5,7 @@
 
 .. autoapi-nested-parse::
 
-   Utilities for managing tool summaries.
+   Functions for managing tool summaries.
 
    .. rubric:: Examples
 
