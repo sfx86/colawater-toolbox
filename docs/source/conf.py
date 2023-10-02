@@ -1,14 +1,18 @@
 import os
 import sys
 
+from sphinx_pyproject import SphinxConfig
+
 # make sure sphinx has right source path
 sys.path.insert(0, os.path.abspath("../../src"))
 
 # project info
-project = "colawater-toolbox"
+config = SphinxConfig(pyproject_file="../../pyproject.toml")
+author = config.author
 copyright = "2023, Columbia Water"
-author = "Columbia Water"
-release = "3.6.0"
+name = config.name
+version = config.version
+description = config.description
 
 # general config
 extensions = [
@@ -41,8 +45,7 @@ html_static_path = ["_static"]
 html_logo = "_static/logo.png"
 html_favicon = "_static/logo.ico"
 
-project_tagline = "ArcGIS geoprocessing tools for Columbia Water"
-html_title = f"{project} {release} <br><small>{project_tagline}</small>"
+html_title = f"{name} {version} <br><small>{description}</small>"
 
 html_theme_options = {
     "navigation_with_keys": True,
