@@ -256,59 +256,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#colawater.lib.error.fallible" title="colawater.lib.error.fallible"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallible</span></code></a>(→ Callable[Ellipsis, Union[_T, NoReturn]])</p></td>
 <td><p>Wraps the decorated function in a try-catch block that handles <code class="docutils literal notranslate"><span class="pre">SystemError</span></code>/<code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code> and <code class="docutils literal notranslate"><span class="pre">Exception</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#colawater.lib.error.halt" title="colawater.lib.error.halt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halt</span></code></a>(→ NoReturn)</p></td>
-<td><p>Posts the current summary, raises an ExecuteError, and adds an error message.</p></td>
-</tr>
 </tbody>
 </table>
 </div>
-</section>
-<section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h3>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#colawater.lib.error.EXPECTED_ERROR_MSG" title="colawater.lib.error.EXPECTED_ERROR_MSG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EXPECTED_ERROR_MSG</span></code></a></p></td>
-<td><p>Error message text to display on <code class="docutils literal notranslate"><span class="pre">SystemError</span></code> and <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#colawater.lib.error.UNEXPECTED_ERROR_MSG" title="colawater.lib.error.UNEXPECTED_ERROR_MSG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UNEXPECTED_ERROR_MSG</span></code></a></p></td>
-<td><p>Error message text to display on non-handled exceptions.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<dl class="py data">
-<dt class="sig sig-object py" id="colawater.lib.error.EXPECTED_ERROR_MSG">
-<span class="sig-prename descclassname"><span class="pre">colawater.lib.error.</span></span><span class="sig-name descname"><span class="pre">EXPECTED_ERROR_MSG</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#colawater.lib.error.EXPECTED_ERROR_MSG" title="Permalink to this definition">#</a></dt>
-<dd><blockquote>
-<div><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;How to resolve common errors:</span>
-<span class="sd">&#39;RuntimeError: An expected Field was not found or could not be retrieved properly.&#39;</span>
-<span class="sd">&#39;RuntimeError: Attribute column not found&#39;</span>
-<span class="sd">    You probably selected the wrong layer in the dropdown.</span>
-<span class="sd">&#39;RuntimeError: Cannot acquire a lock.&#39;</span>
-<span class="sd">    Close the attribute tables of the layers with which you are trying to use this tool.</span>
-<span class="sd">    Another open ArcGIS process could also have a lock on the data, so check for that too.</span>
-<span class="sd">&#39;RuntimeError: Objects in this class cannot be updated outside an edit session&#39;</span>
-<span class="sd">    You probably selected a write-protected layer from cypress by mistake.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></div></blockquote>
-<p>Error message text to display on <code class="docutils literal notranslate"><span class="pre">SystemError</span></code> and <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="colawater.lib.error.UNEXPECTED_ERROR_MSG">
-<span class="sig-prename descclassname"><span class="pre">colawater.lib.error.</span></span><span class="sig-name descname"><span class="pre">UNEXPECTED_ERROR_MSG</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#colawater.lib.error.UNEXPECTED_ERROR_MSG" title="Permalink to this definition">#</a></dt>
-<dd><blockquote>
-<div><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;An unexpected error occurred :(</span>
-<span class="sd">Go find whomever wrote this tool and ask them about it.&quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></div></blockquote>
-<p>Error message text to display on non-handled exceptions.</p>
-</dd></dl>
-
 <dl class="py function">
 <dt class="sig sig-object py" id="colawater.lib.error.fallible">
 <span class="sig-prename descclassname"><span class="pre">colawater.lib.error.</span></span><span class="sig-name descname"><span class="pre">fallible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">Ellipsis</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">Ellipsis</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NoReturn</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#colawater.lib.error.fallible" title="Permalink to this definition">#</a></dt>
@@ -329,20 +279,6 @@ Or, if an exception is caught, an <code class="docutils literal notranslate"><sp
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ExecuteError</strong> – An exception was caught, so this was raised in its place.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="colawater.lib.error.halt">
-<span class="sig-prename descclassname"><span class="pre">colawater.lib.error.</span></span><span class="sig-name descname"><span class="pre">halt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">err</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="headerlink" href="#colawater.lib.error.halt" title="Permalink to this definition">#</a></dt>
-<dd><p>Posts the current summary, raises an ExecuteError, and adds an error message.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>err</strong> (<em>Exception</em>) – The exception causing the halt.</p></li>
-<li><p><strong>msg</strong> (<em>str</em>) – The message to supply to the exception.</p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -408,12 +344,8 @@ Or, if an exception is caught, an <code class="docutils literal notranslate"><sp
             <ul>
 <li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">colawater.lib.error</span></code></a><ul>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#functions">Functions</a></li>
-<li><a class="reference internal" href="#attributes">Attributes</a><ul>
-<li><a class="reference internal" href="#colawater.lib.error.EXPECTED_ERROR_MSG"><code class="docutils literal notranslate"><span class="pre">EXPECTED_ERROR_MSG</span></code></a></li>
-<li><a class="reference internal" href="#colawater.lib.error.UNEXPECTED_ERROR_MSG"><code class="docutils literal notranslate"><span class="pre">UNEXPECTED_ERROR_MSG</span></code></a></li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
 <li><a class="reference internal" href="#colawater.lib.error.fallible"><code class="docutils literal notranslate"><span class="pre">fallible()</span></code></a></li>
-<li><a class="reference internal" href="#colawater.lib.error.halt"><code class="docutils literal notranslate"><span class="pre">halt()</span></code></a></li>
 </ul>
 </li>
 </ul>

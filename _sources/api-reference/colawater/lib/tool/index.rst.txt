@@ -14,8 +14,8 @@
        Foo = toolshed(
            "Foo",
            "Performs arbitrary incantations on your database.",
-           parameters=some_module.parameters,
-           execute=some_module.execute,
+           some_module.parameters,
+           some_module.execute,
        )
 
 
@@ -33,6 +33,33 @@ Functions
 
 
 
-.. py:function:: toolshed(label: str, description: str, category: Optional[str] = None, backgroundable: bool = False, parameters: Callable[[], list[arcpy.Parameter]] = lambda: [], update_parameters: Callable[[list[arcpy.Parameter]], None] = lambda _: None, update_messages: Callable[[list[arcpy.Parameter]], None] = lambda _: None, execute: Callable[[list[arcpy.Parameter]], None] = lambda _: None, post_execute: Callable[[list[arcpy.Parameter]], None] = lambda _: None) -> type
+.. py:function:: toolshed(label: str, description: str, parameters: Callable[[], list[arcpy.Parameter]], execute: Callable[[list[arcpy.Parameter]], None], category: Optional[str] = None, backgroundable: bool = False, update_parameters: Callable[[list[arcpy.Parameter]], None] = lambda _: None, update_messages: Callable[[list[arcpy.Parameter]], None] = lambda _: None, post_execute: Callable[[list[arcpy.Parameter]], None] = lambda _: None) -> type
+
+   Returns a tool class in the shape expected by ArcPy.
+
+   :param label:
+   :type label: str
+   :param description:
+   :type description: str
+   :param parameters: A function providing the tool parameters.
+   :type parameters: Callable[[], list[arcpy.Parameter]]
+   :param execute: The tool's entry point.
+   :type execute: Callable[[list[arcpy.Parameter]], None]
+   :param category: A tool category. Defaults to None.
+   :type category: Optional[str]
+   :param backgroundable: Whether the tool can be backgrounded. Defaults to False.
+   :type backgroundable: bool
+   :param update_parameters: A function that updates the parameter values.
+                             Defaults to ``lambda _: None``.
+   :type update_parameters: Callable[[list[arcpy.Parameter]], None]
+   :param update_messages: A function that updates parameter messages.
+                           Defaults to ``lambda _: None``.
+   :type update_messages: Callable[[list[arcpy.Parameter]], None]
+   :param post_execute: A function to be run after execute runs.
+                        Defaults to ``lambda _: None``.
+   :type post_execute: Callable[[list[arcpy.Parameter]], None]
+
+   :returns: A class with all the required attributes and methods for use in a toolbox.
+   :rtype: type
 
 

@@ -45,7 +45,7 @@ Functions
    :rtype: list[arcpy.Parameter]
 
 
-.. py:function:: append_to_art(wm_lyr: arcpy._mp.Layer, wm_where_clause: str, art_table: arcpy._mp.Table) -> list[tuple[Optional[str], Ellipsis]]
+.. py:function:: append_to_art(wm_lyr: arcpy._mp.Layer, wm_where_clause: str, art_table: arcpy._mp.Table, ignore_nulls: bool) -> list[tuple[Optional[str], Ellipsis]]
 
    Appends recent integrated and well-sourced mains from a given editor to the
    Asset Reference Table.
@@ -56,6 +56,8 @@ Functions
    :type wm_where_clause: str
    :param art_table: The asset reference table.
    :type art_table: arcpy._mp.Table
+   :param ignore_nulls: Whether to filter rows with None values. If false, ValueError will be raised if a row has a None value.
+   :type ignore_nulls: bool
 
    :returns: A list of records of appended mains.
    :rtype: list[tuple[Optional[str], ...]]
