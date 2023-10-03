@@ -61,7 +61,7 @@ def parameters() -> list[arcpy.Parameter]:
     """
     Returns the parameters for Append to ART.
 
-    Parameters are of type GPString, GPDate, GPFeatureLayer, and GPTableView.
+    Parameters are of type GPString, GPDate, GPFeatureLayer, GPTableView, and GPBoolean.
 
     Returns:
         list[arcpy.Parameter]: The list of parameters.
@@ -145,6 +145,22 @@ def append_to_art(
     Note:
         Modifies input table.
     """
+    selected_mains = (
+        tuple(i)
+        for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
+            ly.path(wm_lyr),
+            ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
+            wm_where_clause,
+        )
+    )
+
+    if ignore_nulls:
+        selected_mains = (row for row in selected_mains if all(row))
+    else:
+        for row in selected_mains:
+            if not all(row):
+                raise ValueError(f"Null attributes on main '{row[0]}'.")
+
     with arcpy.da.Editor(  # pyright: ignore [reportGeneralTypeIssues]
         ly.workspace(wm_lyr)
     ), arcpy.da.InsertCursor(  # pyright: ignore [reportGeneralTypeIssues]
@@ -159,22 +175,6 @@ def append_to_art(
             "FILELOCATIONCW2020",
         ),
     ) as cursor:
-        selected_mains = (
-            tuple(i)
-            for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-                ly.path(wm_lyr),
-                ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
-                wm_where_clause,
-            )
-        )
-
-        if ignore_nulls:
-            selected_mains = (row for row in selected_mains if all(row))
-        else:
-            for row in selected_mains:
-                if not all(row):
-                    raise ValueError(f"Null attributes on main '{row[0]}'.")
-
         for fid, install_date, datasource, comments in selected_mains:
             cursor.insertRow(
                 (
