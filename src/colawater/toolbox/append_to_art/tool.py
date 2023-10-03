@@ -145,17 +145,17 @@ def append_to_art(
     Note:
         Modifies input table.
     """
-    selected_mains = (
+    selected_mains = [
         tuple(i)
         for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
             ly.path(wm_lyr),
             ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
             wm_where_clause,
         )
-    )
+    ]
 
     if ignore_nulls:
-        selected_mains = (row for row in selected_mains if all(row))
+        selected_mains = [row for row in selected_mains if all(row)]
     else:
         for row in selected_mains:
             if not all(row):
@@ -188,4 +188,4 @@ def append_to_art(
                 )
             )
 
-    return list(selected_mains)
+    return selected_mains
