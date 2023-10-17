@@ -29,8 +29,8 @@ git cliff --tag "${version}" --unreleased --strip header --config ${pyproject} >
 git cliff --tag "${version}" --config ${pyproject} > ${history}
 
 # commit changes & tag
-# (git add -A) -and (git commit -m "chore(release): prepare for $version")
-# git tag "${version}"
+(git add -A) -and (git commit -m "chore(release): prepare for $version")
+git tag "${version}"
 
 
 Write-Host "All done :)"
