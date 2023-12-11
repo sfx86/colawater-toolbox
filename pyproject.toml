@@ -1,6 +1,6 @@
 [project]
 name = "colawater-toolbox"
-version = "v3.6.0"
+version = "v4.0.0" # managed by ./release.ps1
 authors = [{ name = "felix", email = "sfx86@users.noreply.github.com" }]
 description = "ArcGIS geoprocessing tools for Columbia Water"
 readme = "README.md"
