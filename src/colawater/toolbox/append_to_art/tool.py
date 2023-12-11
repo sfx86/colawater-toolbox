@@ -50,9 +50,6 @@ And (DATASOURCE = 'SURVGPS' Or DATASOURCE = 'ASB')"""
         wm_layer.valueAsText,
         "Water Mains appended to ART (facility identifier, install date, data source, comments)",
     )
-    if mains_appended:
-        sy.add_note(wm_layer.valueAsText, attr.CSV_PROCESSING_MSG)
-    sy.add_items(mains_appended, csv=True)
     sy.add_result("TOOL", f"{len(mains_appended):n} mains appended to ART.")
     sy.post()
 
@@ -155,7 +152,7 @@ def append_to_art(
     ]
 
     if ignore_nulls:
-        selected_mains = [row for row in selected_mains if all(row)]
+        selected_mains = list(filter(all, selected_mains))
     else:
         for row in selected_mains:
             if not all(row):
