@@ -41,7 +41,7 @@ Functions
 
    Returns the parameters for Append to ART.
 
-   Parameters are of type GPString, GPDate, GPFeatureLayer, and GPTableView.
+   Parameters are of type GPString, GPDate, GPFeatureLayer, GPTableView, and GPBoolean.
 
    :returns: The list of parameters.
    :rtype: list[arcpy.Parameter]

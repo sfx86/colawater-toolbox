@@ -12,6 +12,7 @@ Subpackages
 
    append_to_art/index.rst
    calculate_fids/index.rst
+   dump_to_csv/index.rst
    quality_control/index.rst
 
 
