@@ -20,7 +20,7 @@ jobs:
         directory: "src/"
         path: "."
     - name: Release
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@v1.13.0
       with:
         artifacts: "src/colawater-toolbox.zip"
         bodyFile: "CHANGELOG.md"
