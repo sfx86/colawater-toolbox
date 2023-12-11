@@ -73,9 +73,11 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
         if new_fid is not None:
             formatted_fid = affix_template.format(new_fid)
-            sy.add_item(f"{canonical_name}: '{formatted_fid}' -> {new_fid}")
+            msg_str = f"{canonical_name}: '{formatted_fid}' -> {new_fid}"
         else:
-            sy.add_item(f"{canonical_name}: None used")
+            msg_str = f"{canonical_name}: None used"
+
+        sy.add_item(msg_str)
 
     sy.post()
 
