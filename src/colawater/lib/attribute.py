@@ -28,8 +28,8 @@ def process(attr: Optional[Any]) -> str:
     # only check for none as empty strings are also falsy,
     # so naming those <Null> would be incorrect
     if attr is None:
-        processed_attr = "<Null>"
+        attr_processed = "<Null>"
     else:
-        processed_attr = str(attr).strip()
+        attr_processed = str(attr).strip()
 
-    return processed_attr
+    return attr_processed
