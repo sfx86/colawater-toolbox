@@ -14,6 +14,8 @@ Examples:
                 raise SystemError        # Also caught
             elif magic_again:
                 raise RuntimeError       # Catches this too!
+            elif magic_again_2:
+                raise BaseException      # Uncaught, above Exception in the exception hierarchy
             
             return bar # This is returned normally
 """
@@ -21,8 +23,6 @@ from functools import wraps
 from typing import Any, Callable, NoReturn, TypeVar, Union
 
 import arcpy
-
-from . import summary as sy
 
 _ERROR_MESSAGE: str = """How to resolve common errors:
 'RuntimeError: An expected Field was not found or could not be retrieved properly.'
@@ -47,17 +47,10 @@ _T = TypeVar("_T")
 
 def fallible(f: Callable[..., _T]) -> Callable[..., Union[_T, NoReturn]]:
     """
-    Wraps the decorated function in a try-catch block that handles ``SystemError``/``RuntimeError`` and ``Exception``
-
-    Dumps the tool summary and prints a relevant error message depending on the exception.
-
-    Note:
-        The default error message output in ArcGIS often says 'RuntimeError'
-        when a SystemError occurs.
+    Wraps the decorated function in a try-catch block that prints an error message and re-raises ``arcpy.ExecuteError``.
 
     Returns:
         Union[_T, NoReturn]: The return value of the wrapped function.
-        Or, if an exception is caught, an ``ExecuteError`` is raised, and the function does not return.
 
     Raises:
         ExecuteError: An exception was caught, so this was raised in its place.
@@ -68,21 +61,9 @@ def fallible(f: Callable[..., _T]) -> Callable[..., Union[_T, NoReturn]]:
         try:
             res: _T = f(*args, **kwargs)
         except Exception as err:
-            _halt(err, _ERROR_MESSAGE)
+            arcpy.AddError(f"Error: {repr(err)}\n{_ERROR_MESSAGE}")
+            raise arcpy.ExecuteError
         else:
             return res
 
     return wrapper
-
-
-def _halt(err: Exception, msg: str) -> NoReturn:
-    """
-    Posts the current summary, raises an ExecuteError, and adds an error message.
-
-    Arguments:
-        err (Exception): The exception causing the halt.
-        msg (str): The message to supply to the exception.
-    """
-    sy.post(dumped=True)
-    arcpy.AddError(f"Error: {repr(err)}\n{msg}")
-    raise arcpy.ExecuteError
