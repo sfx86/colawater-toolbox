@@ -4,7 +4,7 @@ tool and other helper functions.
 """
 
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 
 import arcpy
 
@@ -58,20 +58,17 @@ def parameters() -> list[arcpy.Parameter]:
 
 
 @fallible
-def dump_to_csv(
-    input_layers: List[Any],
-    dest_dir: Path,
-) -> List[Path]:
+def dump_to_csv(input_layers: list[Any], dest_dir: Path) -> list[Path]:
     """
     Dump attribute table of layers in input_layers to CSVs in dest_dir.
 
     Arguments:
-        input_layers (List[Any]): List of input items supported by Export Table.
+        input_layers (list[Any]): List of input items supported by Export Table.
                                   (These types are private in ArcPy or hard-to-find, hence the ``Any`` annotation)
         dest_dir (Path): Destination directory for exported files.
 
     Returns:
-        List[Path]: List of paths to the exported files.
+        list[Path]: List of paths to the exported files.
     """
     outputs = [
         dest_dir / f"{name}.csv" for name in (ly.name(layer) for layer in input_layers)
