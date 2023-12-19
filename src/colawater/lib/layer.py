@@ -27,23 +27,6 @@ from typing import Optional
 import arcpy
 
 
-def name(
-    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
-) -> str:
-    """
-    Returns the layer's base name.
-
-    Arguments:
-        layer (arcpy._mp.Layer): A layer object.
-
-    Returns:
-        str: The layer's name.
-    """
-    name: str = arcpy.Describe(layer).name  # pyright: ignore [reportGeneralTypeIssues]
-    slash_idx = name.rfind("\\")
-    return name[slash_idx + 1 :]
-
-
 def path(
     layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
 ) -> str:
@@ -57,7 +40,33 @@ def path(
         str: The absolute path to the layer.
     """
     desc = arcpy.Describe(layer)
-    return f"{desc.path}\\{desc.name}"  # pyright: ignore [reportGeneralTypeIssues]
+    path_parent = desc.path  # pyright: ignore [reportGeneralTypeIssues]
+    name_long = desc.name  # pyright: ignore [reportGeneralTypeIssues]
+
+    path = f"{path_parent}\\{name_long}"
+
+    return path
+
+
+def name(
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+) -> str:
+    """
+    Returns the layer's base name.
+
+    Arguments:
+        layer (arcpy._mp.Layer): A layer object.
+
+    Returns:
+        str: The layer's name.
+    """
+    desc = arcpy.Describe(layer)
+    name_long = desc.name  # pyright: ignore [reportGeneralTypeIssues]
+    index_slash = name_long.rfind("\\")
+
+    name: str = name_long[index_slash + 1 :]
+
+    return name
 
 
 def workspace(
@@ -72,9 +81,13 @@ def workspace(
     Returns:
         str: The absolute path to the layer's workspace.
     """
-    path: str = arcpy.Describe(layer).path  # pyright: ignore [reportGeneralTypeIssues]
-    slash_idx = path.rfind("\\")
-    return path[:slash_idx]
+    desc = arcpy.Describe(layer)
+    path_parent = desc.path  # pyright: ignore [reportGeneralTypeIssues]
+    index_slash = path_parent.rfind("\\")
+
+    workspace: str = path_parent[:index_slash]
+
+    return workspace
 
 
 @dataclass
@@ -112,20 +125,39 @@ def kind(
         layer (arcpy._mp.Layer): A layer object.
 
     Returns:
-        LayerKind: The kind of layer.
+        Optional[LayerKind]: The kind of layer.
     """
-    layer_name = name(layer)
-    for pattern, kind in (
-        (r"waCasing", LayerKind.Casing),
-        (r"waControlValve", LayerKind.ControlValve),
-        (r"waFitting", LayerKind.Fitting),
-        (r"waHydrant", LayerKind.Hydrant),
-        (r"waServiceLine", LayerKind.ServiceLine),
-        (r"waStructure", LayerKind.Structure),
-        (r"waSystemValve", LayerKind.SystemValve),
-        (r"waWaterMain", LayerKind.WaterMain),
-    ):
-        if re.compile(pattern).search(layer_name):
-            return kind
+    name_layer = name(layer)
 
-    return None
+    pattern = (
+        r"(?P<ca>waCasing)"
+        r"|(?P<cv>waControlValve)"
+        r"|(?P<ft>waFitting)"
+        r"|(?P<hy>waHydrant)"
+        r"|(?P<sl>waServiceLine"
+        r"|(?P<st>waStructure)"
+        r"|(?P<sv>waSystemValve)"
+        r"|(?P<wm>waWaterMain)"
+    )
+    regex = re.compile(pattern)
+    match = regex.search(name_layer)
+
+    if match is None:
+        return None
+
+    match_groups = match.groupdict()
+    kind_map = {
+        "ca": LayerKind.Casing,
+        "cv": LayerKind.ControlValve,
+        "ft": LayerKind.Fitting,
+        "hy": LayerKind.Hydrant,
+        "sl": LayerKind.ServiceLine,
+        "st": LayerKind.Structure,
+        "sv": LayerKind.SystemValve,
+        "wm": LayerKind.WaterMain,
+    }
+
+    intersection = set(match_groups.keys()) & set(kind_map.keys())
+    layer_kind = kind_map[next(iter(intersection))]
+
+    return layer_kind
