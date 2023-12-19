@@ -77,6 +77,7 @@ See [CHANGELOG.md][changelog].
 
 # Roadmap
 
+* 🏗 Create Static GDB Tool
 * ✅ Calculate Facility Identifiers Tool
 * ✅ Append to Art Tool
 * ✅ Quality Control Tool
@@ -84,6 +85,8 @@ See [CHANGELOG.md][changelog].
     * ✅ Ensure integrated mains have a data source that is not missing or unknown 
     * ✅ Ensure integrated mains have an associated file that exists
     * ✅ Validate facility identifier format
+    * 🏗 Convert message-based output to geodatabse output 
+    * 🏗 Additional checks are on the way, working on developing a list of them 
 
 # Versioning
 
