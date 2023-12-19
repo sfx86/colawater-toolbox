@@ -13,11 +13,9 @@ Examples:
 from typing import Any, Optional
 
 
-def process(attr: Optional[Any]) -> str:
+def process(attr: Optional[Any]) -> Any:
     """
-    Returns a human readable string representation of a nullable field value.
-
-    Turns a ``None`` value into ``"<Null>"`` and optionally strips leading and trailing whitespace.
+    Turns a ``None`` (null in ArcGIS) value into ``"<Null>"``.
 
     Arguments:
         attr (Optional[Any]): The attribute value to be processed.
@@ -25,11 +23,7 @@ def process(attr: Optional[Any]) -> str:
     Returns:
         str: The processed attribute value.
     """
-    # only check for none as empty strings are also falsy,
-    # so naming those <Null> would be incorrect
     if attr is None:
-        attr_processed = "<Null>"
-    else:
-        attr_processed = str(attr).strip()
+        return "<Null>"
 
-    return attr_processed
+    return attr
