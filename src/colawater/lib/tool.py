@@ -55,9 +55,7 @@ def toolshed(
     """
 
     class Tool:
-        def __init__(
-            self,
-        ) -> None:
+        def __init__(self) -> None:
             self.label = label
             self.description = description
             self.category = category
