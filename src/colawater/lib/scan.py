@@ -45,14 +45,10 @@ def exists(filename: str) -> bool:
     # consider changing to @lru_cache(n) to deal with memory issues
 
     return bool(filename) and (
-        (
-            any(
-                (
-                    # valid scans only ever have these extensions and appear in this order of frequency
-                    filename.endswith(".tif"),
-                    filename.endswith(".pdf"),
-                    filename.endswith(".dwg"),
-                )
+        filename.endswith(
+            (
+                ".tif",
+                ".pdf",
             )
         )
         and (CITY_DIR / filename).exists()
