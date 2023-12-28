@@ -134,7 +134,7 @@ def kind(
         r"|(?P<cv>waControlValve)"
         r"|(?P<ft>waFitting)"
         r"|(?P<hy>waHydrant)"
-        r"|(?P<sl>waServiceLine"
+        r"|(?P<sl>waServiceLine)"
         r"|(?P<st>waStructure)"
         r"|(?P<sv>waSystemValve)"
         r"|(?P<wm>waWaterMain)"
