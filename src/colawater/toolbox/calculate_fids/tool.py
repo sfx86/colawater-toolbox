@@ -36,7 +36,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
 
     for layer in layers:
         canonical_name = ly.name(layer)
-        layer_kind = ly.kind(layer)
+        layer_kind = ly.LayerKind.from_str(canonical_name)
 
         if layer_kind is None:
             arcpy.AddWarning(f"Unexpected layer name: skipping [{canonical_name}]")
