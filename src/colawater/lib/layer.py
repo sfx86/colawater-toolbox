@@ -19,9 +19,12 @@ Examples:
         E.g., layer "foo" in subgroup "bar" in group "baz" has a 
         layer name of "baz\\bar\\foo"
 """
+from __future__ import annotations
+
 import re
 from dataclasses import dataclass
 from enum import Enum, unique
+from itertools import dropwhile
 from typing import Optional
 
 import arcpy
@@ -114,50 +117,29 @@ class LayerKind(Enum):
     SystemValve = _TemplateIndex("{}SV", 6)
     WaterMain = _TemplateIndex("000015-WATER-000{}", 7)
 
+    @classmethod
+    def from_str(cls, layer_name: str) -> Optional[LayerKind]:
+        """
+        Returns the variant corresponding to the layer names in Aspen.
 
-def kind(
-    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
-) -> Optional[LayerKind]:
-    """
-    Returns the type of a layer
+        This function recognizes the following names:
+            - GIS.SDE.waCasing
+            - GIS.SDE.waControlValve
+            - GIS.SDE.waFitting
+            - GIS.SDE.waHydrant
+            - GIS.SDE.waServiceLine
+            - GIS.SDE.waStructure
+            - GIS.SDE.waSystemValve
+            - GIS.SDE.waWaterMain
 
-    Arguments:
-        layer (arcpy._mp.Layer): A layer object.
+        These are transposed into LayerKind variants with the same name, minus the 'GIS.SDE.wa' prefix,
+        or None if none match.
 
-    Returns:
-        Optional[LayerKind]: The kind of layer.
-    """
-    name_layer = name(layer)
+        Arguments:
+            layer (arcpy._mp.Layer): A layer object.
 
-    pattern = (
-        r"(?P<ca>waCasing)"
-        r"|(?P<cv>waControlValve)"
-        r"|(?P<ft>waFitting)"
-        r"|(?P<hy>waHydrant)"
-        r"|(?P<sl>waServiceLine)"
-        r"|(?P<st>waStructure)"
-        r"|(?P<sv>waSystemValve)"
-        r"|(?P<wm>waWaterMain)"
-    )
-    regex = re.compile(pattern)
-    match = regex.search(name_layer)
-
-    if match is None:
-        return None
-
-    match_groups = match.groupdict()
-    kind_map = {
-        "ca": LayerKind.Casing,
-        "cv": LayerKind.ControlValve,
-        "ft": LayerKind.Fitting,
-        "hy": LayerKind.Hydrant,
-        "sl": LayerKind.ServiceLine,
-        "st": LayerKind.Structure,
-        "sv": LayerKind.SystemValve,
-        "wm": LayerKind.WaterMain,
-    }
-
-    intersection = set(match_groups.keys()) & set(kind_map.keys())
-    layer_kind = kind_map[next(iter(intersection))]
-
-    return layer_kind
+        Returns:
+            Optional[LayerKind]: The kind of layer.
+        """
+        # slice out 'GIS.SDE.wa' prefix if it exists
+        return getattr(cls, layer_name[10:], None)
