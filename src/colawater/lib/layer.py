@@ -93,6 +93,23 @@ def workspace(
     return workspace
 
 
+def has_field(
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+    field_name: str,
+) -> bool:
+    """
+    Returns whether a layer contains a field.
+
+    Arguments:
+        layer (arcpy._mp.Layer): A layer object.
+        field_name (str): The name of a field.
+
+    Returns:
+        bool: Whether ``layer`` contains ``field_name``
+    """
+    return bool(arcpy.ListFields(layer, field_name))
+
+
 @dataclass
 class _TemplateIndex:
     affix_template: str

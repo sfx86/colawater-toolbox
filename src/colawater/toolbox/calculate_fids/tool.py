@@ -48,19 +48,7 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
             arcpy.AddWarning(f"Start value omitted: skipping [{canonical_name}]")
             continue
 
-        calculate_fid_index = (
-            True
-            if layer_kind
-            in {
-                LayerKind.Casing,
-                LayerKind.ControlValve,
-                LayerKind.Fitting,
-                LayerKind.Hydrant,
-                LayerKind.WaterMain,
-            }
-            else False
-        )
-
+        calculate_fid_index = ly.has_field(layer, "FACILITYIDINDEX")
         affix_template = layer_kind.value.affix_template
         new_fid = calculate_fids(
             layer,
@@ -146,7 +134,7 @@ def calculate_fids(
     layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
     start: int,
     interval: int,
-    initials: str,
+    placeholder: str,
     affix_template: str,
     calculate_fid_index: bool,
 ) -> Optional[int]:
@@ -160,14 +148,14 @@ def calculate_fids(
         layer (arcpy._mp.Layer): The layer value.
         start (int): The start value.
         interval (int): The interval to increment the facility identifier.
-        initials (str): The initials to replace with the calculated facility identifiers.
+        placeholder (str): The placeholder to replace with the calculated facility identifiers.
         affix_template (str): A format string with one anonymous brace pair.
         calculate_fid_index (bool): Whether to calculate the FID indices for ``layer``.
 
     Returns:
         Optional[int]: The final facility identifier value, plus one interval to be used
              as an input for the next tool execution, or None if no values
-             matching ``initials`` were found.
+             matching ``placeholder`` were found.
 
     Raises:
         ExecuteError: An error ocurred in the tool execution.
@@ -175,29 +163,30 @@ def calculate_fids(
     Note:
         Modifies input layer.
     """
-    final = start
+    counter = start
     path = ly.path(layer)
+    where_facid = f"FACILITYID = '{placeholder}'"
+    fields = ("FACILITYID", "FACILITYIDINDEX")
 
     with arcpy.da.Editor(  # pyright: ignore [reportGeneralTypeIssues]
         ly.workspace(layer)
     ):
-        # only these layers have FACILITYIDINDEX
         if calculate_fid_index:
             with arcpy.da.UpdateCursor(  # pyright: ignore [reportGeneralTypeIssues]
-                path, ("FACILITYID", "FACILITYIDINDEX"), f"FACILITYID = '{initials}'"
+                path, fields, where_facid
             ) as cursor:
                 for _ in cursor:
-                    cursor.updateRow((affix_template.format(final), final))
-                    final += interval
+                    cursor.updateRow((affix_template.format(counter), counter))
+                    counter += interval
         else:
             with arcpy.da.UpdateCursor(  # pyright: ignore [reportGeneralTypeIssues]
-                path, ("FACILITYID"), f"FACILITYID = '{initials}'"
+                path, fields[0], where_facid
             ) as cursor:
                 for _ in cursor:
-                    cursor.updateRow((affix_template.format(final),))
-                    final += interval
+                    cursor.updateRow((affix_template.format(counter),))
+                    counter += interval
 
-    if final == start:
+    if counter == start:
         return None
 
-    return final
+    return counter
