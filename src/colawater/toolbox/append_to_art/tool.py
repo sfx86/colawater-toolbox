@@ -5,14 +5,11 @@ tool and other helper functions.
 
 from datetime import datetime, timedelta
 from getpass import getuser
-from typing import Optional
+from typing import Any
 
 import arcpy
 
-import colawater.lib.attribute as attr
-import colawater.lib.layer as ly
 import colawater.lib.scan as scan
-import colawater.lib.summary as sy
 from colawater.lib.error import fallible
 from colawater.lib.progressor import progressor
 
@@ -27,31 +24,17 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     Arguments:
         parameters (list[arcpy.Parameter]): The list of parameters.
     """
-    last_editor = parameters[0].valueAsText
+    editor_name = parameters[0].valueAsText
     on_after_date = parameters[1].valueAsText
-    wm_layer = parameters[2]
-    art_table = parameters[3]
-    ignore_nulls = parameters[4]
-    where_water = f"""INTEGRATIONSTATUS = 'Y' 
-And LASTEDITOR = '{last_editor}' 
-And LASTUPDATE >= '{on_after_date}' 
-And LIFECYCLESTATUS = 'Active' 
-And OWNEDBY = 1 
-And (DATASOURCE = 'SURVGPS' Or DATASOURCE = 'ASB')"""
+    wm_layer = parameters[2].value
+    art_table = parameters[3].value
 
-    mains_appended = append_to_art(
-        wm_layer.value,
-        where_water,
-        art_table.value,
-        ignore_nulls,
+    append_to_art(
+        wm_layer,
+        art_table,
+        editor_name,
+        on_after_date,
     )
-
-    sy.add_result(
-        wm_layer.valueAsText,
-        "Water Mains appended to ART (facility identifier, install date, data source, comments)",
-    )
-    sy.add_result("TOOL", f"{len(mains_appended):n} mains appended to ART.")
-    sy.post()
 
 
 def parameters() -> list[arcpy.Parameter]:
@@ -99,42 +82,30 @@ def parameters() -> list[arcpy.Parameter]:
         direction="Input",
     )
 
-    ignore_nulls = arcpy.Parameter(
-        displayName="Ignore null values on mains",
-        name="ignore_nulls",
-        datatype="GPBoolean",
-        parameterType="Optional",
-        direction="Input",
-    )
-
     return [
         last_editor,
         on_after_date,
         water_main_layer,
         art_table,
-        ignore_nulls,
     ]
 
 
 @fallible
 def append_to_art(
     wm_lyr: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
-    wm_where_clause: str,
     art_table: arcpy._mp.Table,  # pyright: ignore [reportGeneralTypeIssues]
-    ignore_nulls: bool,
-) -> list[tuple[Optional[str], ...]]:
+    editor_name: str,
+    on_after_date: str,
+) -> None:
     """
     Appends recent integrated and well-sourced mains from a given editor to the
     Asset Reference Table.
 
     Arguments:
         wm_lyr (arcpy._mp.Layer): A water main layer from which mains will be read.
-        wm_where_clause (str): A SQL where clause used to select a subset of wm_lyr.
         art_table (arcpy._mp.Table): The asset reference table.
-        ignore_nulls (bool): Whether to filter rows with None values. If false, ValueError will be raised if a row has a None value.
-
-    Returns:
-        list[tuple[Optional[str], ...]]: A list of records of appended mains.
+        editor_name (str): The editor whose edits will be used.
+        on_after_date (str): The date on or after from which edits will be used.
 
     Raises:
         ExecuteError: An error ocurred in the tool execution.
@@ -142,47 +113,55 @@ def append_to_art(
     Note:
         Modifies input table.
     """
-    selected_mains = [
-        tuple(i)
-        for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-            ly.path(wm_lyr),
+
+    def _mk_field_map(fc: Any, input: str, output: str) -> arcpy.FieldMap:
+        map = arcpy.FieldMap()
+        map.addInputField(fc, input)
+        # this makes no sense, but this api is terrible and
+        # this is how the docs do it, so whatever
+        output_fld = map.outputField
+        output_fld.name = output
+        map.outputField = output_fld
+
+        return map
+
+    field_mappings = arcpy.FieldMappings()
+    for map in (
+        _mk_field_map(wm_lyr, input, output)
+        for input, output in zip(
             ("FACILITYID", "INSTALLDATE", "DATASOURCE", "COMMENTS"),
-            wm_where_clause,
+            ("ASSETFACILITYID", "DRAWINGDATE", "DRAWINGTYPE", "SCANNAME"),
         )
-    ]
+    ):
+        field_mappings.addFieldMap(map)
 
-    if ignore_nulls:
-        selected_mains = list(filter(all, selected_mains))
-    else:
-        for row in selected_mains:
-            if not all(row):
-                raise ValueError(f"Null attributes on main '{row[0]}'.")
+    arcpy.management.Append(  # pyright: ignore [reportGeneralTypeIssues]
+        wm_lyr,
+        art_table,
+        "NO_TEST",
+        field_mappings,
+        f"""INTEGRATIONSTATUS = 'Y' 
+And LASTEDITOR = '{editor_name}' 
+And LASTUPDATE >= '{on_after_date}' 
+And LIFECYCLESTATUS = 'Active' 
+And OWNEDBY = 1 
+And (DATASOURCE = 'SURVGPS' Or DATASOURCE = 'ASB')""",
+    )
 
-    with arcpy.da.Editor(  # pyright: ignore [reportGeneralTypeIssues]
-        ly.workspace(wm_lyr)
-    ), arcpy.da.InsertCursor(  # pyright: ignore [reportGeneralTypeIssues]
-        ly.path(art_table),
-        (
-            "FILELOCATIONCITY",
-            "DRAWINGTYPE",
-            "DRAWINGDATE",
-            "ASSETFACILITYID",
-            "ASSETTYPE",
-            "SCANNAME",
-            "FILELOCATIONCW2020",
+    # generate this
+    where_uncalculated = ""
+    arcpy.management.CalculateFields(  # pyright: ignore [reportGeneralTypeIssues]
+        art_table,
+        fields=(
+            (
+                "ASSETTYPE",
+                "WAM",
+            ),
+            ("FILELOCATIONCITY", f"'{scan.CITY_DIR}' + !SCANNAME!"),
+            (
+                "FILELOCATIONCW2020",
+                f"'{scan.CW2020_DIR}' + !SCANNAME!",
+            ),
         ),
-    ) as cursor:
-        for fid, install_date, datasource, comments in selected_mains:
-            cursor.insertRow(
-                (
-                    str(scan.CITY_DIR / comments) if comments is not None else None,
-                    datasource,
-                    install_date,
-                    fid,
-                    "WAM",  # Coded domain value for "Water Main"
-                    comments,
-                    str(scan.CW2020_DIR / comments) if comments is not None else None,
-                )
-            )
-
-    return selected_mains
+        enforce_domains="ENFORCE_DOMAINS",
+    )
