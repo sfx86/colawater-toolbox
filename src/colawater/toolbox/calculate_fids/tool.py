@@ -9,7 +9,6 @@ from typing import Optional
 import arcpy
 
 import colawater.lib.layer as ly
-import colawater.lib.summary as sy
 from colawater.lib.error import fallible
 from colawater.lib.layer import LayerKind
 from colawater.lib.progressor import progressor
@@ -31,8 +30,6 @@ def execute(parameters: list[arcpy.Parameter]) -> None:
     interval = parameters[1].value
     layers = parameters[2].values
     starts = parameters[3:]
-
-    sy.add_result("TOOL", "New start values:")
 
     for layer in layers:
         canonical_name = ly.name(layer)
