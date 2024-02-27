@@ -1,1 +1,1 @@
-from .tool import execute, parameters
+from .tool import QualityControl
