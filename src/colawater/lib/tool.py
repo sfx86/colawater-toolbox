@@ -4,79 +4,56 @@ Type factory for building arcpy tools.
 Examples:
     .. code-block:: python
     
-        Foo = toolshed(
-            "Foo",
-            "Performs arbitrary incantations on your database.",
-            some_module.parameters,
-            some_module.execute,
-        )
+        from magic import Wizard
+
+        Foo = toolshed(Wizard)
 
 """
-from typing import Any, Callable, Optional
+from enum import Enum, unique
+from functools import wraps
+from typing import Any, Callable, TypeVar
 
 import arcpy
 
 
-def toolshed(
-    label: str,
-    description: str,
-    parameters: Callable[[], list[arcpy.Parameter]],
-    execute: Callable[[list[arcpy.Parameter]], None],
-    category: Optional[str] = None,
-    backgroundable: bool = False,
-    update_parameters: Callable[[list[arcpy.Parameter]], None] = lambda _: None,
-    update_messages: Callable[[list[arcpy.Parameter]], None] = lambda _: None,
-    post_execute: Callable[[list[arcpy.Parameter]], None] = lambda _: None,
-) -> type:
+@unique
+class Category(Enum):
+    CheckIn = "Check-in"
+    Tools = "Tools"
+    QualityControl = "Quality Control"
+
+
+_T = TypeVar("_T")
+
+
+def entry(tool_name: str) -> Callable[[Callable[..., _T]], Callable[..., _T]]:
     """
-    Returns a tool class in the shape expected by ArcPy.
+    Wraps the decorated function and prefixes it with boilerplate progressor setup.
 
     Arguments:
-        label (str):
-        description (str):
-        parameters (Callable[[], list[arcpy.Parameter]]): A function providing the tool parameters.
-        execute (Callable[[list[arcpy.Parameter]], None]): The tool's entry point.
-        category (Optional[str]):
-            A tool category. Defaults to None.
-        backgroundable (bool):
-            Whether the tool can be backgrounded. Defaults to False.
-        update_parameters (Callable[[list[arcpy.Parameter]], None]):
-            A function that updates the parameter values.
-            Defaults to ``lambda _: None``.
-        update_messages (Callable[[list[arcpy.Parameter]], None]):
-            A function that updates parameter messages.
-            Defaults to ``lambda _: None``.
-        post_execute (Callable[[list[arcpy.Parameter]], None]):
-            A function to be run after execute runs.
-            Defaults to ``lambda _: None``.
-
-    Returns:
-        type: A class with all the required attributes and methods for use in a toolbox.
+        tool_name (str): The tool name of the entry point being annotated.
     """
 
-    class Tool:
-        def __init__(self) -> None:
-            self.label = label
-            self.description = description
-            self.category = category
-            self.canRunInBackground = backgroundable
+    def decorator(f: Callable[..., _T]) -> Callable[..., _T]:
+        @wraps(f)
+        def wrapper(*args: Any, **kwargs: Any) -> _T:
+            arcpy.SetProgressor("default", f"Running {tool_name}")
+            return f(*args, **kwargs)
 
-        def getParameterInfo(self) -> list[arcpy.Parameter]:
-            return parameters()
+        return wrapper
 
-        def isLicensed(self) -> bool:
-            return True
+    return decorator
 
-        def updateParameters(self, parameters: list[arcpy.Parameter]) -> None:
-            return update_parameters(parameters)
 
-        def updateMessages(self, parameters: list[arcpy.Parameter]) -> None:
-            return update_messages(parameters)
+def label(name: str, category: Category) -> str:
+    """
+    Formats a tool label.
 
-        def execute(self, parameters: list[arcpy.Parameter], messages: Any) -> None:
-            return execute(parameters)
+    Arguments:
+        name (str): The tool name.
+        category (Category): The tool category.
 
-        def postExecute(self, parameters: list[arcpy.Parameter]) -> None:
-            return post_execute(parameters)
-
-    return Tool
+    Returns:
+        str: The formatted name.
+    """
+    return f"{name} ({category.value})"
