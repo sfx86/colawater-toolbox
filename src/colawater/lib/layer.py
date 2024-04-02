@@ -5,36 +5,21 @@ Examples:
     .. code-block:: python
 
         path = path(layer) # Returns "path/to/layer".
+        basename = basename(layer) # Returns "layer".
         workspace = workspace(layer) # Returns "path/to/workspace.
                                      # This is the same as the value in ``path``,
                                      # but without the layer name.
-                                     
-        kind = kind(layer)
-        if kind == LayerKind.Casing:
-            do_something()
-
-    Note: 
-        Layer names include the groups of which they are a part.
-        Nested groups appear in parent-child order.
-        E.g., layer "foo" in subgroup "bar" in group "baz" has a 
-        layer name of "baz\\bar\\foo"
+        has_objectid = has_field(layer, "OBJECTID") # Returns True.
 """
-from __future__ import annotations
-
-import re
-from dataclasses import dataclass
-from enum import Enum, unique
-from itertools import dropwhile
-from typing import Optional
 
 import arcpy
 
 
 def path(
-    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportAttributeAccessIssue]
 ) -> str:
     """
-    Returns the absolute path to a layer.
+    Returns the full path to a layer.
 
     Arguments:
         layer (arcpy._mp.Layer): A layer object.
@@ -43,16 +28,18 @@ def path(
         str: The absolute path to the layer.
     """
     desc = arcpy.Describe(layer)
-    path_parent = desc.path  # pyright: ignore [reportGeneralTypeIssues]
-    name_long = desc.name  # pyright: ignore [reportGeneralTypeIssues]
-
-    path = f"{path_parent}\\{name_long}"
+    path = "\\".join(
+        (
+            desc.path,  # pyright: ignore [reportAttributeAccessIssue]
+            desc.name,  # pyright: ignore [reportAttributeAccessIssue]
+        )
+    )
 
     return path
 
 
-def name(
-    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+def basename(
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportAttributeAccessIssue]
 ) -> str:
     """
     Returns the layer's base name.
@@ -61,22 +48,20 @@ def name(
         layer (arcpy._mp.Layer): A layer object.
 
     Returns:
-        str: The layer's name.
+        str: The layer's base name.
     """
-    desc = arcpy.Describe(layer)
-    name_long = desc.name  # pyright: ignore [reportGeneralTypeIssues]
-    index_slash = name_long.rfind("\\")
+    name = arcpy.Describe(layer).name  # pyright: ignore [reportAttributeAccessIssue]
+    # foo\bar\baz -> baz
+    basename = name.rpartition("\\")[2]
 
-    name: str = name_long[index_slash + 1 :]
-
-    return name
+    return basename
 
 
 def workspace(
-    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportAttributeAccessIssue]
 ) -> str:
     """
-    Returns the absolute path to a layer's workspace.
+    Returns the path to a layer's workspace.
 
     Arguments:
         layer (arcpy._mp.Layer): A layer object.
@@ -84,21 +69,23 @@ def workspace(
     Returns:
         str: The absolute path to the layer's workspace.
     """
-    desc = arcpy.Describe(layer)
-    path_parent = desc.path  # pyright: ignore [reportGeneralTypeIssues]
-    index_slash = path_parent.rfind("\\")
-
-    workspace: str = path_parent[:index_slash]
+    path = arcpy.Describe(layer).path  # pyright: ignore [reportAttributeAccessIssue]
+    # foo\bar -> foo
+    workspace = path.rpartition("\\")[0]
 
     return workspace
 
 
 def has_field(
-    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportAttributeAccessIssue]
     field_name: str,
 ) -> bool:
     """
     Returns whether a layer contains a field.
+
+    This function wraps arcpy.ListFields, so if ``field_name`` contains ``*``, it will behave as a wildcard.
+    E.g. ``Water*`` matches ``Water`` and ``Waterloo``.
+    This function returns true if 1 or more matches are found, false if less.
 
     Arguments:
         layer (arcpy._mp.Layer): A layer object.
@@ -108,55 +95,3 @@ def has_field(
         bool: Whether ``layer`` contains ``field_name``
     """
     return bool(arcpy.ListFields(layer, field_name))
-
-
-@dataclass
-class _TemplateIndex:
-    affix_template: str
-    index: int
-
-
-@unique
-class LayerKind(Enum):
-    """
-    Enumerates layer variants with a payload containing their affix template and parameter index.
-
-    Use the parameter index with a contiguous slice into the relevant part of your parameter
-    list that contains the layer kinds in alphabetical order.
-    """
-
-    Casing = _TemplateIndex("{}CA", 0)
-    ControlValve = _TemplateIndex("{}CV", 1)
-    Fitting = _TemplateIndex("{}FT", 2)
-    Hydrant = _TemplateIndex("{}HYD", 3)
-    ServiceLine = _TemplateIndex("{}SERV", 4)
-    Structure = _TemplateIndex("{}STR", 5)
-    SystemValve = _TemplateIndex("{}SV", 6)
-    WaterMain = _TemplateIndex("000015-WATER-000{}", 7)
-
-    @classmethod
-    def from_str(cls, layer_name: str) -> Optional[LayerKind]:
-        """
-        Returns the variant corresponding to the layer names in Aspen.
-
-        This function recognizes the following names:
-            - GIS.SDE.waCasing
-            - GIS.SDE.waControlValve
-            - GIS.SDE.waFitting
-            - GIS.SDE.waHydrant
-            - GIS.SDE.waServiceLine
-            - GIS.SDE.waStructure
-            - GIS.SDE.waSystemValve
-            - GIS.SDE.waWaterMain
-
-        These are transposed into LayerKind variants with the same name, minus the 'GIS.SDE.wa' prefix,
-        or None if none match.
-
-        Arguments:
-            layer (arcpy._mp.Layer): A layer object.
-
-        Returns:
-            Optional[LayerKind]: The kind of layer.
-        """
-        # slice out 'GIS.SDE.wa' prefix if it exists
-        return getattr(cls, layer_name[10:], None)
