@@ -4,10 +4,9 @@ Functions and constants for working with scan files.
 Examples:
     .. code-block:: python
     
-        from colawater import scan
-
-        important_list = [do_something(f) for f in scan.CITY_DIR.iterdir() if scan.exists(f)]
+        important_list = [do_something(file) for file in CITY_DIR.iterdir() if exists(file)]
 """
+
 from functools import cache
 from pathlib import Path
 
@@ -29,8 +28,7 @@ def exists(filename: str) -> bool:
     """
     Returns whether this scan file exists.
 
-    Applies some heuristics to detect if the string is a valid
-    scan file name and only checks the filesystem if those heuristics pass.
+    Applies some heuristics to detect if the string is a valid scan file name and only checks the filesystem if those heuristics pass.
     Uses an unbounded LRU cache to store arguments and results to avoid erroneous filesystem accesses.
 
     Arguments:
