@@ -6,16 +6,14 @@ Examples:
 
         foo = None
         foo = process(foo) # Returns "<Null>".
-        
-        bar = "      whitespace example   \n\n"
-        bar = process(bar) # Returns "whitespace example"
 """
+
 from typing import Any, Optional
 
 
-def process(attr: Optional[Any]) -> Any:
+def to_str(attr: Optional[Any]) -> str:
     """
-    Turns a ``None`` (null in ArcGIS) value into ``"<Null>"``.
+    Calls ``str`` with the argument or turns a ``None`` (null in ArcGIS) value into ``"<Null>"``.
 
     Arguments:
         attr (Optional[Any]): The attribute value to be processed.
@@ -26,4 +24,4 @@ def process(attr: Optional[Any]) -> Any:
     if attr is None:
         return "<Null>"
 
-    return attr
+    return str(attr)
