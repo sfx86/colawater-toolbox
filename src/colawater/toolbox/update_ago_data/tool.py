@@ -2,7 +2,8 @@ import arcpy
 import arcpy.conversion
 
 from colawater.lib import desc, tool
-from colawater.toolbox.update_ago_data import lib
+from colawater.lib.error import fallible
+from colawater.toolbox.update_ago_data.lib import ExportCategory
 
 
 class UpdateAGOData:
@@ -11,12 +12,13 @@ class UpdateAGOData:
     description = "Downloads layers to be uploaded to ArcGIS Online from aspen."
     canRunInBackground = False
 
+    @fallible
     def execute(self, parameters: list[arcpy.Parameter], messages) -> None:
         conn_aspen = desc.path(parameters[0].value)
 
         # invariant: parameters[1:] & ExportCategory must have same order
         gdbs = (p.value for p in parameters[1:])
-        layer_groups = (l.value for l in lib.ExportCategory)
+        layer_groups = (l.value for l in ExportCategory)
 
         with arcpy.EnvManager(workspace=conn_aspen, overwriteOutput=True):
             for layers, gdb in zip(layer_groups, gdbs):
