@@ -1,33 +1,67 @@
+from enum import Enum, unique
 from typing import Optional
 
 import arcpy
 
-from colawater.lib import layer
+from colawater.lib import desc
+from colawater.lib import layer as ly
 from colawater.lib.error import fallible
+
+
+@unique
+class AssetType(Enum):
+    """
+    Possible asset types represented by a FeatureClass.
+    """
+
+    Casing = "Casing"
+    ControlValve = "Control Valve"
+    Fitting = "Fitting"
+    Hydrant = "Hydrant"
+    ServiceLine = "Service Line"
+    Structure = "Structure"
+    SystemValve = "System Valve"
+    WaterMain = "Water Main"
+
+
+@unique
+class FacIDTemplate(Enum):
+    """
+    Facility Identifier formats corresponding to the variants of AssetType
+    """
+
+    Casing = "{}CA"
+    ControlValve = "{}CV"
+    Fitting = "{}FT"
+    Hydrant = "{}HYD"
+    ServiceLine = "{}SERV"
+    Structure = "{}STR"
+    SystemValve = "{}SV"
+    WaterMain = "000015-WATER-000{}"
+
+
+# every asset type must have an associated template
+assert AssetType._member_names_ == FacIDTemplate._member_names_
 
 
 @fallible
 def calculate_fids(
-    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
-    start: int,
-    interval: int,
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportAttributeAccessIssue]
+    asset_type: AssetType,
     placeholder: str,
-    affix_template: str,
-    calculate_fid_index: bool,
+    interval: int,
+    start: int,
 ) -> Optional[int]:
     """
-    Calculates the facility identifiers for the provided layer.
-
-    Also updates the substituted initials with the new facility identifiers
-    in the provided layer.
+    Calculates and updates the facility identifiers for the provided layer.
+    If the layer has a facility identifier index, also update that.
 
     Arguments:
         layer (arcpy._mp.Layer): The layer value.
-        start (int): The start value.
-        interval (int): The interval to increment the facility identifier.
+        asset_type (AssetType): The asset type.
         placeholder (str): The placeholder to replace with the calculated facility identifiers.
-        affix_template (str): A format string with one anonymous brace pair.
-        calculate_fid_index (bool): Whether to calculate the FID indices for ``layer``.
+        interval (int): The interval to increment the facility identifier.
+        start (int): The start value.
 
     Returns:
         Optional[int]: The final facility identifier value, plus one interval to be used
@@ -41,26 +75,29 @@ def calculate_fids(
         Modifies input layer.
     """
     counter = start
-    path = layer.path(layer)
-    where_facid = f"FACILITYID = '{placeholder}'"
+    facid_template = FacIDTemplate[asset_type.name].value
     fields = ("FACILITYID", "FACILITYIDINDEX")
+    workspace = desc.path(layer)
+    where_facid = f"{fields[0]} = '{placeholder}'"
 
-    with arcpy.da.Editor(  # pyright: ignore [reportGeneralTypeIssues]
-        layer.workspace(layer)
-    ):
-        if calculate_fid_index:
-            with arcpy.da.UpdateCursor(  # pyright: ignore [reportGeneralTypeIssues]
-                path, fields, where_facid
+    with arcpy.da.Editor(workspace):  # pyright: ignore [reportAttributeAccessIssue]
+        if ly.has_field(layer, fields[1]):
+            with arcpy.da.UpdateCursor(  # pyright: ignore [reportAttributeAccessIssue]
+                layer,
+                fields,
+                where_facid,
             ) as cursor:
                 for _ in cursor:
-                    cursor.updateRow((affix_template.format(counter), counter))
+                    cursor.updateRow((facid_template.format(counter), counter))
                     counter += interval
         else:
-            with arcpy.da.UpdateCursor(  # pyright: ignore [reportGeneralTypeIssues]
-                path, fields[0], where_facid
+            with arcpy.da.UpdateCursor(  # pyright: ignore [reportAttributeAccessIssue]
+                layer,
+                fields[0],
+                where_facid,
             ) as cursor:
                 for _ in cursor:
-                    cursor.updateRow((affix_template.format(counter),))
+                    cursor.updateRow((facid_template.format(counter),))
                     counter += interval
 
     if counter == start:

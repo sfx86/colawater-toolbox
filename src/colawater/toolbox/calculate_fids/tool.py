@@ -1,26 +1,24 @@
 """
-Contains the functions used by the Calculate Facility Identifiers
-tool and other helper functions.
+Calculate Facility Identifiers
 """
 
 from getpass import getuser
-from typing import Optional
+from typing import Any
 
 import arcpy
+import arcpy._mp
 
 import colawater.lib.layer as ly
-from colawater.lib import tool
-from colawater.toolbox.calculate_fids import lib
+from colawater.lib import desc, tool
+from colawater.toolbox.calculate_fids.lib import AssetType, calculate_fids
 
 
 class CalculateFacIDs:
-    _category = tool.Category.CheckIn
-    category = _category.value
-    label = tool.label("Calculate Facility Identifiers", _category)
+    category = tool.Category.CheckIn.value
+    label = "Calculate Facility Identifiers"
     canRunInBackground = False
 
-    @tool.entry("Calculating facility identifiers...")
-    def execute(self, parameters: list[arcpy.Parameter]) -> None:
+    def execute(self, parameters: list[arcpy.Parameter], messages: list[Any]) -> None:
         """
         Entry point for Calculate Facility Identifiers.
 
@@ -29,68 +27,57 @@ class CalculateFacIDs:
 
         Arguments:
             parameters (list[arcpy.Parameter]): The list of parameters.
+            messages (list[Any]): The list of messages.
         """
 
-        initials = parameters[0].value
-        interval = parameters[1].value
-        layers = parameters[2].values
-        starts = parameters[3:]
+        placeholder: str = parameters[0].value
+        interval: int = parameters[1].value
+        value_table: list[tuple[arcpy._mp.Layer, str, int]] = parameters[2].values
 
-        for layer in layers:
-            canonical_name = ly.name(layer)
-            layer_kind = ly.LayerKind.from_str(canonical_name)
-
-            if layer_kind is None:
-                arcpy.AddWarning(f"Unexpected layer name: skipping [{canonical_name}]")
-                continue
-
-            start = starts[layer_kind.value.index].value
+        for layer, asset_type, start in value_table:
+            basename = desc.basename(layer)
 
             if start is None:
-                arcpy.AddWarning(f"Start value omitted: skipping [{canonical_name}]")
+                arcpy.AddWarning(f"Start value omitted: skipping [{basename}]")
                 continue
 
-            calculate_fid_index = ly.has_field(layer, "FACILITYIDINDEX")
-            affix_template = layer_kind.value.affix_template
-            new_fid = lib.calculate_fids(
+            if not ly.has_field(layer, "FACILITYID"):
+                arcpy.AddWarning(f"Missing field 'FACILITYID': skipping [{basename}]")
+
+            new_fid = calculate_fids(
                 layer,
-                start,
+                AssetType(asset_type),
+                placeholder,
                 interval,
-                initials,
-                affix_template,
-                calculate_fid_index,
+                start,
             )
 
-            if new_fid is not None:
-                formatted_fid = affix_template.format(new_fid)
-                msg_str = f"{canonical_name}: '{formatted_fid}' -> {new_fid}"
-            else:
-                msg_str = f"{canonical_name}: None used"
-
-            sy.add_item(msg_str)
-
-        sy.post()
+            arcpy.AddMessage(
+                f"{basename}: {new_fid}"
+                if new_fid is not None
+                else f"{basename}: None used"
+            )
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
         """
         Returns the parameters for Calculate Facility Identifiers.
 
-        Parameters are of type GPString, GPLong, GPFeatureLayer multivalue, and 7 GPLong.
+        Parameters are of type GPString, GPLong, GPValueTable[DEFeatureClass, GPString, GPLong] multivalue.
 
         Returns:
             list[arcpy.Parameter]: The list of parameters.
         """
-        initials = arcpy.Parameter(
-            displayName="Initials",
-            name="initials",
+        placeholder = arcpy.Parameter(
+            displayName="Facility Identifier Placeholder",
+            name="placeholder",
             datatype="GPString",
             parameterType="Required",
             direction="Input",
         )
-        initials.value = getuser()[:3].upper()
+        placeholder.value = getuser()[:3].upper()
 
         interval = arcpy.Parameter(
-            displayName="Global Interval",
+            displayName="Interval",
             name="interval",
             datatype="GPLong",
             parameterType="Required",
@@ -98,33 +85,20 @@ class CalculateFacIDs:
         )
         interval.value = 2
 
-        layers = arcpy.Parameter(
-            displayName="Water Layers",
-            name="layers",
-            datatype="GPFeatureLayer",
+        inputs = arcpy.Parameter(
+            displayName="Inputs",
+            name="inputs",
+            datatype="GPValueTable",
             parameterType="Required",
             direction="Input",
             multiValue=True,
         )
+        inputs.columns = [
+            ["DEFeatureClass", "Feature Class"],
+            ["GPString", "Asset Type"],
+            ["GPLong", "Start Value"],
+        ]
+        inputs.filters[1].type = "ValueList"
+        inputs.filters[1].list = [variant.value for variant in AssetType]
 
-        starts = (
-            arcpy.Parameter(
-                displayName=f"Start Value: {name}",
-                name=f"{abbrev}_start",
-                datatype="GPLong",
-                parameterType="Optional",
-                direction="Input",
-            )
-            for abbrev, name in (
-                ("ca", "Casing"),
-                ("cv", "Control Valve"),
-                ("ft", "Fitting"),
-                ("hy", "Hydrant"),
-                ("sl", "Service Line"),
-                ("st", "Structure"),
-                ("sv", "System Valve"),
-                ("wm", "Water Main"),
-            )
-        )
-
-        return [initials, interval, layers, *starts]
+        return [placeholder, interval, inputs]
