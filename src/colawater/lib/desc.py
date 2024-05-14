@@ -17,7 +17,7 @@ from typing import Any
 import arcpy
 
 
-def path(item: Any) -> str:
+def full_path(item: Any) -> str:
     """
     Returns the full path to a item.
 
@@ -28,7 +28,7 @@ def path(item: Any) -> str:
         str: The absolute path to the item.
     """
     desc = arcpy.Describe(item)
-    path = "\\".join(
+    path: str = "\\".join(
         (
             desc.path,  # pyright: ignore [reportAttributeAccessIssue]
             desc.name,  # pyright: ignore [reportAttributeAccessIssue]
@@ -48,25 +48,25 @@ def basename(item: Any) -> str:
     Returns:
         str: The item's base name.
     """
-    name = arcpy.Describe(item).name  # pyright: ignore [reportAttributeAccessIssue]
-    # foo\bar\baz -> baz
-    basename = name.rpartition("\\")[2]
+    basename: str = arcpy.Describe(
+        item
+    ).name  # pyright: ignore [reportAttributeAccessIssue]
 
     return basename
 
 
-def workspace(item: Any) -> str:
+def path(item: Any) -> str:
     """
-    Returns the path to a item's workspace.
+    Returns the path to a item excluding the base name.
 
     Arguments:
         item (arcpy._mp.Layer): A item object.
 
     Returns:
-        str: The absolute path to the item's workspace.
+        str: The path to a item excluding the base name.
     """
-    path = arcpy.Describe(item).path  # pyright: ignore [reportAttributeAccessIssue]
-    # foo\bar -> foo
-    workspace = path.rpartition("\\")[0]
+    path: str = arcpy.Describe(
+        item
+    ).path  # pyright: ignore [reportAttributeAccessIssue]
 
-    return workspace
+    return path
