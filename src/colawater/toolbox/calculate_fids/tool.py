@@ -6,11 +6,11 @@ from getpass import getuser
 from typing import Any
 
 import arcpy
-import arcpy._mp
 
 import colawater.lib.layer as ly
 from colawater.lib import desc, tool
-from colawater.toolbox.calculate_fids.lib import AssetType, calculate_fids
+
+from .lib import AssetType, calculate_fids
 
 
 class CalculateFacIDs:
@@ -32,7 +32,13 @@ class CalculateFacIDs:
 
         placeholder: str = parameters[0].value
         interval: int = parameters[1].value
-        value_table: list[tuple[arcpy._mp.Layer, str, int]] = parameters[2].values
+        value_table: list[
+            tuple[
+                arcpy._mp.Layer,  # pyright: ignore [reportAttributeAccessIssue]
+                str,
+                int,
+            ]
+        ] = parameters[2].values
 
         for layer, asset_type, start in value_table:
             basename = desc.basename(layer)
