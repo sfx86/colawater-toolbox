@@ -3,6 +3,7 @@ $pyproject = "${git_dir}/pyproject.toml"
 $changelog = "${git_dir}/CHANGELOG.md"
 $history = "${git_dir}/HISTORY.md"
 
+Write-Host "Suggested version tag: $(Get-Date -UFormat "%y.%W").0"
 $version = Read-Host -Prompt "Enter a version tag (0Y.0W.MICRO)"  
 
 # update version in pyproject.toml
