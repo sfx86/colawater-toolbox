@@ -13,13 +13,11 @@ from colawater.toolbox.append_to_art import lib
 
 
 class AppendToART:
-    _category = tool.Category.CheckIn
-    category = _category.value
-    label = tool.label("Append to ART", _category)
+    category = tool.Category.CheckIn.value
+    label = "Append to ART"
     description = "Appends new integrated mains to the Asset Reference Table."
     canRunInBackground = False
 
-    @tool.entry(label)
     def execute(self, parameters: list[arcpy.Parameter]) -> None:
         """
         Entry point for Append to ART.
