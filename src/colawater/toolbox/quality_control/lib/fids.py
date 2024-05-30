@@ -19,13 +19,13 @@ from typing import Any, Optional
 
 import arcpy
 
-import colawater.lib.layer as ly
+import colawater.lib.desc as ly
 from colawater.lib.error import fallible
 
 
 @fallible
 def find_faulty(
-    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportAttributeAccessIssue]
     regex: re.Pattern[Any],
 ) -> list[tuple[str, Optional[str]]]:
     """
@@ -43,8 +43,8 @@ def find_faulty(
     """
     return [
         (str(oid), fid)
-        for oid, fid in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-            ly.path(layer), ("OBJECTID", "FACILITYID")
+        for oid, fid in arcpy.da.SearchCursor(  # pyright: ignore [reportAttributeAccessIssue]
+            ly.full_path(layer), ("OBJECTID", "FACILITYID")
         )
         if not regex.fullmatch(str(fid))
     ]
@@ -52,7 +52,7 @@ def find_faulty(
 
 @fallible
 def find_duplicate(
-    layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+    layer: arcpy._mp.Layer,  # pyright: ignore [reportAttributeAccessIssue]
 ) -> list[tuple[str, ...]]:
     """
     Returns all duplicate facility identifiers from the given layer.
@@ -69,20 +69,22 @@ def find_duplicate(
     Note:
         Writes result layer from ``Find Identical`` into scratch geodatabase.
     """
-    scratch_gdb = arcpy.env.scratchGDB  # pyright: ignore [reportGeneralTypeIssues]
+    scratch_gdb = arcpy.env.scratchGDB  # pyright: ignore [reportAttributeAccessIssue]
     timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
     scratch_layer_path = f"{scratch_gdb}\\duplicate_fids_{timestamp}"
-    layer_path = ly.path(layer)
+    layer_path = ly.full_path(layer)
 
     oids: tuple[int, ...] = tuple(
         int(oid[0])
-        for oid in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-            arcpy.management.FindIdentical(  # pyright: ignore [reportGeneralTypeIssues]
+        for oid in arcpy.da.SearchCursor(  # pyright: ignore [reportAttributeAccessIssue]
+            arcpy.management.FindIdentical(  # pyright: ignore [reportAttributeAccessIssue]
                 layer_path,
                 scratch_layer_path,
                 ("FACILITYID"),
                 output_record_option="ONLY_DUPLICATES",
-            ).getOutput(0),
+            ).getOutput(
+                0
+            ),
             ("IN_FID"),
         )
     )
@@ -91,7 +93,7 @@ def find_duplicate(
         return []
 
     oid_to_fid: dict[int, str] = dict(
-        arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
+        arcpy.da.SearchCursor(  # pyright: ignore [reportAttributeAccessIssue]
             layer_path,
             ("OBJECTID", "FACILITYID"),
             where_clause=f"OBJECTID IN ({', '.join(map(str, oids))})",

@@ -18,7 +18,6 @@ _LAYER_START = 4
 
 
 class QualityControl:
-    @tool.entry("Running quality control checks...")
     def execute(self, parameters: list[arcpy.Parameter]) -> None:
         """
         Entry point for Water Quality Control.
@@ -53,26 +52,12 @@ class QualityControl:
 
             for l, r in ((l, r) for l, r in zip(layers, regexes) if l.value):
                 inc_fids = fids.find_faulty(l, re.compile(r))
-
-                _boilerplate(
-                    l.valueAsText,
-                    "Incorrectly formatted facility identifiers (object ID, facility identifier):",
-                    inc_fids,
-                    "incorrectly formatted facility identifiers.",
-                )
+                # TODO: output as fc
 
         if is_fid_duplicate_check:
             for l in (l for l in layers if l.value):
                 duplicate_fids = fids.find_duplicate(l.value)
-
-                _boilerplate(
-                    l.valueAsText,
-                    "Duplicate facility identifiers grouped on each line (fid, object IDs):",
-                    duplicate_fids,
-                    "duplicate facility identifiers.",
-                    unique=True,
-                    result_unique_str="unique duplicate facility identifiers.",
-                )
+                # TODO: output as fc
 
         if (is_wm_file_check or is_wm_ds_check) and not wm_layer.value:
             arcpy.AddWarning(
@@ -82,29 +67,11 @@ class QualityControl:
 
         if is_wm_file_check:
             nonexistent_files = mains.find_faulty_scans(wm_layer)
-
-            _boilerplate(
-                wm_layer.valueAsText,
-                "Nonexistent associated files (object ID, comments):",
-                nonexistent_files,
-                "nonexistent files for integrated mains.",
-                csv=True,
-                unique=True,
-                unique_idx=1,
-                result_unique_str="unique nonexistent files for integrated mains.",
-            )
+            # TODO: output as fc
 
         if is_wm_ds_check:
             inc_datasources = mains.find_unknown_datasources(wm_layer)
-
-            _boilerplate(
-                wm_layer.valueAsText,
-                "Missing or unknown data sources (object ID, datasource):",
-                inc_datasources,
-                "missing or unknown data sources for integrated mains.",
-            )
-
-        sy.post()
+            # TODO: output as fc
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
         """
