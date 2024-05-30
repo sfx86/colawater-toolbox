@@ -19,6 +19,7 @@ Examples:
             
             return bar # This is returned normally
 """
+
 from functools import wraps
 from typing import Any, Callable, NoReturn, TypeVar, Union
 
