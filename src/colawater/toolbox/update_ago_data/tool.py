@@ -8,13 +8,13 @@ from colawater.lib import desc, tool
 from colawater.lib.error import fallible
 from colawater.lib.mp import mp_fix_exec
 
-from .lib import FeatureClassGroup, export_to_gdb
+from .lib import FeatureClassGroup, export_to_gdb, gdb_to_zip
 
 
 @fallible
-def gp_worker(item: tuple[str, str, FeatureClassGroup]) -> None:
-    conn_aspen, gdb, fcg = item
+def gp_worker(conn_aspen: str, gdb: str, fcg: FeatureClassGroup) -> None:
     export_to_gdb(conn_aspen, gdb, fcg)
+    gdb_to_zip(gdb)
 
 
 class UpdateAGOData:
@@ -34,11 +34,11 @@ class UpdateAGOData:
         fcgs = [l for l in FeatureClassGroup]
 
         assert len(gdbs) == len(fcgs)
-        items = list(zip([conn_aspen] * len(gdbs), gdbs, fcgs))
+        arguments = list(zip([conn_aspen] * len(gdbs), gdbs, fcgs))
 
         mp_fix_exec()
-        with mp.Pool(len(items)) as pool:
-            pool.map(gp_worker, items)
+        with mp.Pool(len(arguments)) as pool:
+            pool.starmap(gp_worker, arguments)
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
         conn_aspen = arcpy.Parameter(
