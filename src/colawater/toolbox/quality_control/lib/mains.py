@@ -17,14 +17,14 @@ from typing import Optional
 
 import arcpy
 
-import colawater.lib.layer as ly
+import colawater.lib.desc as ly
 import colawater.lib.scan as scan
 from colawater.lib.error import fallible
 
 
 @fallible
 def find_faulty_scans(
-    wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+    wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportAttributeAccessIssue]
 ) -> list[tuple[Optional[str], ...]]:
     """
     Returns a list of object ID and nonexistent scan pairs for the integrated mains in the water main layer.
@@ -40,8 +40,8 @@ def find_faulty_scans(
     """
     return [
         tuple(i)
-        for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-            ly.path(wm_layer.value),
+        for i in arcpy.da.SearchCursor(  # pyright: ignore [reportAttributeAccessIssue]
+            ly.full_path(wm_layer.value),
             ("OBJECTID", "COMMENTS"),
             "INTEGRATIONSTATUS = 'Y'",
         )
@@ -51,7 +51,7 @@ def find_faulty_scans(
 
 @fallible
 def find_unknown_datasources(
-    wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportGeneralTypeIssues]
+    wm_layer: arcpy._mp.Layer,  # pyright: ignore [reportAttributeAccessIssue]
 ) -> list[tuple[Optional[str], ...]]:
     """
     Returns a list of object ID and unknown/null datasource pairs for the integrated mains in the water main layer.
@@ -67,8 +67,8 @@ def find_unknown_datasources(
     """
     return [
         tuple(i)
-        for i in arcpy.da.SearchCursor(  # pyright: ignore [reportGeneralTypeIssues]
-            ly.path(wm_layer.value),
+        for i in arcpy.da.SearchCursor(  # pyright: ignore [reportAttributeAccessIssue]
+            ly.full_path(wm_layer.value),
             ("OBJECTID", "DATASOURCE"),
             "INTEGRATIONSTATUS = 'Y' AND (DATASOURCE = 'UNK' OR DATASOURCE = '' OR DATASOURCE IS NULL)",
         )
