@@ -28,75 +28,26 @@ Make sure to not alter the file structure; the toolbox will not work otherwise.
 Documentation for colawater-toolbox is hosted on GitHub pages [here][docs].
 Also see the [ArcPy reference][arcpy-reference] for arcpy specific information.
 
-# Tools
-
-<details>
-<summary>Append to ART</summary>
-Appends new water mains to the Asset Reference Drawing Table using this
-field mapping:
-
-| Source      | ART Destination    |
-|-------------|--------------------|
-| city_file   | FILELOCATIONCITY   |
-| DATASOURCE  | DRAWINGTYPE        |
-| INSTALLDATE | DRAWINGDATE        |
-| FACILIITYID | ASSETFACILITYID    |
-| COMMENTS    | SCANNAME           |
-| cw2020_file | FILELOCATIONCW2020 |
-</details>
-
-<details>
-<summary>Calculate Facility Identifiers</summary>
-Automatically calculate the facility identifier fields according to the below table:
-
-| Layer          | Facility ID | Facility ID Index |
-|----------------|-------------|-------------------|
-| Casings        | ✅          | ✅                |
-| Control Valves | ✅          | ✅                |
-| Fittings       | ✅          | ✅                |
-| Hydrants       | ✅          | ✅                |
-| Service Lines  | ✅          | ❌                |
-| Structures     | ✅          | ❌                |
-| System Valves  | ✅          | ❌                |
-| Water Mains    | ✅          | ✅                |
-</details>
-
-<details>
-<summary>Water Quality Control</summary>
-Available quality control checks:
-
-* Check if the associated file exists for all integrated water mains 
-* Check if the data source is set and not unknown for all integrated water mains 
-* Find duplicate facility identifiers
-* Find incorrectly formatted facility identifiers 
-</details>
-
 # Changes
 
 See [CHANGELOG.md][changelog].
 
 # Roadmap
 
-* 🏗 Create Static GDB Tool
-* ✅ Calculate Facility Identifiers Tool
-* ✅ Append to Art Tool
-* ✅ Quality Control Tool
-    * ✅ Deduplicate facility identifiers
-    * ✅ Ensure integrated mains have a data source that is not missing or unknown 
-    * ✅ Ensure integrated mains have an associated file that exists
-    * ✅ Validate facility identifier format
-    * 🏗 Convert message-based output to geodatabse output 
-    * 🏗 Additional checks are on the way, working on developing a list of them 
+* Overhauls:
+    * 🚧 Quality Control Tool
+    * 🚧 Append to ART Tool 
 
 # Versioning
 
-Versions will take the form `major.minor.patch`.
-New tools and behavior changes will result in a major version bump and a release.
-New parameters will result in a minor version bump and a release.
-Changes to documentation, wording, small backward-compatible bugfixes, etc. will result in patch number bump.
+This project uses [CalVer][calver].
+Versions will take the form `0Y.0W.MICRO`.
+Numbered releases will include significant new features or behavior changes.
+Patch releases will include urgent bugfixes not falling into the previous category.
 
 [add-a-toolbox]: https://pro.arcgis.com/en/pro-app/latest/help/projects/connect-to-a-toolbox.htm
 [arcpy-reference]: https://pro.arcgis.com/en/pro-app/latest/arcpy/main/arcgis-pro-arcpy-reference.htm
+[calver]: https://calver.org/ 
 [changelog]: https://github.com/sfx86/colawater-toolbox/blob/main/CHANGELOG.md
-[releases]: https://github.com/sfx86/colawater-toolbox/releases/latest
 [docs]: https://sfx86.github.io/colawater-toolbox
+[releases]: https://github.com/sfx86/colawater-toolbox/releases/latest
