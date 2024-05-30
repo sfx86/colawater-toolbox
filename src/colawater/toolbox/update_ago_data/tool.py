@@ -1,9 +1,20 @@
+import multiprocessing as mp
+from typing import Any
+
 import arcpy
 import arcpy.conversion
 
 from colawater.lib import desc, tool
 from colawater.lib.error import fallible
-from colawater.toolbox.update_ago_data.lib import ExportCategory
+from colawater.lib.mp import mp_fix_exec
+
+from .lib import FeatureClassGroup, export_to_gdb
+
+
+@fallible
+def gp_worker(item: tuple[str, str, FeatureClassGroup]) -> None:
+    conn_aspen, gdb, fcg = item
+    export_to_gdb(conn_aspen, gdb, fcg)
 
 
 class UpdateAGOData:
@@ -12,17 +23,22 @@ class UpdateAGOData:
     description = "Downloads layers to be uploaded to ArcGIS Online from aspen."
     canRunInBackground = False
 
-    @fallible
-    def execute(self, parameters: list[arcpy.Parameter], messages) -> None:
-        conn_aspen = desc.path(parameters[0].value)
+    def execute(self, parameters: list[arcpy.Parameter], messages: list[Any]) -> None:
+        arcpy.SetProgressor("default", "Running... (takes ~20min)")
 
-        # invariant: parameters[1:] & ExportCategory must have same order
-        gdbs = (p.value for p in parameters[1:])
-        layer_groups = (l.value for l in ExportCategory)
+        conn_aspen = desc.full_path(parameters[0].value)
 
-        with arcpy.EnvManager(workspace=conn_aspen, overwriteOutput=True):
-            for layers, gdb in zip(layer_groups, gdbs):
-                arcpy.conversion.FeatureClassToGeodatabase(layers, gdb)
+        # invariant:
+        # parameters[1:] & ExportCategory must have same order
+        gdbs: list[str] = [p.valueAsText for p in parameters[1:]]
+        fcgs = [l for l in FeatureClassGroup]
+
+        assert len(gdbs) == len(fcgs)
+        items = list(zip([conn_aspen] * len(gdbs), gdbs, fcgs))
+
+        mp_fix_exec()
+        with mp.Pool(len(items)) as pool:
+            pool.map(gp_worker, items)
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
         conn_aspen = arcpy.Parameter(

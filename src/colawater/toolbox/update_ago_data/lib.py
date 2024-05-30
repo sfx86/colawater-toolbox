@@ -1,11 +1,13 @@
 from enum import Enum, unique
 
+import arcpy
+
 
 # maybe a better way to organize this data?
 # an enum made more sense when not just iter()-ing over it,
 # but idk
 @unique
-class ExportCategory(Enum):
+class FeatureClassGroup(Enum):
     BaseData = [
         "SDE.Boundary\\SDE.COC_CITY_LIMIT",
         "SDE.Boundary\\SDE.COUNCIL_DISTRICT",
@@ -118,3 +120,19 @@ class ExportCategory(Enum):
         "SDE.WaterNetwork\\SDE.waFitting",
         "SDE.WaterNetwork\\SDE.waMain_Deleted",
     ]
+
+
+def export_to_gdb(conn_aspen: str, gdb: str, fcg: FeatureClassGroup) -> None:
+    with arcpy.EnvManager(
+        workspace=conn_aspen,
+        overwriteOutput=True,
+        transferGDBAttributeProperties=True,
+    ):
+        if fcg == FeatureClassGroup.Tables:
+            arcpy.conversion.TableToGeodatabase(  # pyright: ignore [reportAttributeAccessIssue]
+                fcg.value, gdb
+            )
+        else:
+            arcpy.conversion.FeatureClassToGeodatabase(  # pyright: ignore [reportAttributeAccessIssue]
+                fcg.value, gdb
+            )
