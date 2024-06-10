@@ -23,8 +23,6 @@ class UpdateAGOData:
     canRunInBackground = False
 
     def execute(self, parameters: list[arcpy.Parameter], messages: list[Any]) -> None:
-        arcpy.SetProgressor("default", "Running... (takes ~20min)")
-
         conn_aspen = desc.full_path(parameters[0].value)
 
         # invariant: parameters[1:] & FeatureClassGroup must have same order
