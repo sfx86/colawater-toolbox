@@ -1,9 +1,8 @@
-from colawater.toolbox import (
-    AppendToART,
-    CalculateFacIDs,
-    QualityControl,
-    UpdateAGOData,
-)
+from colawater.lib.mp import mp_fix_exec
+from colawater.toolbox.calculate_fids.tool import CalculateFacIDs
+from colawater.toolbox.update_ago_data.tool import UpdateAGOData
+
+mp_fix_exec()
 
 
 class Toolbox:
@@ -11,8 +10,6 @@ class Toolbox:
         self.label = "Columbia Water"
         self.alias = "colawater"
         self.tools = [
-            # AppendToART,
             CalculateFacIDs,
-            # QualityControl,
             UpdateAGOData,
         ]

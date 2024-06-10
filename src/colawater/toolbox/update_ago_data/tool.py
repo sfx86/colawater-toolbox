@@ -6,7 +6,6 @@ import arcpy.conversion
 
 from colawater.lib import desc, tool
 from colawater.lib.error import fallible
-from colawater.lib.mp import mp_fix_exec
 
 from .lib import FeatureClassGroup, export_to_gdb, gdb_to_zip
 
@@ -28,24 +27,13 @@ class UpdateAGOData:
 
         conn_aspen = desc.full_path(parameters[0].value)
 
-        # invariant:
-        # parameters[1:] & ExportCategory must have same order
-        gdbs: list[str] = [p.valueAsText for p in parameters[1:]]
-        fcgs = [l for l in FeatureClassGroup]
+        # invariant: parameters[1:] & FeatureClassGroup must have same order
+        arguments = [
+            (conn_aspen, p.valueAsText, l)
+            for p, l in zip(parameters[1:], FeatureClassGroup)
+            if p.value is not None
+        ]
 
-        assert len(gdbs) == len(fcgs)
-        arguments = list(
-            filter(
-                lambda x: x[2] is not None,
-                zip(
-                    [conn_aspen] * len(gdbs),
-                    gdbs,
-                    fcgs,
-                ),
-            )
-        )
-
-        mp_fix_exec()
         with mp.Pool(len(arguments)) as pool:
             pool.starmap(gp_worker, arguments)
 
