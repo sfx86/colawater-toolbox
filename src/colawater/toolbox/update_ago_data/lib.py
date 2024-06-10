@@ -21,7 +21,6 @@ class FeatureClassGroup(Enum):
         "SDE.LandRecords\\SDE.PARCEL",
         "SDE.NHDHydrology\\SDE.NHD_FLOWLINE",
         "SDE.NHDHydrology\\SDE.WATER_BODY",
-        "SDE.PublicSafety\\SDE.FEMA_Flood_Hazard_Area",
         "SDE.Transportation\\SDE.STREETS",
         "SDE.Transportation\\SDE.TR_RAILROAD",
     ]
@@ -141,6 +140,7 @@ def export_to_gdb(conn_aspen: str, gdb: str, fcg: FeatureClassGroup) -> None:
 
 
 def gdb_to_zip(gdb: str) -> None:
+    # TODO: DEBUG THIS
     target = Path(gdb)
     assert target.is_dir()
 
