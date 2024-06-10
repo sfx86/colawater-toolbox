@@ -1,6 +1,6 @@
 from enum import Enum, unique
 from pathlib import Path
-from shutil import make_archive
+from zipfile import ZipFile
 
 import arcpy
 
@@ -140,13 +140,8 @@ def export_to_gdb(conn_aspen: str, gdb: str, fcg: FeatureClassGroup) -> None:
 
 
 def gdb_to_zip(gdb: str) -> None:
-    # TODO: DEBUG THIS
     target = Path(gdb)
-    assert target.is_dir()
 
-    make_archive(
-        str(target),
-        format="zip",
-        root_dir=target.parent,
-        base_dir=target,
-    )
+    with ZipFile(target.with_suffix(".gdb.zip"), "w") as zip_file:
+        for entry in target.rglob("*"):
+            zip_file.write(entry, entry.relative_to(target.parent))
