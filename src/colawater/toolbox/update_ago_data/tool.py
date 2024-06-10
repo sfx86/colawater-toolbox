@@ -34,7 +34,16 @@ class UpdateAGOData:
         fcgs = [l for l in FeatureClassGroup]
 
         assert len(gdbs) == len(fcgs)
-        arguments = list(zip([conn_aspen] * len(gdbs), gdbs, fcgs))
+        arguments = list(
+            filter(
+                lambda x: x[2] is not None,
+                zip(
+                    [conn_aspen] * len(gdbs),
+                    gdbs,
+                    fcgs,
+                ),
+            )
+        )
 
         mp_fix_exec()
         with mp.Pool(len(arguments)) as pool:
@@ -54,7 +63,7 @@ class UpdateAGOData:
                 displayName=name_disp,
                 name=name,
                 datatype="DEWorkspace",
-                parameterType="Required",
+                parameterType="Optional",
                 direction="Input",
             )
             for name, name_disp in (
