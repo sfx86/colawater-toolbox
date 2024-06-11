@@ -5,7 +5,7 @@ Examples:
     .. code-block:: python
 
         foo = None
-        foo = process(foo) # Returns "<Null>".
+        foo = to_str(foo) # Returns "<Null>".
 """
 
 from typing import Any, Optional

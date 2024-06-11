@@ -1,12 +1,13 @@
 """
-Type factory for building arcpy tools.
+Types for tools.
 
 Examples:
     .. code-block:: python
     
-        from magic import Wizard
+        class T():
+            category = Category.CheckIn.value
 
-        Foo = toolshed(Wizard)
+            # etc.
 
 """
 
