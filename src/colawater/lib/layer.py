@@ -1,3 +1,13 @@
+"""
+Wrapper functions for working with layers.
+
+Examples:
+
+    .. code-block:: python
+
+        has_objectid = has_field(layer, "OBJECTID")
+"""
+
 import arcpy
 
 

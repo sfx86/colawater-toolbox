@@ -1,15 +1,12 @@
 """
-Wrapper functions around ``arcpy.Describe`` that improve the interface.
+Wrapper functions around ``arcpy.Describe`` that improve the interface for paths.
 
 Examples:
     .. code-block:: python
 
-        path = path(item) # Returns "path/to/item".
+        full_path = path(item) # Returns "path/to/item".
         basename = basename(item) # Returns "item".
-        workspace = workspace(item) # Returns "path/to/workspace.
-                                     # This is the same as the value in ``path``,
-                                     # but without the item name.
-        has_objectid = has_field(item, "OBJECTID") # Returns True.
+        path = path(item) # Returns "path/to".
 """
 
 from typing import Any
