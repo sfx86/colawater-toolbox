@@ -10,6 +10,10 @@ import arcpy
 # but idk
 @unique
 class FeatureClassGroup(Enum):
+    """
+    Groups of feature classes from aspen.
+    """
+
     BaseData = [
         "SDE.Boundary\\SDE.COC_CITY_LIMIT",
         "SDE.Boundary\\SDE.COUNCIL_DISTRICT",
@@ -124,6 +128,21 @@ class FeatureClassGroup(Enum):
 
 
 def export_to_gdb(conn_aspen: str, gdb: str, fcg: FeatureClassGroup) -> None:
+    """
+    Exports the layers from the FeatureClass group to gdb from conn_aspen.
+
+    Arguments:
+        conn_aspen (str): The path to the aspen connection.
+        gdb (str): The path to the target gdb.
+        fcg (FeatureClassGroup): The group of feature classes to export.
+
+    Returns:
+        None
+
+    Note:
+        Path arguments are str and not Path or arcpy.Parameter because paths inside
+        geodatabases aren't real filesystem paths and arcpy.Parameter doesn't pickle.
+    """
     with arcpy.EnvManager(
         workspace=conn_aspen,
         overwriteOutput=True,
@@ -140,6 +159,20 @@ def export_to_gdb(conn_aspen: str, gdb: str, fcg: FeatureClassGroup) -> None:
 
 
 def gdb_to_zip(gdb: str) -> None:
+    """
+    Zips a geodatabase in the same directory as the geodatabase.
+
+    Arguments:
+        gdb (str): The path to the target gdb.
+
+    Returns:
+        None
+
+
+    Note:
+        Path arguments are str and not Path or arcpy.Parameter because paths inside
+        geodatabases aren't real filesystem paths and arcpy.Parameter doesn't pickle.
+    """
     target = Path(gdb)
 
     with ZipFile(target.with_suffix(".gdb.zip"), "w") as zip_file:

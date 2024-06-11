@@ -63,3 +63,10 @@ class UpdateAGOData:
         )
 
         return [conn_aspen, *gdb_targets]
+
+    # fmt: off
+    def isLicensed(self) -> bool: return True
+    def postExecute(self, parameters: list[arcpy.Parameter]) -> None: return None
+    def updateMessages(self, parameters: list[Any]) -> None: return None
+    def updateParameters(self, parameters: list[arcpy.Parameter]) -> None: return None
+    # fmt: on

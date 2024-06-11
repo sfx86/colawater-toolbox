@@ -5,6 +5,7 @@ tool and other helper functions.
 
 from datetime import datetime, timedelta
 from getpass import getuser
+from typing import Any
 
 import arcpy
 
@@ -19,14 +20,6 @@ class AppendToART:
     canRunInBackground = False
 
     def execute(self, parameters: list[arcpy.Parameter]) -> None:
-        """
-        Entry point for Append to ART.
-
-        Appends recent integrated and well-sourced mains from a given editor to the Asset Reference Table.
-
-        Arguments:
-            parameters (list[arcpy.Parameter]): The list of parameters.
-        """
         editor_name = parameters[0].valueAsText
         on_after_date = parameters[1].valueAsText
         wm_layer = parameters[2].value
@@ -40,14 +33,6 @@ class AppendToART:
         )
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
-        """
-        Returns the parameters for Append to ART.
-
-        Parameters are of type GPString, GPDate, GPFeatureLayer, GPTableView, and GPBoolean.
-
-        Returns:
-            list[arcpy.Parameter]: The list of parameters.
-        """
         last_editor = arcpy.Parameter(
             displayName="Editor name",
             name="last_editor",
@@ -90,3 +75,10 @@ class AppendToART:
             water_main_layer,
             art_table,
         ]
+
+    # fmt: off
+    def isLicensed(self) -> bool: return True
+    def postExecute(self, parameters: list[arcpy.Parameter]) -> None: return None
+    def updateMessages(self, parameters: list[Any]) -> None: return None
+    def updateParameters(self, parameters: list[arcpy.Parameter]) -> None: return None
+    # fmt: on
