@@ -11,7 +11,7 @@ from colawater.lib.error import fallible
 @unique
 class AssetType(Enum):
     """
-    Possible asset types represented by a FeatureClass.
+    Possible asset types.
     """
 
     Casing = "Casing"

@@ -5,7 +5,7 @@ tool and other helper functions.
 
 import re
 from collections.abc import Sequence
-from typing import Optional
+from typing import Any, Optional
 
 import arcpy
 
@@ -19,13 +19,6 @@ _LAYER_START = 4
 
 class QualityControl:
     def execute(self, parameters: list[arcpy.Parameter]) -> None:
-        """
-        Entry point for Water Quality Control.
-
-        Arguments:
-            parameters (list[arcpy.Parameter]): The list of parameters.
-        """
-
         is_checks = parameters[:_LAYER_START]
         layers = parameters[_LAYER_START:]
         wm_layer = layers[-1]
@@ -74,14 +67,6 @@ class QualityControl:
             # TODO: output as fc
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
-        """
-        Returns the parameters for Water Quality Control.
-
-        Parameters are 3 of type GPBoolean and 7 of type GPFeatureLayer.
-
-        Returns:
-            list[arcpy.Parameter]: The list of parameters.
-        """
         checks = [
             arcpy.Parameter(
                 displayName=name,
@@ -120,3 +105,10 @@ class QualityControl:
         ]
 
         return [*checks, *lyrs]
+
+    # fmt: off
+    def isLicensed(self) -> bool: return True
+    def postExecute(self, parameters: list[arcpy.Parameter]) -> None: return None
+    def updateMessages(self, parameters: list[Any]) -> None: return None
+    def updateParameters(self, parameters: list[arcpy.Parameter]) -> None: return None
+    # fmt: on

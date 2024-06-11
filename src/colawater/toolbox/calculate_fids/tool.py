@@ -19,17 +19,6 @@ class CalculateFacIDs:
     canRunInBackground = False
 
     def execute(self, parameters: list[arcpy.Parameter], messages: list[Any]) -> None:
-        """
-        Entry point for Calculate Facility Identifiers.
-
-        Calculates the new facility identifiers for features with given
-        placeholder initials starting from a given start value.
-
-        Arguments:
-            parameters (list[arcpy.Parameter]): The list of parameters.
-            messages (list[Any]): The list of messages.
-        """
-
         placeholder: str = parameters[0].value
         interval: int = parameters[1].value
         value_table: list[
@@ -65,14 +54,6 @@ class CalculateFacIDs:
             )
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
-        """
-        Returns the parameters for Calculate Facility Identifiers.
-
-        Parameters are of type GPString, GPLong, GPValueTable[DEFeatureClass, GPString, GPLong] multivalue.
-
-        Returns:
-            list[arcpy.Parameter]: The list of parameters.
-        """
         placeholder = arcpy.Parameter(
             displayName="Facility Identifier Placeholder",
             name="placeholder",
@@ -108,3 +89,10 @@ class CalculateFacIDs:
         inputs.filters[1].list = [variant.value for variant in AssetType]
 
         return [placeholder, interval, inputs]
+
+    # fmt: off
+    def isLicensed(self) -> bool: return True
+    def postExecute(self, parameters: list[arcpy.Parameter]) -> None: return None
+    def updateMessages(self, parameters: list[Any]) -> None: return None
+    def updateParameters(self, parameters: list[arcpy.Parameter]) -> None: return None
+    # fmt: on
