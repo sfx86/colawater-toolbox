@@ -18,6 +18,6 @@ class Tool:
     # fmt: off
     def isLicensed(self) -> bool: return True
     def postExecute(self, parameters: list[arcpy.Parameter]) -> None: return None
-    def updateMessages(self, parameters: list[Any]) -> None: return None
-    def updateParameters(self, parameters: list[arcpy.Parameter]) -> None: return None
+    def updateMessages(self, parameters: list[arcpy.Parameter]) -> list[arcpy.Parameter]: return parameters
+    def updateParameters(self, parameters: list[arcpy.Parameter]) -> list[arcpy.Parameter]: return parameters
     # fmt: on
