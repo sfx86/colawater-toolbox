@@ -13,7 +13,7 @@ from colawater.lib import desc, tool
 from .lib import AssetType, calculate_fids
 
 
-class CalculateFacIDs:
+class CalculateFacilityIdentifiers:
     category = tool.Category.CheckIn.value
     label = "Calculate Facility Identifiers"
     canRunInBackground = False
@@ -93,6 +93,6 @@ class CalculateFacIDs:
     # fmt: off
     def isLicensed(self) -> bool: return True
     def postExecute(self, parameters: list[arcpy.Parameter]) -> None: return None
-    def updateMessages(self, parameters: list[Any]) -> None: return None
-    def updateParameters(self, parameters: list[arcpy.Parameter]) -> None: return None
+    def updateMessages(self, parameters: list[arcpy.Parameter]) -> list[arcpy.Parameter]: return parameters
+    def updateParameters(self, parameters: list[arcpy.Parameter]) -> list[arcpy.Parameter]: return parameters
     # fmt: on
