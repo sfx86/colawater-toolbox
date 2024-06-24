@@ -1,5 +1,5 @@
 from enum import Enum, unique
-from typing import Optional
+from typing import Any, Optional
 
 import arcpy
 
@@ -51,7 +51,7 @@ def calculate_fids(
     placeholder: str,
     interval: int,
     start: int,
-) -> Optional[int]:
+) -> int:
     """
     Calculates and updates the facility identifiers for the provided layer.
     If the layer has a facility identifier index, also update that.
@@ -99,8 +99,5 @@ def calculate_fids(
                 for _ in cursor:
                     cursor.updateRow((facid_template.format(counter),))
                     counter += interval
-
-    if counter == start:
-        return None
 
     return counter
