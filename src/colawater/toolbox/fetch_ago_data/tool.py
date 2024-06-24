@@ -17,7 +17,7 @@ def gp_worker(conn_aspen: str, gdb: str, fcg: FeatureClassGroup) -> None:
 
 
 class FetchAGOData:
-    category = tool.Category.ArcGISOnline.value
+    # category = tool.Category.ArcGISOnline.value
     label = "Fetch AGO Data"
     description = "Fetches layers from aspen and zips them for upload to ArcGIS Online."
     canRunInBackground = False
@@ -66,7 +66,7 @@ class FetchAGOData:
 
     # fmt: off
     def isLicensed(self) -> bool: return True
-    def postExecute(self, parameters: list[arcpy.Parameter]) -> None: return None
-    def updateMessages(self, parameters: list[arcpy.Parameter]) -> list[arcpy.Parameter]: return parameters
-    def updateParameters(self, parameters: list[arcpy.Parameter]) -> list[arcpy.Parameter]: return parameters
+    def postExecute(self, parameters: list[arcpy.Parameter]) -> None: pass
+    def updateMessages(self, parameters: list[arcpy.Parameter]) -> None: pass
+    def updateParameters(self, parameters: list[arcpy.Parameter]) -> None: pass
     # fmt: on
