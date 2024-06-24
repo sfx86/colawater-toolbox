@@ -6,6 +6,7 @@ from getpass import getuser
 from typing import Any
 
 import arcpy
+import arcpy.management
 
 import colawater.lib.layer as ly
 from colawater.lib import desc, tool
@@ -14,7 +15,7 @@ from .lib import AssetType, calculate_fids
 
 
 class CalculateFacilityIdentifiers:
-    category = tool.Category.CheckIn.value
+    # category = tool.Category.CheckIn.value
     label = "Calculate Facility Identifiers"
     canRunInBackground = False
 
@@ -28,6 +29,8 @@ class CalculateFacilityIdentifiers:
                 int,
             ]
         ] = parameters[2].values
+
+        arcpy.AddMessage("Layer -> Next starting value\n")
 
         for layer, asset_type, start in value_table:
             basename = desc.basename(layer)
@@ -47,11 +50,7 @@ class CalculateFacilityIdentifiers:
                 start,
             )
 
-            arcpy.AddMessage(
-                f"{basename}: {new_fid}"
-                if new_fid is not None
-                else f"{basename}: None used"
-            )
+            arcpy.AddMessage(f"{basename} -> {new_fid}")
 
     def getParameterInfo(self) -> list[arcpy.Parameter]:
         placeholder = arcpy.Parameter(
@@ -81,7 +80,7 @@ class CalculateFacilityIdentifiers:
             multiValue=True,
         )
         inputs.columns = [
-            ["DEFeatureClass", "Feature Class"],
+            ["GPFeatureLayer", "Feature Class"],
             ["GPString", "Asset Type"],
             ["GPLong", "Start Value"],
         ]
@@ -92,7 +91,7 @@ class CalculateFacilityIdentifiers:
 
     # fmt: off
     def isLicensed(self) -> bool: return True
-    def postExecute(self, parameters: list[arcpy.Parameter]) -> None: return None
-    def updateMessages(self, parameters: list[arcpy.Parameter]) -> list[arcpy.Parameter]: return parameters
-    def updateParameters(self, parameters: list[arcpy.Parameter]) -> list[arcpy.Parameter]: return parameters
+    def postExecute(self, parameters: list[arcpy.Parameter]) -> None: pass
+    def updateMessages(self, parameters: list[arcpy.Parameter]) -> None: pass
+    def updateParameters(self, parameters: list[arcpy.Parameter]) -> None: pass
     # fmt: on
