@@ -16,10 +16,10 @@ def gp_worker(conn_aspen: str, gdb: str, fcg: FeatureClassGroup) -> None:
     gdb_to_zip(gdb)
 
 
-class UpdateAGOData:
+class FetchAGOData:
     category = tool.Category.ArcGISOnline.value
-    label = "Update AGO Data"
-    description = "Downloads layers to be uploaded to ArcGIS Online from aspen."
+    label = "Fetch AGO Data"
+    description = "Fetches layers from aspen and zips them for upload to ArcGIS Online."
     canRunInBackground = False
 
     def execute(self, parameters: list[arcpy.Parameter], messages: list[Any]) -> None:
