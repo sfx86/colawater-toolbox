@@ -11,7 +11,7 @@ import arcpy.management
 import colawater.lib.layer as ly
 from colawater.lib import desc, tool
 
-from .lib import AssetType, calculate_fids
+from .lib import AssetType, calculate_fids, guess_asset_type
 
 
 class CalculateFacilityIdentifiers:
@@ -89,9 +89,17 @@ class CalculateFacilityIdentifiers:
 
         return [placeholder, interval, inputs]
 
+    def updateParameters(
+        self, parameters: list[arcpy.Parameter]
+    ) -> list[arcpy.Parameter]:
+        return parameters
+        # for item in parameters[2].values:
+        #     item[1] = guess_asset_type(item[1])
+
+        # return parameters
+
     # fmt: off
     def isLicensed(self) -> bool: return True
     def postExecute(self, parameters: list[arcpy.Parameter]) -> None: pass
     def updateMessages(self, parameters: list[arcpy.Parameter]) -> None: pass
-    def updateParameters(self, parameters: list[arcpy.Parameter]) -> None: pass
     # fmt: on

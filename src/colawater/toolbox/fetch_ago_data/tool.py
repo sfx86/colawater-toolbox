@@ -58,6 +58,7 @@ class FetchAGOData:
                 ("gdb_sewer", "Sewer Geodatabase"),
                 ("gdb_stormwater", "Stormwater Geodatabase"),
                 ("gdb_tables", "Tables Geodatabase"),
+                ("gdb_dpo", "Utility Developer Projects Database"),
                 ("gdb_water", "Water Geodatabase"),
             )
         )

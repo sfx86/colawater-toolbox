@@ -101,3 +101,23 @@ def calculate_fids(
                     counter += interval
 
     return counter
+
+
+def guess_asset_type(asset_str: str) -> Optional[str]:
+    subs = (
+        "casing",
+        "control",
+        "fitting",
+        "hydrant",
+        "service",
+        "structure",
+        "system",
+        "main",
+    )
+    cmp = asset_str.lower()
+
+    for sub, typ in zip(subs, AssetType):
+        if sub in cmp:
+            return typ.value
+
+    return None
