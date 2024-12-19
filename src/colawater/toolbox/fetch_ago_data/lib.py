@@ -29,7 +29,6 @@ class FeatureClassGroup(Enum):
         "SDE.Transportation\\SDE.TR_RAILROAD",
     ]
     Infrastructure = [
-        "SDE.InfrastructureOperations\\SDE.CIPs",
         "SDE.InfrastructureOperations\\SDE.Easements",
         "SDE.InfrastructureOperations\\SDE.FOG",
         "SDE.InfrastructureOperations\\SDE.InspectorBoundaryArea",
@@ -40,7 +39,6 @@ class FeatureClassGroup(Enum):
         "SDE.InfrastructureOperations\\SDE.RainGauge",
         "SDE.InfrastructureOperations\\SDE.SSO",
         "SDE.InfrastructureOperations\\SDE.SS_ProjectArea",
-        "SDE.InfrastructureOperations\\SDE.UtilityDeveloperProjects",
         "SDE.InfrastructureOperations\\SDE.WM4484_HYDRANTS",
         "SDE.InfrastructureOperations\\SDE.WM4484_VALVES",
         "SDE.InfrastructureOperations\\SDE.ssBasinBoundary",
@@ -107,7 +105,12 @@ class FeatureClassGroup(Enum):
         "SDE.ssManhole_RehabSummary",
         "SDE.ssRootControl_WorkSummary",
         "SDE.swConveyanceCondition",
+        "SDE.swConveyance_RehabSummary",
         "SDE.swNodesCondition",
+        "SDE.swNodes_RehabSummary",
+    ]
+    UtilityDeveloperProjects = [
+        "SDE.DataUpdateGP\\SDE.UtilityDeveloperProjects",
     ]
     Water = [
         "SDE.WaterNetwork\\SDE.waCasing",
@@ -176,6 +179,10 @@ def gdb_to_zip(gdb: str) -> None:
     """
     target = Path(gdb)
 
-    with ZipFile(target.with_suffix(".gdb.zip"), "w") as zip_file:
-        for entry in target.rglob("*"):
+    with ZipFile(target.with_suffix(".zip"), "w") as zip_file:
+        for entry in filter(
+            # lockfile permissions prevent them from being zipped
+            lambda p: p.suffix != ".lock",
+            target.rglob("*"),
+        ):
             zip_file.write(entry, entry.relative_to(target.parent))
