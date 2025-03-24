@@ -94,7 +94,6 @@ class FeatureClassGroup(Enum):
         "SDE.PRV_RemoteSites",
         "SDE.PS_RemoteSites",
         "SDE.Tank_RemoteSites",
-        "SDE.ssCleanout_RehabSummary",
         "SDE.ssEasement_Maintenance",
         "SDE.ssFlowMeters",
         "SDE.ssGravityMain_InspectionSummary",
