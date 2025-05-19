@@ -9,13 +9,12 @@ import arcpy
 import arcpy.management
 
 import colawater.lib.layer as ly
-from colawater.lib import desc, tool
+from colawater.lib import desc
 
 from .lib import AssetType, calculate_fids, guess_asset_type
 
 
 class CalculateFacilityIdentifiers:
-    # category = tool.Category.CheckIn.value
     label = "Calculate Facility Identifiers"
     canRunInBackground = False
 
