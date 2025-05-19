@@ -4,7 +4,7 @@ from typing import Any
 import arcpy
 import arcpy.conversion
 
-from colawater.lib import desc, tool
+from colawater.lib import desc
 from colawater.lib.error import fallible
 
 from .lib import FeatureClassGroup, export_to_gdb, gdb_to_zip
@@ -17,7 +17,6 @@ def gp_worker(conn_aspen: str, gdb: str, fcg: FeatureClassGroup) -> None:
 
 
 class FetchAGOData:
-    # category = tool.Category.ArcGISOnline.value
     label = "Fetch AGO Data"
     description = "Fetches layers from aspen and zips them for upload to ArcGIS Online."
     canRunInBackground = False
