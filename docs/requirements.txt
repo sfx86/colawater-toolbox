@@ -1,6 +1,0 @@
-docutils==0.20.1
-furo==2023.5.20
-sphinx-autoapi==2.1.1
-sphinx-pyproject==0.3.0
-sphinx==7.0.1
-astroid==2.15.8 # https://github.com/readthedocs/sphinx-autoapi/issues/407
