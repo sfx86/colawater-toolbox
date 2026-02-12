@@ -1,20 +1,34 @@
-from enum import Enum, unique
 from pathlib import Path
+from typing import Any
 from zipfile import ZipFile
 
 import arcpy
+from arcgis.gis import ItemProperties, ItemTypeEnum
+
+from colawater.lib.error import fallible
+
+_SPATIAL_REFERENCE = "3361"
 
 
-# maybe a better way to organize this data?
-# an enum made more sense when not just iter()-ing over it,
-# but idk
-@unique
-class FeatureClassGroup(Enum):
+class LayerTablePair:
     """
-    Groups of feature classes from aspen.
+    Paired layers and tables.
     """
 
-    BaseData = [
+    def __init__(
+        self,
+        name: str,
+        feature_classes: list[str],
+        tables: list[str],
+    ) -> None:
+        self.name = name
+        self.feature_classes = feature_classes
+        self.tables = tables
+
+
+base_data: LayerTablePair = LayerTablePair(
+    "BaseData",
+    [
         "SDE.Boundary\\SDE.COC_CITY_LIMIT",
         "SDE.Boundary\\SDE.COUNCIL_DISTRICT",
         "SDE.Boundary\\SDE.COUNTY",
@@ -27,8 +41,12 @@ class FeatureClassGroup(Enum):
         "SDE.NHDHydrology\\SDE.WATER_BODY",
         "SDE.Transportation\\SDE.STREETS",
         "SDE.Transportation\\SDE.TR_RAILROAD",
-    ]
-    Infrastructure = [
+    ],
+    [],
+)
+infrastructure: LayerTablePair = LayerTablePair(
+    "Infrastructure",
+    [
         "SDE.InfrastructureOperations\\SDE.Easements",
         "SDE.InfrastructureOperations\\SDE.FOG",
         "SDE.InfrastructureOperations\\SDE.InspectorBoundaryArea",
@@ -54,8 +72,12 @@ class FeatureClassGroup(Enum):
         "SDE.InfrastructureOperations\\SDE.waDistrictOffices",
         "SDE.InfrastructureOperations\\SDE.waDistricts",
         "SDE.InfrastructureOperations\\SDE.waPressureZone",
-    ]
-    Sewer = [
+    ],
+    [],
+)
+sewer: LayerTablePair = LayerTablePair(
+    "Sewer",
+    [
         "SDE.Sewer\\SDE.ssBend",
         "SDE.Sewer\\SDE.ssCasing",
         "SDE.Sewer\\SDE.ssCleanOut",
@@ -73,8 +95,22 @@ class FeatureClassGroup(Enum):
         "SDE.Sewer\\SDE.ssSystemValve",
         "SDE.Sewer\\SDE.ssTap",
         "SDE.Sewer\\SDE.ssVault",
-    ]
-    Stormwater = [
+    ],
+    [
+        "SDE.ssEasement_Maintenance",
+        "SDE.ssFlowMeters",
+        "SDE.ssGravityMain_InspectionSummary",
+        "SDE.ssGravityMain_RehabSummary",
+        "SDE.ssLateralLine_InspectionSummary",
+        "SDE.ssLateralLine_RehabSummary",
+        "SDE.ssManhole_InspectionSummary",
+        "SDE.ssManhole_RehabSummary",
+        "SDE.ssRootControl_WorkSummary",
+    ],
+)
+stormwater: LayerTablePair = LayerTablePair(
+    "Stormwater",
+    [
         "SDE.StormWater\\SDE.swDischargePoint",
         "SDE.StormWater\\SDE.swDischargePoint_Deleted",
         "SDE.StormWater\\SDE.swDrainPipe",
@@ -89,29 +125,24 @@ class FeatureClassGroup(Enum):
         "SDE.StormWater\\SDE.swPermBMP",
         "SDE.StormWater\\SDE.swPermBMP_Deleted",
         "SDE.StormWater\\SDE.swVirtualReach",
-    ]
-    Tables = [
-        "SDE.PRV_RemoteSites",
-        "SDE.PS_RemoteSites",
-        "SDE.Tank_RemoteSites",
-        "SDE.ssEasement_Maintenance",
-        "SDE.ssFlowMeters",
-        "SDE.ssGravityMain_InspectionSummary",
-        "SDE.ssGravityMain_RehabSummary",
-        "SDE.ssLateralLine_InspectionSummary",
-        "SDE.ssLateralLine_RehabSummary",
-        "SDE.ssManhole_InspectionSummary",
-        "SDE.ssManhole_RehabSummary",
-        "SDE.ssRootControl_WorkSummary",
+    ],
+    [
         "SDE.swConveyanceCondition",
         "SDE.swConveyance_RehabSummary",
         "SDE.swNodesCondition",
         "SDE.swNodes_RehabSummary",
-    ]
-    UtilityDeveloperProjects = [
+    ],
+)
+utility_developer_projects: LayerTablePair = LayerTablePair(
+    "UtilityDeveloperProjects",
+    [
         "SDE.DataUpdateGP\\SDE.UtilityDeveloperProjects",
-    ]
-    Water = [
+    ],
+    [],
+)
+water: LayerTablePair = LayerTablePair(
+    "Water",
+    [
         "SDE.WaterNetwork\\SDE.waCasing",
         "SDE.WaterNetwork\\SDE.waControlValve",
         "SDE.WaterNetwork\\SDE.waCurbStopValve",
@@ -127,40 +158,16 @@ class FeatureClassGroup(Enum):
         "SDE.WaterNetwork\\SDE.waSystemValve",
         "SDE.WaterNetwork\\SDE.waTestStation",
         "SDE.WaterNetwork\\SDE.waWaterMain",
-    ]
+    ],
+    [
+        "SDE.PRV_RemoteSites",
+        "SDE.PS_RemoteSites",
+        "SDE.Tank_RemoteSites",
+    ],
+)
 
 
-def export_to_gdb(conn_aspen: str, gdb: str, fcg: FeatureClassGroup) -> None:
-    """
-    Exports the layers from the FeatureClass group to gdb from conn_aspen.
-
-    Arguments:
-        conn_aspen (str): The path to the aspen connection.
-        gdb (str): The path to the target gdb.
-        fcg (FeatureClassGroup): The group of feature classes to export.
-
-    Returns:
-        None
-
-    Note:
-        Path arguments are str and not Path or arcpy.Parameter because paths inside
-        geodatabases aren't real filesystem paths and arcpy.Parameter doesn't pickle.
-    """
-    with arcpy.EnvManager(
-        workspace=conn_aspen,
-        overwriteOutput=True,
-        transferGDBAttributeProperties=True,
-    ):
-        if fcg == FeatureClassGroup.Tables:
-            arcpy.conversion.TableToGeodatabase(  # pyright: ignore [reportAttributeAccessIssue]
-                fcg.value, gdb
-            )
-        else:
-            arcpy.conversion.FeatureClassToGeodatabase(  # pyright: ignore [reportAttributeAccessIssue]
-                fcg.value, gdb
-            )
-
-
+@fallible
 def gdb_to_zip(gdb: str) -> None:
     """
     Zips a geodatabase in the same directory as the geodatabase.
@@ -185,3 +192,55 @@ def gdb_to_zip(gdb: str) -> None:
             target.rglob("*"),
         ):
             zip_file.write(entry, entry.relative_to(target.parent))
+
+
+@fallible
+def upload_gdb(folder: Any, gdb: Any, title: str, tags: list[str]) -> None:
+    """
+    Uploads a geodatabase to a folder with a given title and tags.
+
+    Arguments:
+        folder (Any): The remote folder.
+        remote_gdb (Any): The path to the target gdb.
+        title (str): The title to use as the publishing name.
+        tags (list[str]): The list of tags to apply to the published item.
+
+    Returns:
+        None
+    """
+    item_properties = ItemProperties(
+        title=title,
+        item_type=ItemTypeEnum.FILE_GEODATABASE.value,
+        spatial_reference=_SPATIAL_REFERENCE,
+        tags=tags,
+    )
+
+    folder.add(
+        item_properties=item_properties,
+        file=gdb,
+    )
+
+
+@fallible
+def publish_gdb(remote_gdb: Any) -> None:
+    """
+    Publishes a remote gdb as a feature class service.
+
+    Arguments:
+        remote_gdb (Any): The path to the target gdb.
+
+    Returns:
+        None
+    """
+    publish_parameters = {
+        "name": remote_gdb.title,
+        "targetSR": {
+            "wkid": _SPATIAL_REFERENCE,
+        },
+    }
+
+    remote_gdb.publish(
+        publish_parameters=publish_parameters,
+        file_type="filegeodatabase",
+        overwrite=True,
+    )

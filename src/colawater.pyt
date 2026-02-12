@@ -1,6 +1,6 @@
 from colawater.lib.mp import mp_fix_exec
 from colawater.toolbox.calculate_fids.tool import CalculateFacilityIdentifiers
-from colawater.toolbox.fetch_ago_data.tool import FetchAGOData
+from colawater.toolbox.update_ago_data.tool import UpdateAGOData
 
 mp_fix_exec()
 
@@ -11,5 +11,5 @@ class Toolbox:
         self.alias = "colawater"
         self.tools = [
             CalculateFacilityIdentifiers,
-            FetchAGOData,
+            UpdateAGOData,
         ]
